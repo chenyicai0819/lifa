@@ -1,0 +1,213 @@
+<template>
+  <div class="counter-index">
+    <div class="counter-index-head">
+      <el-input
+          class="counter-index-head-input"
+          v-model="search"
+          placeholder="会员信息查询，输入会员名字"
+          clearable="true"
+      />
+    </div>
+    <div class="counter-index-body">
+      <el-tabs type="card" v-model="activeName" @tab-click="handleClick" class="counter-index-body-tab">
+        <el-tab-pane label="项目消费" name="buy-1">项目消费</el-tab-pane>
+        <el-tab-pane label="商品消费" name="buy-2">商品消费</el-tab-pane>
+      </el-tabs>
+      <div class="counter-index-buy">
+        <el-card class="box-card" shadow="hover">
+          <div v-if="activeName=='buy-1'">
+            <span>服务项目：</span>
+            <el-select v-model="form.service" placeholder="请选择服务">
+              <el-option v-for="(item,index)  in serviceItem" :label="item.label" :value="item.label"
+                         :key="index"></el-option>
+            </el-select>
+            <span>原价：</span>
+            <el-input v-model="form.initPrice" readonly style="width: 5%"/>
+            <span>优惠价：</span>
+            <el-input v-model="form.newPrice" style="width: 5%"/>
+            <span>发型师：</span>
+            <el-select v-model="form.workMan" placeholder="请选择发型师">
+              <el-option v-for="(item,index)  in workMans" :label="item.label" :value="item.label"
+                         :key="index"></el-option>
+            </el-select>
+            <span>其他人员：</span>
+            <el-select v-model="form.orderMan" placeholder="其他工作人员">
+              <el-option v-for="(item,index)  in workMans" :label="item.label" :value="item.label"
+                         :key="index"></el-option>
+            </el-select>
+          </div>
+          <div v-else>
+            <span>选择商品：</span>
+            <el-select v-model="form.commodity" multiple placeholder="选择商品" style="width: 50%">
+              <el-option
+                  v-for="item in commoditys"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+              >
+              </el-option>
+            </el-select>
+            <span>原价：</span>
+            <el-input v-model="form.initPrice" readonly style="width: 5%"/>
+            <span>优惠价：</span>
+            <el-input v-model="form.newPrice" style="width: 5%"/>
+
+          </div>
+        </el-card>
+        <el-card class="box-card" shadow="hover">
+          <div>
+            <span>客户姓名：</span>
+            <el-input v-model="form.guestName" clearable="true" style="width: 20%"/>
+
+            <span>联系电话：</span>
+            <el-input v-model="form.guestPhone" clearable="true" style="width: 20%"/>
+          </div>
+          <div style="margin-top: 5px">
+            <span>客户性别：</span>
+            <el-select v-model="form.guestSex" placeholder="客户性别" style="width: 20%">
+              <el-option label="男" value="1"></el-option>
+              <el-option label="女" value="0"></el-option>
+            </el-select>
+
+            <span>客户来源：</span>
+            <el-select v-model="form.guestCome" placeholder="客户来源" style="width: 20%">
+              <el-option v-for="(item,index)  in guestComes" :label="item.label" :value="item.label"
+                         :key="index"></el-option>
+            </el-select>
+          </div>
+          <el-input v-model="form.remark" style="width: 53%;margin-top: 5px" type="textarea" placeholder="备注"></el-input>
+
+        </el-card>
+        <el-card class="box-card" shadow="hover" >
+          <div>
+            <span>最终价格：</span>
+            <el-input v-model="form.realPrice" readonly style="width: 10%"/>
+            <span>流水单号：</span>
+            <el-input v-model="form.SingleNumber" readonly style="width: 20%"/>
+            <span>消费日期：</span>
+            <el-input v-model="form.SingleDate" readonly style="width: 20%"/>
+            <span>付款方式：</span>
+            <el-select v-model="form.payType" placeholder="付款方式" style="width: 20%">
+              <el-option label="微信" value="1"></el-option>
+              <el-option label="支付宝" value="2"></el-option>
+              <el-option label="现金" value="3"></el-option>
+              <el-option label="银联" value="4"></el-option>
+              <el-option label="积分" value="5"></el-option>
+              <el-option label="免单" value="6"></el-option>
+            </el-select>
+          </div>
+          <div style="margin-top: 10px">
+            <el-button type="primary" style="height: 50px;width: 200px">结 账</el-button>
+          </div>
+        </el-card>
+      </div>
+    </div>
+  </div>
+
+
+</template>
+
+<script>
+import {onBeforeMount, reactive, toRefs} from "vue";
+import selectItem from "../../utils/selectItem";
+import moment from "moment";
+
+export default {
+  name: "Index",
+  setup() {
+    const data = reactive({
+      search: '',
+      activeName: 'buy-1',
+      serviceItem: selectItem.SERVICEITEM,
+      workMans:selectItem.WORKMANS,
+      guestComes:selectItem.GUESTCOMES,
+      commoditys:selectItem.COMMODITYS,
+      form: {
+        service: '',
+        initPrice: 10,
+        newPrice: '',
+        workMan:'',
+        orderMan:'',
+        guestName:'',
+        guestPhone:'',
+        guestSex:'',
+        guestCome:'',
+        remark:'',
+        SingleNumber:'',
+        SingleDate:'',
+        realPrice:'',
+        payType:'',
+        commodity:[],
+      }
+    })
+    const handleClick = (tab, event) => {
+      console.log(tab, event)
+    }
+    onBeforeMount(()=>{
+      data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
+    })
+    return {
+      ...toRefs(data),
+      handleClick,
+    }
+  },
+}
+</script>
+
+<style scoped>
+.counter-index-head {
+  width: 100%;
+  height: 50px;
+  background-color: #cca8f5;
+  display: flex;
+  justify-content: left;
+  margin-top: 5px;
+  border-radius: 3px
+}
+
+.counter-index-head-input {
+  width: 25%;
+  margin-left: 5px;
+  margin-top: 5px;
+  font-size: 18px;
+}
+
+.counter-index-head-input :focus {
+  background-color: antiquewhite;
+}
+
+.counter-index-body {
+  margin-top: 5px;
+  width: 100%;
+}
+
+.counter-index-body-tab {
+  font-size: 28px;
+  /*border: #2c3e50 1px solid;*/
+  border-radius: 3px
+}
+
+/deep/ .el-tabs__item {
+  background-color: #EBEEF5;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+/deep/ .el-tabs__item.is-active {
+  background-color: #FFFFFF;
+}
+
+.box-card {
+  width: 100%;
+  padding: 0 0;
+  margin-top: 5px;
+  /*display: flex;*/
+  /*justify-content: left;*/
+}
+.box-card :hover{
+
+}
+.box-card>span{
+  padding-left: 10px;
+}
+</style>
