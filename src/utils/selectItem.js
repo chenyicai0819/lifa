@@ -29,6 +29,13 @@ export default {
         {value: "4", label: "会员开卡"},
         {value: "5", label: "订购套餐"}
     ],
+    STAFFLEVELS:[{value: "1", label: "首席发型师"},
+        {value: "2", label: "总监"},
+        {value: "3", label: "特级发型师"},
+        {value: "4", label: "高级发型师"},
+        {value: "5", label: "技师"},
+        {value: "6", label: "助理"},
+        {value: "7", label: "学徒"}]
 }
 
 

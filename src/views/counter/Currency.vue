@@ -119,7 +119,7 @@
         </div>
         <div style="margin-top: 5px">
           <span>金额：</span>
-          <el-input v-model="form.dialogtime" clearable="true" style="width: 50%"/>
+          <el-input v-model="form.dialogMoney" clearable="true" style="width: 50%"/>
         </div>
         <el-input v-model="form.dialogRemark" style="width: 60%;margin-top: 5px" type="textarea" placeholder="备注"></el-input>
       </div>

@@ -6,6 +6,11 @@ const routes = [
     redirect: '/index'
   },
   {
+    path: '/login',
+    name: 'login',
+    component: ()=>import('../views/Login')
+  },
+  {
     path: '/index',
     name: 'index',
     component: () => import('../views/Home.vue'),
@@ -68,6 +73,18 @@ const routes = [
         path: 'chats',
         name: 'chats',
         component: ()=>import('../views/vips/Chats')
+      },
+    ]
+  },
+  {
+    path: '/system',
+    name: 'system',
+    component: () => import('../views/Home.vue'),
+    children: [
+      {
+        path: 'staff',
+        name: 'staff',
+        component: ()=>import('../views/system/Staff')
       },
     ]
   },

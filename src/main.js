@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -8,7 +8,8 @@ import ElementPlus from 'element-plus'
 import 'element-plus/theme-chalk/index.css'
 import axios from "./axios/config";
 
-const app=createApp(App)
+const app = createApp(App)
+
 app.use(ElementPlus)
 app.use(Vuex)
 app.use(store)

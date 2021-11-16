@@ -177,7 +177,7 @@ const TREELIST_5 = [{
     "path": "/",
     "parents": null,
     "type": 5,
-    "chi": [{"id": 511, "name": "添加员工", "path": "/", "parents": 510, "type": null, "chi": null}, {
+    "chi": [{"id": 511, "name": "添加员工", "path": "/system/staff", "parents": 510, "type": null, "chi": null}, {
         "id": 512,
         "name": "添加卡类型",
         "path": "/",
