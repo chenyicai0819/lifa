@@ -13,7 +13,7 @@
       </el-button>
     </div>
     <div class="op-button-div">
-      <el-button class="op-button" size="mini" style="background-color: Transparent">
+      <el-button class="op-button" size="mini" style="background-color: Transparent" @click="logout">
         <svg t="1636810180263" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2214" width="20" height="20"><path d="M896 1024H298.666667a128 128 0 0 1-128-128v-211.2a42.666667 42.666667 0 0 1 85.333333 0V896a42.666667 42.666667 0 0 0 42.666667 42.666667h597.333333a42.666667 42.666667 0 0 0 42.666667-42.666667V128a42.666667 42.666667 0 0 0-42.666667-42.666667H298.666667a42.666667 42.666667 0 0 0-42.666667 42.666667v213.333333a42.666667 42.666667 0 0 1-85.333333 0V128a128 128 0 0 1 128-128h597.333333a128 128 0 0 1 128 128v768a128 128 0 0 1-128 128z m-213.333333-469.333333H42.666667a42.666667 42.666667 0 0 1 0-85.333334h537.173333l-55.893333-55.466666a42.666667 42.666667 0 1 1 60.586666-60.586667l128 128a42.666667 42.666667 0 0 1 8.96 46.506667A42.666667 42.666667 0 0 1 682.666667 554.666667z" p-id="2215" fill="#ffffff"></path></svg>
         <span style="font-size: 20px;margin-left: 3px">退出</span>
       </el-button>
@@ -31,9 +31,12 @@ export default {
     const toIndex = () => {
       router.push("/");
     }
-
+    const logout = () => {
+      router.push("/login")
+      localStorage.removeItem("loginToken");
+    }
     return{
-      toIndex,
+      toIndex,logout,
     }
   }
 }

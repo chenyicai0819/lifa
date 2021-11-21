@@ -13,6 +13,7 @@ const routes = [
   {
     path: '/index',
     name: 'index',
+    meta: { permission: true },
     component: () => import('../views/Home.vue'),
     children: [
       {
@@ -25,6 +26,7 @@ const routes = [
   {
     path: '/home',
     name: 'Home',
+    meta: { permission: true },
     component: () => import('../views/Home.vue'),
     children:[
       {
@@ -57,6 +59,7 @@ const routes = [
   {
     path: '/vips',
     name: 'vips',
+    meta: { permission: true },
     component: () => import('../views/Home.vue'),
     children:[
       {
@@ -79,6 +82,7 @@ const routes = [
   {
     path: '/system',
     name: 'system',
+    meta: { permission: true },
     component: () => import('../views/Home.vue'),
     children: [
       {
@@ -86,11 +90,17 @@ const routes = [
         name: 'staff',
         component: ()=>import('../views/system/Staff')
       },
+      {
+        path: 'cardtype',
+        name: 'cardtype',
+        component: ()=>import('../views/system/CardType')
+      },
     ]
   },
   {
     path: '/about',
     name: 'About',
+    meta: { permission: true },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -102,5 +112,20 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
-
+router.beforeEach(((to, from, next) => {
+  if(to.meta.permission) {
+    /*判断交互过程中 token登录状态的记录*/
+    let token = localStorage.getItem('loginToken');
+    if (token === null || token === ''||token===undefined) {
+      /*没有登录状态 表示当前用户未登录 则返回项目登录 首页*/
+      alert("请先登录")
+      next('/login');
+    } else {
+      /*存在token手令 表示当前用户已登录  访问路径放行*/
+      next();
+    }
+  } else {
+    next();
+  }
+}))
 export default router

@@ -1,8 +1,9 @@
 import axios from 'axios'
+import qs from "qs";
 //建立axios的一个实例
 var instance = axios.create({
     baseURL:'http://localhost:8089/',//接口统一域名
-    timeout: 6000                                                       //设置超时
+    timeout: 10000                                                       //设置超时
 })
 
 
@@ -29,17 +30,18 @@ instance.interceptors.response.use(function (response) {
 /**
  * 使用es6的export default导出了一个函数，导出的函数代替axios去帮咱们请求数据，
  * 函数的参数及返回值以下：
+ * @param {Object}headers
  * @param {String} method  请求的方法：get、post、delete、put
  * @param {String} url     请求的url:
  * @param {Object} data    请求的参数
  * @returns {Promise}     返回一个promise对象，其实就至关于axios请求数据的返回值
  */
-export default function (method, url, data = null) {
+export default function (headers=null,method, url, data = null) {
     method = method.toLowerCase();
     if (method == 'post') {
-        return instance.post(url, data)
+        return instance.post(url, qs.stringify(data))
     } else if (method == 'get') {
-        return instance.get(url, { params: data })
+        return instance.get(url, {headers:headers, params: data })
     } else if (method == 'delete') {
         return instance.delete(url, { params: data })
     }else if(method == 'put'){
