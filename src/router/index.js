@@ -95,6 +95,11 @@ const routes = [
         name: 'cardtype',
         component: ()=>import('../views/system/CardType')
       },
+      {
+        path: 'service',
+        name: 'service',
+        component: ()=>import('../views/system/ServiceList')
+      },
     ]
   },
   {

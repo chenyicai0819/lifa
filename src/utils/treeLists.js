@@ -184,7 +184,7 @@ const TREELIST_5 = [{
         "parents": 510,
         "type": null,
         "chi": null
-    }, {"id": 513, "name": "添加服务项目", "path": "/", "parents": 510, "type": null, "chi": null}, {
+    }, {"id": 513, "name": "添加服务项目", "path": "/system/service", "parents": 510, "type": null, "chi": null}, {
         "id": 514,
         "name": "添加疗程套餐",
         "path": "/",

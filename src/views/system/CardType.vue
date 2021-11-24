@@ -12,19 +12,19 @@
     </div>
     <div class="system-cardtype-tabs">
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick" class="counter-index-body-tab">
-        <el-tab-pane label="会员卡设置" name="cardType-1">会员卡设置</el-tab-pane>
-        <el-tab-pane label="开卡充值设置" name="cardType-2">开卡充值设置</el-tab-pane>
+        <el-tab-pane label="会员卡设置" name="cardType-1"></el-tab-pane>
+        <el-tab-pane label="开卡充值设置" name="cardType-2"></el-tab-pane>
       </el-tabs>
     </div>
     <div class="system-cardtype-head-body-1" v-if="activeName=='cardType-1'">
       <el-card class="box-card-table" shadow="hover" >
         <div class="box-card-table-head">
-          <span>会员列表</span>
+          <span>会员卡列表</span>
         </div>
         <div>
           <el-table
               :data="
-      pends.filter(
+      cardList.filter(
         (data) =>
           !form.search || data.name.toLowerCase().includes(form.search.toLowerCase())
       )
@@ -72,8 +72,111 @@
       </el-card>
     </div>
     <div class="system-cardtype-head-body-2" v-else-if="activeName=='cardType-2'">
-      ddd
+      <el-card class="box-card-table" shadow="hover" >
+        <div class="box-card-table-head">
+          <span>开卡充值设置</span>
+        </div>
+        <div>
+          <el-table
+              :data="openList"
+              style="width: 100%"
+          >
+            <el-table-column type="selection" width="35" />
+            <el-table-column label="编号" prop="cardId" />
+            <el-table-column label="会员卡名称" prop="cardName" />
+            <el-table-column label="开卡充值" prop="openPay" />
+            <el-table-column align="right">
+              <template #default="scope">
+                <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+                >Edit</el-button
+                >
+                <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleDelete(scope.$index, scope.row)"
+                >Delete</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-card>
     </div>
+  </div>
+
+<!--  弹框-->
+  <div class="dialogs">
+    <el-dialog
+        v-model="dialogVisible"
+        title="添加会员类型"
+        width="50%"
+        :before-close="handleClose"
+        :show-close=false
+    >
+      <div>
+        <div>
+          <span>卡名：</span>
+          <el-input v-model="form.dialogName" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>开卡充值：</span>
+          <el-input v-model="form.dialogOpenPay" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>项目折扣：</span>
+          <el-input v-model="form.dialogCardDiscount1" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>商品折扣：</span>
+          <el-input v-model="form.dialogCardDiscount2" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>套餐折扣：</span>
+          <el-input v-model="form.dialogCardDiscount3" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>备注：</span>
+          <el-input v-model="form.dialogReMark" clearable="true" style="width: 30%"/>
+        </div>
+      </div>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+        >确认</el-button
+        >
+      </span>
+      </template>
+    </el-dialog>
+  </div>
+
+  <div class="dialogs">
+    <el-dialog
+        v-model="dialogVisibleForUpdate"
+        title="修改开卡充值"
+        width="50%"
+        :before-close="handleClose"
+        :show-close=false
+    >
+      <div>
+        <div>
+          <span>卡名：</span>
+          <el-input v-model="form.dialogName" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>开卡充值：</span>
+          <el-input v-model="form.dialogOpenPay" clearable="true" style="width: 30%"/>
+        </div>
+      </div>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisibleForUpdate = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisibleForUpdate = false"
+        >确认</el-button
+        >
+      </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -91,18 +194,48 @@ export default {
       pends:[],
       currentPage:1,
       pageSize:10,
+      dialogVisible:false,
+      dialogVisibleForUpdate:false,
+      vipTypes:selectItem.VIPTYPES,
       form:{
         search:'',
-      }
+        vipType:'',
+        dialogName:'',
+        dialogOpenPay:'',
+        dialogCardDiscount1:'',
+        dialogCardDiscount2:'',
+        dialogCardDiscount3:'',
+        dialogReMark:'',
+      },
+      cardList:[{
+        cardId:1,
+        cardName:"测试",
+        cardDiscount1:'0.9',
+        cardDiscount2:'0.98',
+        cardDiscount3:'1.0',
+        cardValidPeriod:'永久',
+        cardRemark:'',
+      }],
+      openList:[{
+        cardId:1,
+        cardName:'测试',
+        openPay:100,
+      }]
     })
     const handleClick = (tab, event) => {
       console.log(tab, event)
     }
     const addCardType = () => {
       console.log("添加卡类型");
+      data.dialogVisible=true
     }
     const handleEdit = (index, row) => {
       console.log(index, row)
+      if (data.activeName==='cardType-1'){
+        data.dialogVisible=true
+      }else{
+        data.dialogVisibleForUpdate=true
+      }
     }
     const handleDelete = (index, row) => {
       console.log(index, row)
@@ -114,9 +247,13 @@ export default {
     const handleCurrentChange = (val) => {
       data.currentPage=val
     }
+    const handleClose = () => {
+
+    }
 
     return{
-      ...toRefs(data),handleClick,addCardType,handleDelete,handleEdit,handleSizeChange,handleCurrentChange
+      ...toRefs(data),handleClick,addCardType,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,
+      handleClose,
     }
   }
 }
