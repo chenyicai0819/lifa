@@ -9,7 +9,7 @@
     <div class="op-button-div">
       <el-button class="op-button" size="mini" style="background-color: Transparent">
         <svg t="1636810117323" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1947" width="20" height="20"><path d="M903.252518 1023.997867H120.747482a42.666578 42.666578 0 0 1-42.666578-42.666578 482.98566 482.98566 0 0 1 213.332889-402.345829 343.465951 343.465951 0 0 1-101.546455-243.626159A329.38598 329.38598 0 0 1 512 0a329.38598 329.38598 0 0 1 322.132662 335.359301 343.465951 343.465951 0 0 1-101.119789 243.626159 482.98566 482.98566 0 0 1 213.332889 402.345829 42.666578 42.666578 0 0 1-43.093244 42.666578zM165.974054 938.664711h692.051892c-15.786634-140.373041-106.239779-272.212766-218.879544-310.612686a42.666578 42.666578 0 0 1-28.586607-35.41326 42.666578 42.666578 0 0 1 20.053291-42.666577 255.999467 255.999467 0 0 0 118.186421-216.31955A244.052825 244.052825 0 0 0 512 85.333156a244.052825 244.052825 0 0 0-236.799507 250.026145 255.999467 255.999467 0 0 0 118.186421 216.31955 42.666578 42.666578 0 0 1 20.053291 42.666577 42.666578 42.666578 0 0 1-28.586607 35.41326c-112.639765 36.693257-203.09291 168.532982-218.879544 308.906023z" p-id="1948" fill="#ffffff"></path></svg>
-        <span style="font-size: 20px;margin-left: 3px">用户</span>
+        <span style="font-size: 20px;margin-left: 3px">{{username}}</span>
       </el-button>
     </div>
     <div class="op-button-div">
@@ -24,10 +24,17 @@
 
 <script>
 import router from "../../router";
+import {onBeforeMount, reactive, toRefs} from "vue";
+import {useStore} from "vuex";
+
 
 export default {
   name: "Operate",
   setup(){
+    const store =useStore();
+    const data=reactive({
+      username:'',
+    })
     const toIndex = () => {
       router.push("/");
     }
@@ -35,8 +42,11 @@ export default {
       router.push("/login")
       localStorage.removeItem("loginToken");
     }
+    onBeforeMount(()=>{
+      data.username=store.state.users.username
+    })
     return{
-      toIndex,logout,
+      toIndex,logout,...toRefs(data)
     }
   }
 }

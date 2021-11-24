@@ -3,7 +3,7 @@ import qs from "qs";
 //建立axios的一个实例
 var instance = axios.create({
     baseURL:'http://localhost:8089/',//接口统一域名
-    timeout: 10000                                                       //设置超时
+    timeout: 6000                                                       //设置超时
 })
 
 
