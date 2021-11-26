@@ -25,24 +25,24 @@
         <div>
           <el-table
               :data="
-      pends.filter(
+      workers.filter(
         (data) =>
-          !form.search || data.name.toLowerCase().includes(form.search.toLowerCase())
+          !form.search || data.workName.toLowerCase().includes(form.search.toLowerCase())
       )
     "
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
-            <el-table-column label="工号" prop="staffId" />
-            <el-table-column label="姓名" prop="staffName" />
-            <el-table-column label="性别" prop="staffSex" />
-            <el-table-column label="手机号码" prop="staffPhone" />
-            <el-table-column label="等级" prop="staffLevel" />
-            <el-table-column label="状态" prop="staffStart" />
-            <el-table-column label="入职时间" prop="staffInTime" />
+            <el-table-column label="工号" prop="workId" />
+            <el-table-column label="姓名" prop="workName" />
+            <el-table-column label="性别" prop="workSex" />
+            <el-table-column label="手机号码" prop="workPhone" />
+            <el-table-column label="等级" prop="levelId" />
+            <el-table-column label="状态" prop="workState" />
+            <el-table-column label="入职时间" prop="workDate" />
             <el-table-column align="right">
               <template #header>
-                <el-input v-model="form.search" size="mini" placeholder="Type to search" />
+                <el-input v-model="form.search" size="mini" placeholder="搜索姓名" />
               </template>
               <template #default="scope">
                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
@@ -136,7 +136,7 @@ export default {
   setup(){
     const data=reactive({
       staffLevels:selectItem.STAFFLEVELS,
-      pends:[],
+      workers:selectItem.WORKMANS,
       allStaff:0,
       currentPage:1,
       dialogVisible: false,

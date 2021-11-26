@@ -17,21 +17,21 @@
     <div class="finance-worker-body">
       <el-scrollbar height="100%">
         <el-card class="box-card-table" shadow="hover" v-for="(item,index) in wokrers" :key="index">
-          <el-descriptions :title=" item.label">
-            <el-descriptions-item label="联系方式">{{ item.phone }}</el-descriptions-item>
-            <el-descriptions-item label="银行卡">{{ item.bank }}</el-descriptions-item>
+          <el-descriptions :title=" item.workName">
+            <el-descriptions-item label="联系方式">{{ item.workPhone }}</el-descriptions-item>
+            <el-descriptions-item label="银行卡">{{ item.workBank }}</el-descriptions-item>
 
             <el-descriptions-item label="操作">
               <el-button size="mini" type="warning">修改</el-button>
             </el-descriptions-item>
             <el-descriptions-item label="基础工资">
-              <el-tag size="24px" style="font-size: 16px">{{ item.basic }}</el-tag>
+              <el-tag size="24px" style="font-size: 16px">{{ item.workBasic }}</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="提成">
-              <el-tag size="24px" style="font-size: 16px">{{ item.bonus }}</el-tag>
+              <el-tag size="24px" style="font-size: 16px">{{ item.workBonus }}</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="最终发放">
-              <el-tag size="24px" style="font-size: 16px">{{ item.all }}</el-tag>
+              <el-tag size="24px" style="font-size: 16px">{{ item.workSalary }}</el-tag>
             </el-descriptions-item>
           </el-descriptions>
         </el-card>
@@ -41,28 +41,17 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
+import {onBeforeMount, reactive, toRefs} from "vue";
+import selectItem from "../../utils/selectItem";
 
 export default {
   name: "Worker",
   setup() {
     const data = reactive({
-      workerNum: 5,
-      allPay: 25000,
+      workerNum: 0,
+      allPay: 0,
       isPay: '未发放',
-      wokrers: [{
-        value: "1",
-        label: "张三",
-        phone: 15512341234,
-        bank: 112233445566778899,
-        basic: 3000,
-        bonus: 2000,
-        all: 5000
-      },
-        {value: "2", label: "李四", phone: 15512341234, bank: 112233445566778899, basic: 3000, bonus: 2000, all: 5000},
-        {value: "3", label: "王五", phone: 15512341234, bank: 112233445566778899, basic: 3000, bonus: 2000, all: 5000},
-        {value: "4", label: "贾六", phone: 15512341234, bank: 112233445566778899, basic: 3000, bonus: 2000, all: 5000},
-        {value: "5", label: "王八", phone: 15512341234, bank: 112233445566778899, basic: 3000, bonus: 2000, all: 5000}]
+      wokrers: []
     })
     const payToWorker = () => {
 
@@ -70,6 +59,13 @@ export default {
     const SetterCommission = () => {
 
     }
+    onBeforeMount(()=>{
+      data.wokrers=selectItem.WORKMANS
+      data.workerNum=selectItem.WORKMANS.length
+      for (let i = 0; i < selectItem.WORKMANS.length; i++) {
+        data.allPay=data.allPay+selectItem.WORKMANS[i].workSalary
+      }
+    })
 
     return {
       ...toRefs(data), payToWorker, SetterCommission,

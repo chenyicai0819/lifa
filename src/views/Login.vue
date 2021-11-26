@@ -40,6 +40,9 @@ import {reactive, toRefs} from "vue";
 import router from "../router";
 import {getUser, loginapi} from "../api/login";
 import {ElMessage} from "element-plus";
+import {getWorker} from "../api/worker";
+import selectItem from "../utils/selectItem";
+import {getService} from "../api/service";
 export default {
   name: "Login",
   components: {
@@ -66,7 +69,7 @@ export default {
         ElMessage.error('账号不存在或者密码不正确！')
       })
       localStorage.setItem("loginToken","test")
-
+      getAll()
       router.push("/index")
 
     }
@@ -75,8 +78,17 @@ export default {
         console.log(res);
       })
     }
+    // 登陆后获取所需信息
+    const getAll = () => {
+      getWorker().then((res)=>{
+        selectItem.WORKMANS=res
+      })
+      getService().then((res)=>{
+        selectItem.SERVICEITEM=res
+      })
+    }
     return{
-      ...toRefs(data),login,aaa
+      ...toRefs(data),login,aaa,getAll
     }
   }
 }

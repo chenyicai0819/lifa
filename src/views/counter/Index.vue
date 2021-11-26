@@ -17,8 +17,8 @@
         <el-card class="box-card" shadow="hover">
           <div v-if="activeName=='buy-1'">
             <span>服务项目：</span>
-            <el-select v-model="form.service" placeholder="请选择服务">
-              <el-option v-for="(item,index)  in serviceItem" :label="item.label" :value="item.label"
+            <el-select v-model="form.service" placeholder="请选择服务" @change="serviceChange">
+              <el-option v-for="(item,index)  in serviceItem" :label="item.serName" :value="index"
                          :key="index"></el-option>
             </el-select>
             <span>原价：</span>
@@ -27,12 +27,12 @@
             <el-input v-model="form.newPrice" style="width: 5%"/>
             <span>发型师：</span>
             <el-select v-model="form.workMan" placeholder="请选择发型师">
-              <el-option v-for="(item,index)  in workMans" :label="item.label" :value="item.label"
+              <el-option v-for="(item,index)  in workMans" :label="item.workName" :value="item.workName"
                          :key="index"></el-option>
             </el-select>
             <span>其他人员：</span>
             <el-select v-model="form.orderMan" placeholder="其他工作人员">
-              <el-option v-for="(item,index)  in workMans" :label="item.label" :value="item.label"
+              <el-option v-for="(item,index)  in workMans" :label="item.workName" :value="item.workName"
                          :key="index"></el-option>
             </el-select>
           </div>
@@ -118,13 +118,13 @@ export default {
     const data = reactive({
       search: '',
       activeName: 'buy-1',
-      serviceItem: selectItem.SERVICEITEM,
+      serviceItem: [],
       workMans:selectItem.WORKMANS,
       guestComes:selectItem.GUESTCOMES,
       commoditys:selectItem.COMMODITYS,
       form: {
         service: '',
-        initPrice: 10,
+        initPrice: 0,
         newPrice: '',
         workMan:'',
         orderMan:'',
@@ -143,12 +143,18 @@ export default {
     const handleClick = (tab, event) => {
       console.log(tab, event)
     }
+    const serviceChange = (val) => {
+      // console.log(val);
+      // console.log(data.serviceItem[val].serPrice);
+      data.form.initPrice=data.serviceItem[val].serPrice
+    }
     onBeforeMount(()=>{
       data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
+      data.serviceItem=selectItem.SERVICEITEM
     })
     return {
       ...toRefs(data),
-      handleClick,
+      handleClick,serviceChange,
     }
   },
 }
@@ -190,7 +196,6 @@ export default {
 /deep/ .el-tabs__item {
   background-color: #EBEEF5;
   font-weight: bold;
-  margin-left: 5px;
 }
 
 /deep/ .el-tabs__item.is-active {

@@ -66,6 +66,51 @@
       </el-card>
     </div>
   </div>
+<!--  弹框-->
+  <div class="dialogs">
+    <el-dialog
+        v-model="dialogVisible"
+        title="修改订单信息"
+        width="50%"
+        :before-close="handleClose"
+        :show-close=false
+    >
+      <div>
+        <div>
+          <span>客户姓名：</span>
+          <el-input v-model="dialog.orderMan" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>消费金额：</span>
+          <el-input v-model="dialog.orderMoney" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>服务内容：</span>
+          <el-input v-model="dialog.orderText" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>员工：</span>
+          <el-input v-model="dialog.orderWorker" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>中工：</span>
+          <el-input v-model="dialog.orderOrderWorker" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>备注：</span>
+          <el-input v-model="dialog.orderRemake" clearable="true" style="width: 30%"/>
+        </div>
+      </div>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+        >确认</el-button
+        >
+      </span>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -83,10 +128,14 @@ export default {
       // allTotal:31,
       form:{
         search:'',
-      }
+      },
+      dialog:[],
+      dialogVisible:false,
     })
     const handleEdit = (index, row) => {
       console.log(index, row)
+      data.dialog=row
+      data.dialogVisible=true
     }
     const handleDelete = (index, row) => {
       console.log(index, row)
@@ -98,6 +147,9 @@ export default {
     const handleCurrentChange = (val) => {
       data.currentPage=val
     }
+    const handleClose = () => {
+
+    }
     onBeforeMount(()=>{
       getOrder().then((res)=>{
         data.orders=res
@@ -105,7 +157,7 @@ export default {
       })
     })
     return{
-      ...toRefs(data),handleDelete,handleEdit,handleSizeChange,handleCurrentChange
+      ...toRefs(data),handleDelete,handleEdit,handleSizeChange,handleCurrentChange,handleClose
     }
   }
 }
