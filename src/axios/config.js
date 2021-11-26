@@ -2,7 +2,8 @@ import axios from 'axios'
 import qs from "qs";
 //建立axios的一个实例
 var instance = axios.create({
-    baseURL:'http://localhost:8089/',//接口统一域名
+    // baseURL:'http://localhost:8089/',//接口统一域名
+    baseURL:'https://www.fastmock.site/mock/8503c017afa982b32ba0af91cd964ccb/lifa/',//mork接口
     timeout: 6000                                                       //设置超时
 })
 

@@ -4,7 +4,7 @@ export default {
         {value: "3", label: "烫发"},
         {value: "4", label: "染发"},
         {value: "5", label: "洗剪吹"}],
-    WORKMANS: [{value: "2", label: "张三"},
+    WORKMANS: [{value: "1", label: "张三"},
         {value: "2", label: "李四"},
         {value: "3", label: "王五"},
         {value: "4", label: "贾六"},

@@ -38,28 +38,28 @@
         <div>
           <el-table
               :data="
-      pends.filter(
+      vipsList.filter(
         (data) =>
-          !form.search || data.name.toLowerCase().includes(form.search.toLowerCase())
+          !form.search || data.vipsName.toLowerCase().includes(form.search.toLowerCase())
       )
     "
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
-            <el-table-column label="卡号" prop="vipsId" />
+            <el-table-column label="卡号" prop="vipId" />
             <el-table-column label="会员姓名" prop="vipsName" />
-            <el-table-column label="会员性别" prop="vipsSex" />
-            <el-table-column label="手机号码" prop="vipsPhone" />
-            <el-table-column label="会员类型" prop="vipsType" />
+            <el-table-column label="会员性别" prop="vipSex" />
+            <el-table-column label="手机号码" prop="vipPhone" />
+            <el-table-column label="会员类型" prop="vipType" />
             <el-table-column label="卡金" prop="vipsMoney" />
-            <el-table-column label="总消费" prop="vipsPay" />
-            <el-table-column label="赠送金" prop="vipsGift" />
-            <el-table-column label="生日" prop="vipsBrithday" />
-            <el-table-column label="开卡时间" prop="vipsOpen" />
-            <el-table-column label="最近消费时间" prop="vipsRecentTime" />
+            <el-table-column label="总消费" prop="vipsConsum" />
+            <el-table-column label="赠送金" prop="vipsBonus" />
+            <el-table-column label="生日" prop="vipBirthday" />
+            <el-table-column label="开卡时间" prop="vipOpenCard" />
+            <el-table-column label="最近消费时间" prop="vipsLast" />
             <el-table-column align="right">
               <template #header>
-                <el-input v-model="form.search" size="mini" placeholder="Type to search" />
+                <el-input v-model="form.search" size="mini" placeholder="搜索姓名" />
               </template>
               <template #default="scope">
                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
@@ -93,16 +93,17 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
+import {onBeforeMount, reactive, toRefs} from "vue";
 import selectItem from "../../utils/selectItem";
+import {getVips} from "../../api/vips";
 
 export default {
   name: "VipsList",
   setup(){
     const data=reactive({
-      allvips:32,
-      allvipmoney:567,
-      pends:[],
+      allvips:0,
+      allvipmoney:0,
+      vipsList:[],
       currentPage:1,
       pageSize:10,
       vipsTypes:selectItem.VIPTYPES,
@@ -133,6 +134,17 @@ export default {
     const handleCurrentChange = (val) => {
       data.currentPage=val
     }
+    // 在渲染之前获取会员列表
+    onBeforeMount(()=>{
+      getVips().then((res)=>{
+        data.vipsList=res
+        data.allvips=res.length
+        for (let i = 0; i < res.length; i++) {
+          data.allvipmoney=data.allvipmoney+res[i].vipsMoney
+        }
+
+      })
+    })
 
     return{
       ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange

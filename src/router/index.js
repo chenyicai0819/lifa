@@ -100,6 +100,29 @@ const routes = [
         name: 'service',
         component: ()=>import('../views/system/ServiceList')
       },
+      {
+        path: 'combo',
+        name: 'combo',
+        component: ()=>import('../views/system/Combo')
+      },
+      {
+        path: 'shop',
+        name: 'shop',
+        component: ()=>import('../views/system/Shop')
+      },
+    ]
+  },
+  {
+    path: '/finance',
+    name: 'finance',
+    meta: {permission: true},
+    component: () => import('../views/Home.vue'),
+    children: [
+      {
+        path: 'worker',
+        name: 'worker',
+        component: ()=>import('../views/finance/Worker')
+      },
     ]
   },
   {

@@ -1,24 +1,26 @@
 <template>
-  <div class="system-serviceList">
-    <div class="system-serviceList-head">
-      <div class="system-serviceList-head-title">
+  <div class="system-shop">
+    <div class="system-shop-head">
+      <div class="system-shop-head-title">
         <span>查询到总共有：</span>
-        <span style="color: #f5576c">{{serviceNum}}</span>
-        <span>种服务项目</span>
+        <span style="color: #f5576c">{{shopNum}}</span>
+        <span>种商品，总价值：</span>
+        <span style="color: #f5576c">{{shopMoney}}</span>
+        <span>元</span>
       </div>
-      <div class="system-serviceList-head-system">
-        <el-button type="small" @click="addService">添加服务项目</el-button>
+      <div class="system-shop-head-system">
+        <el-button type="small" @click="addShop">添加商品</el-button>
       </div>
     </div>
-    <div class="system-serviceList-body">
+    <div class="system-shop-body">
       <el-card class="box-card-table" shadow="hover" >
         <div class="box-card-table-head">
-          <span>项目列表</span>
+          <span>商品列表</span>
         </div>
         <div>
           <el-table
               :data="
-      sevriceList.filter(
+      shopList.filter(
         (data) =>
           !form.search || data.name.toLowerCase().includes(form.search.toLowerCase())
       )
@@ -26,9 +28,9 @@
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
-            <el-table-column label="编号" prop="serviceId" />
-            <el-table-column label="项目名称" prop="serviceName" />
-            <el-table-column label="价格" prop="servicePrice" />
+            <el-table-column label="编号" prop="comboId" />
+            <el-table-column label="套餐名称" prop="comboName" />
+            <el-table-column label="价格" prop="comboPrice" />
             <el-table-column align="right">
               <template #header>
                 <el-input v-model="form.search" size="mini" placeholder="Type to search" />
@@ -53,7 +55,7 @@
               :page-sizes="[10, 20, 30, 50]"
               :page-size=pageSize
               layout="total, sizes, prev, pager, next, jumper"
-              :total=allStaff
+              :total=shopNum
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
           >
@@ -63,23 +65,27 @@
     </div>
   </div>
 
-<!--  弹框-->
+  <!--  弹框-->
   <div class="dialogs">
     <el-dialog
         v-model="dialogVisible"
-        title="添加服务项目"
+        title="添加商品"
         width="50%"
         :before-close="handleClose"
         :show-close=false
     >
       <div>
         <div>
-          <span>项目名称：</span>
+          <span>商品名称：</span>
           <el-input v-model="form.dialogName" clearable="true" style="width: 30%"/>
         </div>
         <div style="margin-top: 5px">
-          <span>项目价格：</span>
+          <span>商品价格：</span>
           <el-input v-model="form.dialogPrice" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>商品库存：</span>
+          <el-input v-model="form.dialogDepot" clearable="true" style="width: 30%"/>
         </div>
       </div>
       <template #footer>
@@ -98,22 +104,24 @@
 import {reactive, toRefs} from "vue";
 
 export default {
-  name: "ServiceList",
+  name: "Shop",
   setup(){
     const data=reactive({
-      serviceNum:20,
-      dialogVisible: false,
-      currentPage:1,
-      pageSize:10,
-      allStaff:20,
+      shopNum:20,
+      shopMoney:230,
       form:{
         search:'',
         dialogName:'',
         dialogPrice:'',
+        dialogDepot:'',
+
       },
-      sevriceList:[],
+      shopList:[],
+      dialogVisible: false,
+      currentPage:1,
+      pageSize:10,
     })
-    const addService = () => {
+    const addShop = () => {
       data.dialogVisible=true
     }
     const handleEdit = (index, row) => {
@@ -134,14 +142,14 @@ export default {
     }
 
     return{
-      ...toRefs(data),addService,handleEdit,handleDelete,handleSizeChange,handleCurrentChange,handleClose,
+      ...toRefs(data),addShop,handleEdit,handleDelete,handleSizeChange,handleCurrentChange,handleClose,
     }
   }
 }
 </script>
 
 <style scoped>
-.system-serviceList-head {
+.system-shop-head {
   width: 100%;
   height: 50px;
   background-color: #cca8f5;
@@ -150,16 +158,16 @@ export default {
   margin-top: 5px;
   border-radius: 3px
 }
-.system-serviceList-head>div{
+.system-shop-head>div{
   float: left;
   margin-top: 5px;
   margin-left: 5px;
 }
-.system-serviceList-head-title{
+.system-shop-head-title{
   padding-top: 10px;
 }
-.system-serviceList-head-system{
-  width: 80%;
+.system-shop-head-system{
+  width: 70%;
   height: 50%;
   margin-left: 4%;
   position: relative;
@@ -167,7 +175,7 @@ export default {
   justify-content: right;
   top: 5px;
 }
-.system-serviceList-body{
+.system-shop-body{
   margin-top: 5px;
 }
 .box-card-table {

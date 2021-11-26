@@ -119,7 +119,7 @@ const TREELIST_3 = [{
     "path": "/",
     "parents": null,
     "type": 3,
-    "chi": [{"id": 341, "name": "员工工资表", "path": "/", "parents": 340, "type": null, "chi": null}]
+    "chi": [{"id": 341, "name": "员工工资表", "path": "/finance/worker", "parents": 340, "type": null, "chi": null}]
 }];
 const TREELIST_4 = [{
     "id": 410,
@@ -187,11 +187,11 @@ const TREELIST_5 = [{
     }, {"id": 513, "name": "添加服务项目", "path": "/system/service", "parents": 510, "type": null, "chi": null}, {
         "id": 514,
         "name": "添加疗程套餐",
-        "path": "/",
+        "path": "/system/combo",
         "parents": 510,
         "type": null,
         "chi": null
-    }, {"id": 515, "name": "添加商品", "path": "/", "parents": 510, "type": null, "chi": null}]
+    }, {"id": 515, "name": "添加商品", "path": "/system/shop", "parents": 510, "type": null, "chi": null}]
 }, {
     "id": 520,
     "name": "提成设置",

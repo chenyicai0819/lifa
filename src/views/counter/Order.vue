@@ -15,22 +15,24 @@
         <div>
           <el-table
               :data="
-      pends.filter(
+      orders.filter(
         (data) =>
-          !form.search || data.name.toLowerCase().includes(form.search.toLowerCase())
+          !form.search || data.orderMan.toLowerCase().includes(form.search.toLowerCase())
       )
     "
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
             <el-table-column label="单号" prop="orderId" />
-            <el-table-column label="客户姓名" prop="orderName" />
-            <el-table-column label="消费金额" prop="ordePrice" />
-            <el-table-column label="订单类型" prop="ordeType" />
-            <el-table-column label="服务内容" prop="ordeContent" />
-            <el-table-column label="售价" prop="contentPrice" />
-            <el-table-column label="员工信息" prop="workMan" />
-            <el-table-column label="备注" prop="remark" />
+            <el-table-column label="客户姓名" prop="orderMan" />
+            <el-table-column label="消费金额" prop="orderMoney" />
+            <el-table-column label="支付方式" prop="payType" />
+            <el-table-column label="服务内容" prop="orderText" />
+            <el-table-column label="售价" prop="orderPrice" />
+            <el-table-column label="员工信息" prop="orderWorker" />
+            <el-table-column label="中工" prop="orderOrderWorker" />
+            <el-table-column label="时间" prop="orderDate" />
+            <el-table-column label="备注" prop="orderRemake" />
             <el-table-column align="right">
               <template #header>
                 <el-input v-model="form.search" size="mini" placeholder="Type to search" />
@@ -67,14 +69,15 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
+import {onBeforeMount, reactive, toRefs} from "vue";
+import {getOrder} from "../../api/order";
 
 export default {
   name: "Order",
   setup() {
     const data=reactive({
-      orderNum:5,
-      pends:[],
+      orderNum:0,
+      orders:[],
       currentPage:1,
       pageSize:10,
       // allTotal:31,
@@ -95,7 +98,12 @@ export default {
     const handleCurrentChange = (val) => {
       data.currentPage=val
     }
-
+    onBeforeMount(()=>{
+      getOrder().then((res)=>{
+        data.orders=res
+        data.orderNum=res.length
+      })
+    })
     return{
       ...toRefs(data),handleDelete,handleEdit,handleSizeChange,handleCurrentChange
     }
