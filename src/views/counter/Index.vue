@@ -38,19 +38,19 @@
           </div>
           <div v-else>
             <span>选择商品：</span>
-            <el-select v-model="form.commodity" multiple placeholder="选择商品" style="width: 50%">
+            <el-select v-model="form.commodity" multiple placeholder="选择商品" style="width: 50%" @change="commChange">
               <el-option
-                  v-for="item in commoditys"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="(item,index) in commoditys"
+                  :key="index"
+                  :label="item.commName"
+                  :value="index"
               >
               </el-option>
             </el-select>
             <span>原价：</span>
-            <el-input v-model="form.initPrice" readonly style="width: 5%"/>
+            <el-input v-model="form.initCommPrice" readonly style="width: 5%"/>
             <span>优惠价：</span>
-            <el-input v-model="form.newPrice" style="width: 5%"/>
+            <el-input v-model="form.newCommPrice" style="width: 5%"/>
 
           </div>
         </el-card>
@@ -121,7 +121,7 @@ export default {
       serviceItem: [],
       workMans:selectItem.WORKMANS,
       guestComes:selectItem.GUESTCOMES,
-      commoditys:selectItem.COMMODITYS,
+      commoditys:[],
       form: {
         service: '',
         initPrice: 0,
@@ -138,6 +138,8 @@ export default {
         realPrice:'',
         payType:'',
         commodity:[],
+        initCommPrice:'',
+        newCommPrice:'',
       }
     })
     const handleClick = (tab, event) => {
@@ -148,13 +150,23 @@ export default {
       // console.log(data.serviceItem[val].serPrice);
       data.form.initPrice=data.serviceItem[val].serPrice
     }
+    const commChange = (val) => {
+      data.form.initCommPrice=0
+      for (const valKey of val) {
+        // console.log(data.commoditys[valKey].commPrice);
+        data.form.initCommPrice= data.form.initCommPrice+ data.commoditys[valKey].commPrice
+      }
+
+    }
     onBeforeMount(()=>{
       data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
       data.serviceItem=selectItem.SERVICEITEM
+      data.form.SingleNumber=moment(new Date()).valueOf()
+      data.commoditys=selectItem.COMMODITYS
     })
     return {
       ...toRefs(data),
-      handleClick,serviceChange,
+      handleClick,serviceChange,commChange,
     }
   },
 }

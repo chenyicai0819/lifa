@@ -20,8 +20,8 @@
             <span>会员卡号：</span>
             <el-input v-model="form.cardId" readonly style="width: 10%"/>
             <span>会员类型：</span>
-            <el-select v-model="form.vipType" placeholder="会员类型">
-              <el-option v-for="(item,index)  in vipTypes" :label="item.label" :value="item.label"
+            <el-select v-model="form.vipType" placeholder="会员类型" @change="typeChange">
+              <el-option v-for="(item,index)  in vipTypes" :label="item.vipType" :value="index"
                          :key="index"></el-option>
             </el-select>
             <span>会员折扣：</span>
@@ -90,7 +90,7 @@ export default {
   setup(){
     const data=reactive({
       activeName:'card-1',
-      vipTypes:selectItem.VIPTYPES,
+      vipTypes:[],
       vipComes:selectItem.GUESTCOMES,
       payMans:selectItem.WORKMANS,
       search:'',
@@ -114,12 +114,17 @@ export default {
     const handleClick = (tab, event) => {
       console.log(tab, event)
     }
+    const typeChange = (val) => {
+      data.form.discount=data.vipTypes[val].vipDiscount*10==10?"不打折":data.vipTypes[val].vipDiscount*10+"折"
+    }
     onBeforeMount(()=>{
       data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
+      data.vipTypes=selectItem.VIPTYPES
+      data.form.singleNumber=moment(new Date()).valueOf()
     })
     return{
       ...toRefs(data),
-      handleClick,
+      handleClick,typeChange,
     }
   }
 }

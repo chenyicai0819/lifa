@@ -1,5 +1,4 @@
 <template>
-  <el-button @click="aaa">djd</el-button>
   <div class="login">
     <div class="login-card">
       <n-card>
@@ -43,6 +42,8 @@ import {ElMessage} from "element-plus";
 import {getWorker} from "../api/worker";
 import selectItem from "../utils/selectItem";
 import {getService} from "../api/service";
+import {getComm} from "../api/commoditys";
+import {getVipsType} from "../api/vips";
 export default {
   name: "Login",
   components: {
@@ -85,6 +86,12 @@ export default {
       })
       getService().then((res)=>{
         selectItem.SERVICEITEM=res
+      })
+      getComm().then((res)=>{
+        selectItem.COMMODITYS=res
+      })
+      getVipsType().then((res)=>{
+        selectItem.VIPTYPES=res
       })
     }
     return{

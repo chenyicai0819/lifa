@@ -47,7 +47,7 @@
         <div>
           <el-table
               :data="
-      pends.filter(
+      bills.filter(
         (data) =>
           !form.search || data.name.toLowerCase().includes(form.search.toLowerCase())
       )
@@ -55,12 +55,13 @@
               style="width: 100%"
           >
             <el-table-column type="selection" width="35"/>
-            <el-table-column label="时间" sortable prop="currencyTime"/>
-            <el-table-column label="收支类型" prop="currencyType"/>
-            <el-table-column label="消费金额" prop="currencyMoney"/>
-            <el-table-column label="明细内容" prop="currencyOrder"/>
-            <el-table-column label="员工信息" prop="currencyMan"/>
-            <el-table-column label="备注" prop="currencyRemark"/>
+            <el-table-column label="时间" sortable prop="billTime"/>
+            <el-table-column label="收支类型" prop="billType"/>
+            <el-table-column label="消费金额" prop="billMoney"/>
+            <el-table-column label="明细内容" prop="billText"/>
+            <el-table-column label="员工信息" prop="billWorker"/>
+            <el-table-column label="支付方式" prop="payType"/>
+            <el-table-column label="备注" prop="billRemark"/>
             <el-table-column align="right">
               <template #header>
                 <el-input v-model="form.search" size="mini" placeholder="Type to search"/>
@@ -138,16 +139,17 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import selectItem from "../../utils/selectItem";
+import {getBill} from "../../api/bill";
 
 export default {
   name: "Currency",
   setup() {
     const data = reactive({
-      outMoneyNum: 3,
-      outMoney: 13,
-      inMoneyNum: 5,
-      pends: [],
-      inMoney: 100,
+      outMoneyNum: 0,
+      outMoney: 0,
+      inMoneyNum: 0,
+      bills: [],
+      inMoney: 0,
       currentPage: 1,
       pageSize: 10,
       alltotal: '',
@@ -201,6 +203,15 @@ export default {
     }
     onBeforeMount(() => {
       data.alltotal = data.outMoneyNum + data.inMoneyNum
+      data.inMoney=0,data.inMoneyNum=0,data.outMoneyNum=0,data.outMoney=0
+      getBill().then((res)=>{
+        data.bills=res
+        for (const resKey in res) {
+          data.bills[resKey].billType=data.bills[resKey].billType==1?"收入":"支出"
+          data.bills[resKey].billType==1?data.outMoneyNum++:data.inMoneyNum++
+          data.bills[resKey].billType==1?data.outMoney=data.outMoney+data.bills[resKey].billMoney:data.inMoney=data.inMoney+data.bills[resKey].billMoney
+        }
+      })
     })
     return {
       ...toRefs(data), addIn, addOut, outExecl, selectTypes,
