@@ -7,32 +7,29 @@
         </div>
       </template>
       <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-        <li v-for="(item,index) in list" :key="index" class="infinite-list-item">{{item.name}}{{ item.label }}消费{{item.price}}元</li>
+        <li v-for="(item,index) in list" :key="index" class="infinite-list-item">{{item.orderMan}}{{ item.orderText }}消费{{item.orderMoney}}元</li>
       </ul>
     </el-card>
   </div>
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
+import {onBeforeMount, reactive, toRefs} from "vue";
+import {getOrder} from "../../api/order";
 
 export default {
   name: "Ing",
   setup(){
     const data=reactive({
-      list:[{name: "李白", label: "洗剪吹",price:"38"},
-        {name: "张飞", label: "洗头",price:"18"},
-        {name: "孙尚香", label: "染发",price:"268"},
-        {name: "关羽", label: "开卡充值",price:"200"},
-        {name: "刘备", label: "开卡充值",price:"200"},
-        {name: "诸葛亮", label: "充值",price:"500"},
-        {name: "迪迦", label: "霸王洗发水",price:"68"},
-        {name: "盖亚", label: "剪头",price:"25"},
-        {name: "杜甫", label: "剃胡子",price:"15"},
-        {name: "李白", label: "修眉",price:"25"}],
+      list:[],
     })
     const load = () => {
     }
+    onBeforeMount(()=>{
+      getOrder().then((res)=>{
+        data.list=res
+      })
+    })
     return{
       ...toRefs(data),load
     }
