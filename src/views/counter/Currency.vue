@@ -97,6 +97,7 @@
       </el-card>
     </div>
   </div>
+
   <div class="dialogs">
     <el-dialog
         v-model="dialogVisible"
@@ -119,8 +120,19 @@
           </el-select>
         </div>
         <div style="margin-top: 5px">
+          <span>内容：</span>
+          <el-input v-model="form.dialogText" clearable="true" style="width: 50%"/>
+        </div>
+        <div style="margin-top: 5px">
           <span>金额：</span>
           <el-input v-model="form.dialogMoney" clearable="true" style="width: 50%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>员工：</span>
+          <el-select v-model="form.dialogMan" placeholder="请选择员工" style="width: 50%">
+            <el-option v-for="(item,index)  in workMans" :label="item.workName" :value="item.workName"
+                       :key="index"></el-option>
+          </el-select>
         </div>
         <el-input v-model="form.dialogRemark" style="width: 60%;margin-top: 5px" type="textarea" placeholder="备注"></el-input>
       </div>
@@ -134,12 +146,50 @@
       </template>
     </el-dialog>
   </div>
+
+  <div class="dialogs">
+    <el-dialog
+        v-model="dialogVisibleEdit"
+        :title="dialogType"
+        width="30%"
+        :before-close="handleClose"
+        :show-close=false
+    >
+      <div>
+        <div style="margin-top: 5px">
+          <span>内容：</span>
+          <el-input v-model="form.dialogTextEdit" clearable="true" style="width: 50%"/>
+        </div>
+        <div>
+          <span>金额：</span>
+          <el-input v-model="form.dialogMoneyEdit" clearable="true" style="width: 50%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>员工：</span>
+          <el-select v-model="form.dialogManEdit" placeholder="请选择员工" style="width: 50%">
+            <el-option v-for="(item,index)  in workMans" :label="item.workName" :value="item.workName"
+                       :key="index"></el-option>
+          </el-select>
+        </div>
+        <el-input v-model="form.dialogRemarkEdit" style="width: 60%;margin-top: 5px" type="textarea" placeholder="备注"></el-input>
+      </div>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisibleEdit = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisibleEdit = false"
+        >确认</el-button
+        >
+      </span>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import selectItem from "../../utils/selectItem";
 import {getBill} from "../../api/bill";
+import {getWorker} from "../../api/worker";
 
 export default {
   name: "Currency",
@@ -149,22 +199,29 @@ export default {
       outMoney: 0,
       inMoneyNum: 0,
       bills: [],
+      workMans:[],
       inMoney: 0,
       currentPage: 1,
       pageSize: 10,
       alltotal: '',
       dialogVisible: false,
+      dialogVisibleEdit:false,
       currencyTypes:selectItem.CURRENCYTYPE,
       dialogType: '',
       form: {
         selectDate: '',
         selectType: '',
+        dialogMan:'',
+        dialogTextEdit:'',
         search: '',
         dialogtime: '',
         dialogType: '',
         dialogMoney: '',
         dialogText: '',
         dialogRemark: '',
+        dialogMoneyEdit:'',
+        dialogManEdit:'',
+        dialogRemarkEdit:'',
         defaultTime: [
           new Date(2000, 1, 1, 0, 0, 0),
           new Date(2000, 2, 1, 23, 59, 59),],
@@ -187,6 +244,11 @@ export default {
     }
     const handleEdit = (index, row) => {
       console.log(index, row)
+      data.dialogVisibleEdit=true
+      data.form.dialogMoneyEdit=row.billMoney
+      data.form.dialogManEdit=row.billWorker
+      data.form.dialogTextEdit=row.billText
+      data.form.dialogRemarkEdit=row.billRemark
     }
     const handleDelete = (index, row) => {
       console.log(index, row)
@@ -211,6 +273,9 @@ export default {
           data.bills[resKey].billType==1?data.outMoneyNum++:data.inMoneyNum++
           data.bills[resKey].billType==1?data.outMoney=data.outMoney+data.bills[resKey].billMoney:data.inMoney=data.inMoney+data.bills[resKey].billMoney
         }
+      })
+      getWorker().then((res)=>{
+        data.workMans=res;
       })
     })
     return {

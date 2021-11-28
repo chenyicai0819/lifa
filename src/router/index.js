@@ -123,6 +123,29 @@ const routes = [
         name: 'worker',
         component: ()=>import('../views/finance/Worker')
       },
+      {
+        path: 'ordercheck',
+        name: 'ordercheck',
+        component: ()=>import('../views/finance/OrderCheck')
+      },
+    ]
+  },
+  {
+    path: '/digital',
+    name: 'digital',
+    meta: {permission: true},
+    component: () => import('../views/Home.vue'),
+    children: [
+      {
+        path: 'billreport',
+        name: 'billreport',
+        component: ()=>import('../views/digital/BillReport')
+      },
+      {
+        path: 'workreport',
+        name: 'workreport',
+        component: ()=>import('../views/digital/WorkReport')
+      },
     ]
   },
   {

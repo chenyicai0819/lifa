@@ -20,7 +20,7 @@
               :data="
       comboList.filter(
         (data) =>
-          !form.search || data.name.toLowerCase().includes(form.search.toLowerCase())
+          !form.search || data.comboName.toLowerCase().includes(form.search.toLowerCase())
       )
     "
               style="width: 100%"

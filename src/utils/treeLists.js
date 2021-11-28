@@ -77,7 +77,7 @@ const TREELIST_3 = [{
     "path": "/",
     "parents": null,
     "type": 3,
-    "chi": [{"id": 311, "name": "水单审核", "path": "/", "parents": 310, "type": null, "chi": null}, {
+    "chi": [{"id": 311, "name": "水单审核", "path": "/finance/ordercheck", "parents": 310, "type": null, "chi": null}, {
         "id": 312,
         "name": "项目消费记录",
         "path": "/",
@@ -127,7 +127,7 @@ const TREELIST_4 = [{
     "path": "/",
     "parents": null,
     "type": 4,
-    "chi": [{"id": 411, "name": "收支报表", "path": "/", "parents": 410, "type": null, "chi": null}, {
+    "chi": [{"id": 411, "name": "收支报表", "path": "/digital/billreport", "parents": 410, "type": null, "chi": null}, {
         "id": 412,
         "name": "店面业绩报表",
         "path": "/",
@@ -141,7 +141,7 @@ const TREELIST_4 = [{
     "path": "/",
     "parents": null,
     "type": 4,
-    "chi": [{"id": 421, "name": "员工业绩报表", "path": "/", "parents": 420, "type": null, "chi": null}]
+    "chi": [{"id": 421, "name": "员工业绩报表", "path": "/digital/workreport", "parents": 420, "type": null, "chi": null}]
 }, {
     "id": 430,
     "name": "销售统计报表",

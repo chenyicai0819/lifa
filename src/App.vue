@@ -1,20 +1,30 @@
 <template>
-<!--  <div id="nav">-->
-<!--    <router-link to="/">Home</router-link> |-->
-<!--    <router-link to="/about">About</router-link>-->
-<!--  </div>-->
+  <!--  <div id="nav">-->
+  <!--    <router-link to="/">Home</router-link> |-->
+  <!--    <router-link to="/about">About</router-link>-->
+  <!--  </div>-->
   <router-view/>
 </template>
 <script>
 
+import * as echarts from 'echarts'
+import {provide} from "vue";
+
+export default {
+  name: 'App',
+  setup() {
+    provide('ec', echarts)//provide
+  }
+}
 </script>
 
 <style lang="less">
-*{
+* {
   margin: 0;
   padding: 0;
   font-family: 黑体;
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
