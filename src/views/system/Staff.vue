@@ -104,12 +104,12 @@
           <span>手机：</span>
           <el-input v-model="form.dialogPhone" clearable="true" style="width: 30%"/>
           <span>入职时间：</span>
-          <el-date-picker v-model="form.dialogInTime" type="date" placeholder="会员生日" style="width: 26%">
+          <el-date-picker v-model="form.dialogInTime" type="date" placeholder="入职时间" style="width: 26%">
           </el-date-picker>
         </div>
         <div style="margin-top: 5px">
           <span>生日：</span>
-          <el-date-picker v-model="form.dialogBirthday" type="date" placeholder="会员生日" style="width: 30%">
+          <el-date-picker v-model="form.dialogBirthday" type="date" placeholder="员工生日" style="width: 30%">
           </el-date-picker>
           <span>身份证号：</span>
           <el-input v-model="form.dialogIDcard" clearable="true" style="width: 26%"/>
@@ -154,11 +154,24 @@ export default {
         dialogBirthday:'',
       }
     })
+
+    /**
+     * 添加新员工
+     */
     const addStaff = () => {
       data.dialogVisible=true
     }
+    /**
+     * 编辑员工信息
+     * @param index
+     * @param row
+     */
     const handleEdit = (index, row) => {
       console.log(index, row)
+      let form_=data.form
+      form_.dialogId=row.workId;form_.dialogName=row.workName;form_.dialogSex=row.workSex;form_.staffLevel=row.levelId;
+      form_.dialogPhone=row.workPhone;form_.dialogInTime=row.workDate;form_.dialogBirthday='';form_.dialogIDcard=''
+      data.dialogVisible=true
     }
     const handleDelete = (index, row) => {
       console.log(index, row)

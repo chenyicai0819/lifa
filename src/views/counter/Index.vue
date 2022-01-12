@@ -97,7 +97,7 @@
             </el-select>
           </div>
           <div style="margin-top: 10px">
-            <el-button type="primary" style="height: 50px;width: 200px">结 账</el-button>
+            <el-button type="primary" style="height: 50px;width: 200px" @click="Bill">结 账</el-button>
           </div>
         </el-card>
       </div>
@@ -111,6 +111,7 @@
 import {onBeforeMount, reactive, toRefs} from "vue";
 import selectItem from "../../utils/selectItem";
 import moment from "moment";
+import {addBill} from "../../api/bill";
 
 export default {
   name: "Index",
@@ -156,7 +157,23 @@ export default {
         // console.log(data.commoditys[valKey].commPrice);
         data.form.initCommPrice= data.form.initCommPrice+ data.commoditys[valKey].commPrice
       }
+    }
+    /**
+     * 结账
+     * @constructor
+     */
+    const Bill = () => {
+      if (data.activeName=="buy-1"){
+        // 项目结账
 
+        addBill({'billNo':data.form.SingleNumber,'billType':1,
+          'billMoney':data.form.newPrice,'billText':data.serviceItem[data.form.service].serName,'billWorker':data.form.workMan,
+          'billOrderWorkers':data.form.orderMan, 'billRemark':data.form.remark,'payType':data.form.payType}).then((res)=>{
+          console.log(res);
+        })
+      }else if (data.activeName=="buy-2"){
+        // 商品结账
+      }
     }
     onBeforeMount(()=>{
       data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
@@ -166,7 +183,7 @@ export default {
     })
     return {
       ...toRefs(data),
-      handleClick,serviceChange,commChange,
+      handleClick,serviceChange,commChange,Bill,
     }
   },
 }

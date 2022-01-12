@@ -1,7 +1,7 @@
 import http from '../axios/config'
 
 const getWorker=function (){
-    return http('','get','worker/get',)
+    return http('','get','worker/all',)
 }
 
 const getWorkPay = () => {
@@ -10,7 +10,9 @@ const getWorkPay = () => {
 const getWorkTest = () => {
     return http('','get','/worker/gettext',)
 }
-
+const getWw = () => {
+    return http('','get','/worker/getWw',)
+}
 export{
-    getWorker,getWorkPay,getWorkTest
+    getWorker,getWorkPay,getWorkTest,getWw,
 }

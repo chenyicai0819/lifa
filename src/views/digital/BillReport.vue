@@ -40,10 +40,15 @@ export default {
         new Date(2000, 2, 1, 23, 59, 59),
       ],
       form: {},
+      // 统计类型，按天、按月
       statisticsType: '',
+      // 选择日期
       statisticsDate: '',
+      // 收
       inBill: [],
+      // 支出
       outBill: [],
+      // echats绘图
       option: {
         title: {
           text: '收入与支出趋势图'
@@ -102,7 +107,26 @@ export default {
       };
     }
     const select = () => {
+
       console.log(data.statisticsType);
+      if (data.statisticsType==1){
+        getBillInForDay().then((res)=>{
+          for (const i in res) {
+            data.option.series[0].data.push(res[i].billMoney)
+          }
+          console.log(data.option.series[0].data);
+        })
+        getBillOutForDay().then((res)=>{
+          for (const i in res) {
+            data.option.series[1].data.push(res[i].billMoney)
+            data.option.xAxis.data.push(res[i].billTime)
+
+          }
+          ech()
+        })
+      }else if (data.statisticsType==2){
+        // 根据月份获取
+      }
       ech();
     }
 

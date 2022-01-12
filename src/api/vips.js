@@ -7,6 +7,10 @@ const getVipsType = () => {
   return http('','get','vipstype/get')
 }
 
+const getVipsIndex = () => {
+    return http('','get','/vips/index')
+}
+
 export{
-    getVips,getVipsType
+    getVips,getVipsType,getVipsIndex,
 }

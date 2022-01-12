@@ -84,6 +84,7 @@ export default {
 
     const handleCheck = (index, row) => {
       console.log(index, row)
+      console.log("审核通过");
     }
     const handleSizeChange = (val) => {
       data.pageSize=val

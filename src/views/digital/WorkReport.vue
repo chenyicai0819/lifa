@@ -28,7 +28,7 @@
 
 <script>
 import {inject, onBeforeMount, reactive, toRefs} from "vue";
-import {getWorker, getWorkPay, getWorkTest} from "../../api/worker";
+import {getWorker, getWorkPay, getWorkTest, getWw} from "../../api/worker";
 
 export default {
   name: "WorkReport",
@@ -72,16 +72,7 @@ export default {
           type: 'value'
         },
         series: [
-          {
-            name: '',
-            type: 'line',
-            data: []
-          },
-          {
-            name: '',
-            type: 'line',
-            data: []
-          }
+
         ]
       }
     })
@@ -100,7 +91,16 @@ export default {
       };
     }
     onBeforeMount(() => {
-
+      // 生成固定数量的位置给员工
+      for (let i = 0; i < 3; i++) {
+        data.option.series[i]={
+          name: '',
+          type: 'line',
+          data: []
+        }
+      }
+      // data.option.series
+      // 获取员工信息
       getWorker().then((res)=>{
         for (const i in res) {
           data.option.legend.data.push(res[i].workName)
@@ -108,7 +108,7 @@ export default {
           console.log(data.option.legend.data);
         }
       })
-
+      // 获取员工业绩信息
       getWorkPay().then((res)=>{
         data.option.series[0].name=res[0].workerName
         for (const i in res) {
@@ -116,10 +116,16 @@ export default {
           data.option.series[0].data.push(res[i].workerPay)
         }
       })
-      getWorkTest().then((res)=>{
+      getWw().then((res)=>{
         data.option.series[1].name=res[0].workerName
         for (const i in res) {
           data.option.series[1].data.push(res[i].workerPay)
+        }
+      })
+      getWorkTest().then((res)=>{
+        data.option.series[2].name=res[0].workerName
+        for (const i in res) {
+          data.option.series[2].data.push(res[i].workerPay)
         }
         ech()
       })

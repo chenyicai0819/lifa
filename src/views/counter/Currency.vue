@@ -240,6 +240,10 @@ export default {
       console.log("导出表格");
     }
     const selectTypes = () => {
+      console.log("aaa")
+      console.log(data.form.selectDate[0]);
+      console.log(data.form.selectDate[1]);
+      console.log(data.form.selectType)
       console.log("查询");
     }
     const handleEdit = (index, row) => {

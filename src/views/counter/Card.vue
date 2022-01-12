@@ -67,7 +67,7 @@
             <el-input v-model="form.giftMoney" style="width: 10%"/>
             <span>操作人员：</span>
             <el-select v-model="form.payMan" placeholder="操作人员">
-              <el-option v-for="(item,index)  in payMans" :label="item.label" :value="item.label"
+              <el-option v-for="(item,index)  in payMans" :label="item.workName" :value="item.workName"
                          :key="index"></el-option>
             </el-select>
           </div>
@@ -84,6 +84,7 @@
 import {onBeforeMount, reactive, toRefs} from "vue";
 import selectItem from "../../utils/selectItem";
 import moment from "moment";
+import {getVipsIndex} from "../../api/vips";
 
 export default {
   name: "Card",
@@ -95,7 +96,7 @@ export default {
       payMans:selectItem.WORKMANS,
       search:'',
       form:{
-        cardId:'112233',
+        cardId:'',
         vipType:'',
         discount:'',
         singleNumber:'',
@@ -121,6 +122,17 @@ export default {
       data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
       data.vipTypes=selectItem.VIPTYPES
       data.form.singleNumber=moment(new Date()).valueOf()
+
+      getVipsIndex().then((res)=>{
+        if (res<10){data.form.cardId="0000000"+(res+1)
+        }else if (res>=10&&res<100){data.form.cardId="000000"+(res+1)
+        }else if (res>=100&&res<1000){data.form.cardId="00000"+(res+1)
+        }else if (res>=1000&&res<10000){data.form.cardId="0000"+(res+1)
+        }else if (res>10000&&res<100000){data.form.cardId="000"+(res+1)
+        }else if (res>100000&&res<1000000){data.form.cardId="00"+(res+1)
+        }else if (res>1000000&&res<10000000){data.form.cardId="0"+(res+1)
+        }else if (res>10000000&&res<100000000){data.form.cardId=""+(res+1)}
+      })
     })
     return{
       ...toRefs(data),

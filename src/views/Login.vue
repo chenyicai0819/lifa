@@ -44,12 +44,14 @@ import selectItem from "../utils/selectItem";
 import {getService} from "../api/service";
 import {getComm} from "../api/commoditys";
 import {getVipsType} from "../api/vips";
+import {useStore} from "vuex";
 export default {
   name: "Login",
   components: {
     NButton,NCard,NTabPane,NTabs,NForm,NFormItemRow,
   },
   setup(){
+    const store =useStore();
     const data=reactive({
       logins:{
         username:'',
@@ -70,6 +72,7 @@ export default {
         ElMessage.error('账号不存在或者密码不正确！')
       })
       localStorage.setItem("loginToken","test")
+      store.dispatch('users/upUsernameActions',data.logins.username)
       getAll()
       router.push("/index")
 

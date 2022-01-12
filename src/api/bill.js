@@ -9,7 +9,10 @@ const getBillInForDay = () => {
 const getBillOutForDay = () => {
     return http('','get','/bill/getoutforday')
 }
+const addBill = (data) => {
+    return http('','post','/bill/add',data)
+}
 
 export{
-    getBill,getBillInForDay,getBillOutForDay
+    getBill,getBillInForDay,getBillOutForDay,addBill
 }

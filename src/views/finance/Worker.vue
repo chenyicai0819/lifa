@@ -22,7 +22,7 @@
             <el-descriptions-item label="银行卡">{{ item.workBank }}</el-descriptions-item>
 
             <el-descriptions-item label="操作">
-              <el-button size="mini" type="warning">修改</el-button>
+              <el-button size="mini" type="warning" @click="editWorker(item)">修改</el-button>
             </el-descriptions-item>
             <el-descriptions-item label="基础工资">
               <el-tag size="24px" style="font-size: 16px">{{ item.workBasic }}</el-tag>
@@ -38,6 +38,39 @@
       </el-scrollbar>
     </div>
   </div>
+  <div class="dialogs">
+    <el-dialog
+        v-model="dialogVisible"
+        :title="form.workname"
+        width="50%"
+        :before-close="handleClose"
+        :show-close=false
+    >
+      <div>
+        <div>
+          <span>银行卡号：</span>
+          <el-input v-model="form.bankid" clearable="true" style="width: 50%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>基础工资：</span>
+          <el-input v-model="form.money1" clearable="true" style="width: 50%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>提成工资：</span>
+          <el-input v-model="form.money2" clearable="true" style="width: 50%"/>
+        </div>
+
+      </div>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+        >确认</el-button
+        >
+      </span>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -48,16 +81,36 @@ export default {
   name: "Worker",
   setup() {
     const data = reactive({
+      dialogVisible: false,
       workerNum: 0,
       allPay: 0,
       isPay: '未发放',
-      wokrers: []
+      wokrers: [],
+      form:{
+        workname:'', //名字
+        bankid:'', //银行卡
+        money1:'',  //基础工资
+        money2:'',  //提成
+      }
     })
     const payToWorker = () => {
 
     }
     const SetterCommission = () => {
 
+    }
+    // 修改工资信息
+    const editWorker = (value) => {
+      console.log(value);
+      let _form=data.form
+      _form.workname="修改工资信息("+value.workName+")"
+      _form.bankid=value.workBank
+      _form.money1=value.workBasic
+      _form.money2=value.workBonus
+      data.dialogVisible=true
+    }
+    const handleClose = (done) => {
+      console.log(done);
     }
     onBeforeMount(()=>{
       data.wokrers=selectItem.WORKMANS
@@ -68,7 +121,7 @@ export default {
     })
 
     return {
-      ...toRefs(data), payToWorker, SetterCommission,
+      ...toRefs(data), payToWorker, SetterCommission,editWorker,handleClose,
     }
   }
 }

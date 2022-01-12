@@ -34,6 +34,7 @@
             <el-table-column type="selection" width="35" />
             <el-table-column label="编号" prop="cardId" />
             <el-table-column label="会员卡名称" prop="cardName" />
+<!--            <el-table-column label="开卡充值" prop="openPay" />-->
             <el-table-column label="项目折扣" prop="cardDiscount1" />
             <el-table-column label="商品折扣" prop="cardDiscount2" />
             <el-table-column label="套餐折扣" prop="cardDiscount3" />
@@ -210,6 +211,7 @@ export default {
       cardList:[{
         cardId:1,
         cardName:"测试",
+        cardOpenPay:200,
         cardDiscount1:'0.9',
         cardDiscount2:'0.98',
         cardDiscount3:'1.0',
@@ -225,15 +227,31 @@ export default {
     const handleClick = (tab, event) => {
       console.log(tab, event)
     }
+    /**
+     * 添加卡类型
+     *
+     */
     const addCardType = () => {
-      console.log("添加卡类型");
+      // console.log("添加卡类型");
       data.dialogVisible=true
     }
+    /**
+     * 修改卡类型
+     * @param index
+     * @param row
+     */
     const handleEdit = (index, row) => {
       console.log(index, row)
+      let form_=data.form
       if (data.activeName==='cardType-1'){
+        form_.dialogName=row.cardName;form_.dialogOpenPay=row.openPay;form_.dialogCardDiscount1=row.cardDiscount1;
+        form_.dialogCardDiscount2=row.cardDiscount2;form_.dialogCardDiscount3=row.cardDiscount3;
+        form_.dialogReMark=row.cardRemark;
+
         data.dialogVisible=true
       }else{
+        form_.dialogName=row.cardName
+        form_.dialogOpenPay=row.openPay
         data.dialogVisibleForUpdate=true
       }
     }
