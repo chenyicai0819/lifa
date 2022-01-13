@@ -24,7 +24,7 @@
             <span>原价：</span>
             <el-input v-model="form.initPrice" readonly style="width: 5%"/>
             <span>优惠价：</span>
-            <el-input v-model="form.newPrice" style="width: 5%"/>
+            <el-input v-model="form.newPrice" @change="setRealPrice" style="width: 5%"/>
             <span>发型师：</span>
             <el-select v-model="form.workMan" placeholder="请选择发型师">
               <el-option v-for="(item,index)  in workMans" :label="item.workName" :value="item.workName"
@@ -50,7 +50,7 @@
             <span>原价：</span>
             <el-input v-model="form.initCommPrice" readonly style="width: 5%"/>
             <span>优惠价：</span>
-            <el-input v-model="form.newCommPrice" style="width: 5%"/>
+            <el-input v-model="form.newCommPrice" style="width: 5%" @change="setRealPrice" />
 
           </div>
         </el-card>
@@ -88,12 +88,12 @@
             <el-input v-model="form.SingleDate" readonly style="width: 20%"/>
             <span>付款方式：</span>
             <el-select v-model="form.payType" placeholder="付款方式" style="width: 20%">
-              <el-option label="微信" value="1"></el-option>
-              <el-option label="支付宝" value="2"></el-option>
-              <el-option label="现金" value="3"></el-option>
-              <el-option label="银联" value="4"></el-option>
-              <el-option label="积分" value="5"></el-option>
-              <el-option label="免单" value="6"></el-option>
+              <el-option label="微信" value="微信"></el-option>
+              <el-option label="支付宝" value="支付宝"></el-option>
+              <el-option label="现金" value="现金"></el-option>
+              <el-option label="银联" value="银联"></el-option>
+              <el-option label="积分" value="积分"></el-option>
+              <el-option label="免单" value="免单"></el-option>
             </el-select>
           </div>
           <div style="margin-top: 10px">
@@ -112,6 +112,7 @@ import {onBeforeMount, reactive, toRefs} from "vue";
 import selectItem from "../../utils/selectItem";
 import moment from "moment";
 import {addBill} from "../../api/bill";
+import {ElMessage} from "element-plus";
 
 export default {
   name: "Index",
@@ -141,6 +142,7 @@ export default {
         commodity:[],
         initCommPrice:'',
         newCommPrice:'',
+        text:'',
       }
     })
     const handleClick = (tab, event) => {
@@ -150,6 +152,7 @@ export default {
       // console.log(val);
       // console.log(data.serviceItem[val].serPrice);
       data.form.initPrice=data.serviceItem[val].serPrice
+      data.form.realPrice=data.form.initPrice
     }
     const commChange = (val) => {
       data.form.initCommPrice=0
@@ -157,6 +160,17 @@ export default {
         // console.log(data.commoditys[valKey].commPrice);
         data.form.initCommPrice= data.form.initCommPrice+ data.commoditys[valKey].commPrice
       }
+      data.form.realPrice==data.form.initCommPrice
+    }
+    /**
+     * 设置真实价格
+     */
+    const setRealPrice = () => {
+          if (data.activeName=="buy-1"){
+            data.form.realPrice=data.form.newPrice
+          }else if (data.activeName=="buy-2"){
+            data.form.realPrice=data.form.newCommPrice
+          }
     }
     /**
      * 结账
@@ -165,14 +179,36 @@ export default {
     const Bill = () => {
       if (data.activeName=="buy-1"){
         // 项目结账
-
         addBill({'billNo':data.form.SingleNumber,'billType':1,
-          'billMoney':data.form.newPrice,'billText':data.serviceItem[data.form.service].serName,'billWorker':data.form.workMan,
+          'billMoney':data.form.realPrice,'billText':data.serviceItem[data.form.service].serName,'billWorker':data.form.workMan,
           'billOrderWorkers':data.form.orderMan, 'billRemark':data.form.remark,'payType':data.form.payType}).then((res)=>{
           console.log(res);
+          ElMessage({
+            message: '结账付款成功',
+            type: 'success',
+          })
+        }).catch(()=>{
+          ElMessage.error('结账付款失败.')
         })
       }else if (data.activeName=="buy-2"){
+        for (const key of data.form.commodity) {
+          let a=data.commoditys[key].commName
+          data.form.text+=a+';'
+          a=''
+        }
+        // console.log(data.form.text);
         // 商品结账
+        addBill({'billNo':data.form.SingleNumber,'billType':2,
+          'billMoney':data.form.realPrice,'billText':data.form.text,'billWorker':data.form.workMan,
+          'billOrderWorkers':data.form.orderMan, 'billRemark':data.form.remark,'payType':data.form.payType}).then((res)=>{
+          console.log(res);
+          ElMessage({
+            message: '结账付款成功',
+            type: 'success',
+          })
+        }).catch(()=>{
+          ElMessage.error('结账付款失败.')
+        })
       }
     }
     onBeforeMount(()=>{
@@ -183,7 +219,7 @@ export default {
     })
     return {
       ...toRefs(data),
-      handleClick,serviceChange,commChange,Bill,
+      handleClick,serviceChange,commChange,Bill,setRealPrice,
     }
   },
 }

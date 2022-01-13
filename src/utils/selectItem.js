@@ -21,7 +21,10 @@ export default {
         {value: "4", label: "高级发型师"},
         {value: "5", label: "技师"},
         {value: "6", label: "助理"},
-        {value: "7", label: "学徒"}]
+        {value: "7", label: "学徒"}],
+    FORMRULES:{
+        inputvalue:[{required:true,message:'该项为必填项',trigger:'blur'}]
+    }
 }
 
 
