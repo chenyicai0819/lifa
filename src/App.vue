@@ -14,6 +14,19 @@ export default {
   name: 'App',
   setup() {
     provide('ec', echarts)//provide
+  },
+  created() {
+    console.log(sessionStorage.getItem("store"));
+    console.log(sessionStorage.length);
+    // 如果sessionStorage中存储了store
+    if (sessionStorage.getItem("store")) {
+      // replaceState 替换state根状态（参数为 对象）
+      this.$store.replaceState( Object.assign({}, this.$store.state, JSON.parse(sessionStorage.getItem("store"))))
+    }
+    //在页面刷新时将vuex里的信息保存到sessionStorage里
+    window.addEventListener("beforeunload",()=>{
+      sessionStorage.setItem("store", JSON.stringify(this.$store.state))
+    })
   }
 }
 </script>

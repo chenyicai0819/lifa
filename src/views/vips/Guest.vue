@@ -87,18 +87,19 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
-import selectItem from "../../utils/selectItem";
+import {onBeforeMount, reactive, toRefs} from "vue";
+import useStore from "vuex/dist/vuex.mjs";
 
 export default {
   name: "Guest",
   setup(){
+    const store =useStore();
     const data=reactive({
       allguests:112,
       pends:[],
       currentPage:1,
       pageSize:10,
-      vipsTypes:selectItem.VIPTYPES,
+      vipsTypes:[],
       form:{
         selectvips:'',
         vipsSex:'',
@@ -130,6 +131,9 @@ export default {
     const handleCurrentChange = (val) => {
       data.currentPage=val
     }
+    onBeforeMount(()=>{
+      data.vipsTypes=store.state.selectItem.VIPTYPES
+    })
 
     return{
       ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange

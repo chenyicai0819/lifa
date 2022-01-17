@@ -40,7 +40,6 @@ import router from "../router";
 import {getUser, loginapi} from "../api/login";
 import {ElMessage} from "element-plus";
 import {getWorker} from "../api/worker";
-import selectItem from "../utils/selectItem";
 import {getService} from "../api/service";
 import {getComm} from "../api/commoditys";
 import {getVipsType} from "../api/vips";
@@ -85,16 +84,16 @@ export default {
     // 登陆后获取所需信息
     const getAll = () => {
       getWorker().then((res)=>{
-        selectItem.WORKMANS=res
+        store.dispatch('selectItem/upworkmanActions',res)
       })
       getService().then((res)=>{
-        selectItem.SERVICEITEM=res
+        store.dispatch('selectItem/upserviceitemActions',res)
       })
       getComm().then((res)=>{
-        selectItem.COMMODITYS=res
+        store.dispatch('selectItem/upcommoditysActions',res)
       })
       getVipsType().then((res)=>{
-        selectItem.VIPTYPES=res
+        store.dispatch('selectItem/upviptypeActions',res)
       })
     }
     return{

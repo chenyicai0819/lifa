@@ -82,18 +82,19 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import selectItem from "../../utils/selectItem";
 import moment from "moment";
 import {getVipsIndex} from "../../api/vips";
+import {useStore} from "vuex";
 
 export default {
   name: "Card",
   setup(){
+    const store =useStore();
     const data=reactive({
       activeName:'card-1',
       vipTypes:[],
-      vipComes:selectItem.GUESTCOMES,
-      payMans:selectItem.WORKMANS,
+      vipComes:[],
+      payMans:[],
       search:'',
       form:{
         cardId:'',
@@ -120,7 +121,9 @@ export default {
     }
     onBeforeMount(()=>{
       data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
-      data.vipTypes=selectItem.VIPTYPES
+      data.vipTypes=store.state.selectItem.VIPTYPES
+      data.vipComes=store.state.selectItem.GUESTCOMES
+      data.payMans=store.state.selectItem.WORKMANS
       data.form.singleNumber=moment(new Date()).valueOf()
 
       getVipsIndex().then((res)=>{

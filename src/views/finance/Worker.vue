@@ -75,11 +75,12 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import selectItem from "../../utils/selectItem";
+import {useStore} from "vuex";
 
 export default {
   name: "Worker",
   setup() {
+    const store =useStore();
     const data = reactive({
       dialogVisible: false,
       workerNum: 0,
@@ -113,10 +114,10 @@ export default {
       console.log(done);
     }
     onBeforeMount(()=>{
-      data.wokrers=selectItem.WORKMANS
-      data.workerNum=selectItem.WORKMANS.length
-      for (let i = 0; i < selectItem.WORKMANS.length; i++) {
-        data.allPay=data.allPay+selectItem.WORKMANS[i].workSalary
+      data.wokrers=store.state.selectItem.WORKMANS
+      data.workerNum=store.state.selectItem.WORKMANS.length
+      for (let i = 0; i < store.state.selectItem.WORKMANS.length; i++) {
+        data.allPay=data.allPay+store.state.selectItem.WORKMANS[i].workSalary
       }
     })
 

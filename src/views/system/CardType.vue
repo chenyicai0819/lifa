@@ -182,22 +182,23 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
-import selectItem from "../../utils/selectItem";
+import {onBeforeMount, reactive, toRefs} from "vue";
+import useStore from "vuex/dist/vuex.mjs";
 
 export default {
   name: "CardType",
   setup(){
+    const store =useStore();
     const data=reactive({
       activeName:'cardType-1',
       cardTypeNum:4,
-      cardTypes:selectItem.VIPTYPES,
+      cardTypes:[],
       pends:[],
       currentPage:1,
       pageSize:10,
       dialogVisible:false,
       dialogVisibleForUpdate:false,
-      vipTypes:selectItem.VIPTYPES,
+      vipTypes:[],
       form:{
         search:'',
         vipType:'',
@@ -268,6 +269,11 @@ export default {
     const handleClose = () => {
 
     }
+
+    onBeforeMount(()=>{
+      data.cardTypes=store.state.selectItem.VIPTYPES
+      data.vipTypes=store.state.selectItem.VIPTYPES
+    })
 
     return{
       ...toRefs(data),handleClick,addCardType,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,

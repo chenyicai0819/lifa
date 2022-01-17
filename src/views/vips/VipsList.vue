@@ -94,19 +94,20 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import selectItem from "../../utils/selectItem";
 import {getVips} from "../../api/vips";
+import useStore from "vuex/dist/vuex.mjs";
 
 export default {
   name: "VipsList",
   setup(){
+    const store =useStore();
     const data=reactive({
       allvips:0,
       allvipmoney:0,
       vipsList:[],
       currentPage:1,
       pageSize:10,
-      vipsTypes:selectItem.VIPTYPES,
+      vipsTypes:[],
       form:{
         selectvips:'',
         vipsSex:'',
@@ -136,6 +137,7 @@ export default {
     }
     // 在渲染之前获取会员列表
     onBeforeMount(()=>{
+      data.vipsTypes=store.state.selectItem.VIPTYPES
       getVips().then((res)=>{
         data.vipsList=res
         data.allvips=res.length

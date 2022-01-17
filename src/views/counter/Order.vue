@@ -115,7 +115,7 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import {getOrder} from "../../api/order";
+import {todayOrder} from "../../api/order";
 
 export default {
   name: "Order",
@@ -151,7 +151,7 @@ export default {
 
     }
     onBeforeMount(()=>{
-      getOrder().then((res)=>{
+      todayOrder().then((res)=>{
         data.orders=res
         data.orderNum=res.length
       })

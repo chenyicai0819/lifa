@@ -76,7 +76,7 @@ export default {
         ]
       }
     })
-    const select = () => {
+    const selectItem = () => {
       console.log(data.statisticsType);
       ech()
     }

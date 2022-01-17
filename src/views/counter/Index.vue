@@ -109,20 +109,23 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import selectItem from "../../utils/selectItem";
 import moment from "moment";
 import {addBill} from "../../api/bill";
 import {ElMessage} from "element-plus";
+import {addOrder} from "../../api/order";
+import {useStore} from "vuex";
+
 
 export default {
   name: "Index",
   setup() {
+    const store =useStore();
     const data = reactive({
       search: '',
       activeName: 'buy-1',
       serviceItem: [],
-      workMans:selectItem.WORKMANS,
-      guestComes:selectItem.GUESTCOMES,
+      workMans:[],
+      guestComes:[],
       commoditys:[],
       form: {
         service: '',
@@ -179,6 +182,10 @@ export default {
     const Bill = () => {
       if (data.activeName=="buy-1"){
         // 项目结账
+        addOrder({'orderId':data.form.SingleNumber,
+          'orderPrice':data.form.initPrice,'orderText':data.serviceItem[data.form.service].serName,'orderMan':data.form.guestName,
+          'orderPhone':data.form.guestPhone,'orderSex':data.form.guestSex,'payType':data.form.payType,'orderMoney':data.form.realPrice,
+          'orderWorker':data.form.workMan, 'orderOrderWorker':data.form.orderMan,'orderCome':data.form.guestCome,'orderRemake':data.form.remark,})
         addBill({'billNo':data.form.SingleNumber,'billType':1,
           'billMoney':data.form.realPrice,'billText':data.serviceItem[data.form.service].serName,'billWorker':data.form.workMan,
           'billOrderWorkers':data.form.orderMan, 'billRemark':data.form.remark,'payType':data.form.payType}).then((res)=>{
@@ -198,7 +205,11 @@ export default {
         }
         // console.log(data.form.text);
         // 商品结账
-        addBill({'billNo':data.form.SingleNumber,'billType':2,
+        addOrder({'orderId':data.form.SingleNumber,
+          'orderPrice':data.form.initPrice,'orderText':data.form.text,'orderMan':data.form.guestName,
+          'orderPhone':data.form.guestPhone,'orderSex':data.form.guestSex,'payType':data.form.payType,'orderMoney':data.form.realPrice,
+          'orderWorker':data.form.workMan, 'orderOrderWorker':data.form.orderMan,'orderCome':data.form.guestCome,'orderRemake':data.form.remark,})
+        addBill({'billNo':data.form.SingleNumber,'billType':1,
           'billMoney':data.form.realPrice,'billText':data.form.text,'billWorker':data.form.workMan,
           'billOrderWorkers':data.form.orderMan, 'billRemark':data.form.remark,'payType':data.form.payType}).then((res)=>{
           console.log(res);
@@ -213,9 +224,12 @@ export default {
     }
     onBeforeMount(()=>{
       data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
-      data.serviceItem=selectItem.SERVICEITEM
+
+      data.serviceItem=store.state.selectItem.SERVICEITEM
       data.form.SingleNumber=moment(new Date()).valueOf()
-      data.commoditys=selectItem.COMMODITYS
+      data.commoditys=store.state.selectItem.COMMODITYS
+      data.workMans=store.state.selectItem.WORKMANS
+      data.guestComes=store.state.selectItem.GUESTCOMES
     })
     return {
       ...toRefs(data),

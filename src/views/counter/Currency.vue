@@ -187,13 +187,14 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import selectItem from "../../utils/selectItem";
-import {getBill} from "../../api/bill";
+import {todayBill} from "../../api/bill";
 import {getWorker} from "../../api/worker";
+import {useStore} from "vuex";
 
 export default {
   name: "Currency",
   setup() {
+    const store =useStore();
     const data = reactive({
       outMoneyNum: 0,
       outMoney: 0,
@@ -206,7 +207,7 @@ export default {
       alltotal: '',
       dialogVisible: false,
       dialogVisibleEdit:false,
-      currencyTypes:selectItem.CURRENCYTYPE,
+      currencyTypes:[],
       dialogType: '',
       form: {
         selectDate: '',
@@ -268,9 +269,10 @@ export default {
       console.log(done);
     }
     onBeforeMount(() => {
+      data.currencyTypes=store.state.selectItem.CURRENCYTYPE
       data.alltotal = data.outMoneyNum + data.inMoneyNum
       data.inMoney=0,data.inMoneyNum=0,data.outMoneyNum=0,data.outMoney=0
-      getBill().then((res)=>{
+      todayBill().then((res)=>{
         data.bills=res
         for (const resKey in res) {
           data.bills[resKey].billType=data.bills[resKey].billType==1?"收入":"支出"

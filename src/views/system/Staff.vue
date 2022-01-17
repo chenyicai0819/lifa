@@ -128,15 +128,16 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
-import selectItem from "../../utils/selectItem";
+import {onBeforeMount, reactive, toRefs} from "vue";
+import useStore from "vuex/dist/vuex.mjs";
 
 export default {
   name: "Staff",
   setup(){
+    const store =useStore();
     const data=reactive({
-      staffLevels:selectItem.STAFFLEVELS,
-      workers:selectItem.WORKMANS,
+      staffLevels:[],
+      workers:[],
       allStaff:0,
       currentPage:1,
       dialogVisible: false,
@@ -186,6 +187,10 @@ export default {
     const handleClose = (done) => {
       console.log(done);
     }
+    onBeforeMount(()=>{
+      data.staffLevels=store.state.selectItem.STAFFLEVELS
+      data.workers=store.state.selectItem.WORKMANS
+    })
     return{
       ...toRefs(data),addStaff,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,handleClose,
     }
