@@ -42,7 +42,10 @@
               <el-option label="女" value="0"></el-option>
             </el-select>
             <span>会员生日：</span>
-            <el-date-picker v-model="form.vipBirthday" type="date" placeholder="会员生日" style="width: 15%">
+            <el-date-picker v-model="form.vipBirthday" type="date" placeholder="会员生日" style="width: 15%"
+                            format="YYYY/MM/DD"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+            >
             </el-date-picker>
             <span>会员来源：</span>
             <el-select v-model="form.vipCome" placeholder="会员来源" style="width: 15%">
@@ -72,7 +75,7 @@
             </el-select>
           </div>
           <div style="margin-top: 10px">
-            <el-button type="primary" style="height: 50px;width: 200px">充 值</el-button>
+            <el-button type="primary" style="height: 50px;width: 200px" @click="openCard">充 值</el-button>
           </div>
         </el-card>
       </div>
@@ -83,8 +86,10 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import moment from "moment";
-import {getVipsIndex} from "../../api/vips";
+import {getVipsIndex, openCardVips} from "../../api/vips";
 import {useStore} from "vuex";
+import {ElMessage} from "element-plus";
+import {addBill} from "../../api/bill";
 
 export default {
   name: "Card",
@@ -98,6 +103,7 @@ export default {
       search:'',
       form:{
         cardId:'',
+        vipTYpesId:'',
         vipType:'',
         discount:'',
         singleNumber:'',
@@ -118,6 +124,23 @@ export default {
     }
     const typeChange = (val) => {
       data.form.discount=data.vipTypes[val].vipDiscount*10==10?"不打折":data.vipTypes[val].vipDiscount*10+"折"
+      data.form.cardPay=data.vipTypes[val].vipRemark
+      data.form.vipTYpesId=data.vipTypes[val].typeId
+    }
+    const openCard = () => {
+      // 开卡
+      openCardVips({"vipId":data.form.cardId,"typeId":data.form.vipTYpesId,"vipName":data.form.vipName,"vipPassword":"12345678",
+        "vipPhone":data.form.vipPhone,"vipSex":data.form.vipSex,"vipBirthday":data.form.vipBirthday,"vipsMoney":data.form.cardPay,
+        "vipsConsume":0,"vipsBonus":0,}).then(()=>{
+        ElMessage({
+          message: '开卡成功，初始密码为12345678',
+          type: 'success',
+        })
+        // 添加账单
+        addBill({'billNo':data.form.singleNumber,'billType':1,
+          'billMoney':data.form.cardPay,'billText':data.form.cardId+"开卡充值",'billWorker':data.form.payMan,
+          'billOrderWorkers':"", 'billRemark':"",'payType':data.form.payType})
+      })
     }
     onBeforeMount(()=>{
       data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
@@ -139,7 +162,7 @@ export default {
     })
     return{
       ...toRefs(data),
-      handleClick,typeChange,
+      handleClick,typeChange,openCard,
     }
   }
 }

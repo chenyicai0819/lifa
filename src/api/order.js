@@ -12,7 +12,13 @@ const todayOrder = () => {
 const upOrder = (data) => {
     return http('','post','order/update',data)
 }
+const numberOrder = (data) => {
+    return http('','get','order/number',data)
+}
+const moneyOrder = (data) => {
+    return http('','get','order/money',data)
+}
 
 export{
-    getOrder,addOrder,todayOrder,upOrder
+    getOrder,addOrder,todayOrder,upOrder,numberOrder,moneyOrder,
 }

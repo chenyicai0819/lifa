@@ -15,7 +15,7 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import {getOrder} from "../../api/order";
+import {todayOrder} from "../../api/order";
 
 export default {
   name: "Ing",
@@ -26,7 +26,7 @@ export default {
     const load = () => {
     }
     onBeforeMount(()=>{
-      getOrder().then((res)=>{
+      todayOrder().then((res)=>{
         data.list=res
       })
     })

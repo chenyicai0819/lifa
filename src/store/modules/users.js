@@ -1,7 +1,7 @@
 const users={
     namespaced: true,
     state: {
-        username:'登录',
+        username:'未登录',
     },
     mutations: {
         // 定义mutations，用于同步修改状态

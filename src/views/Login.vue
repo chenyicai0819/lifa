@@ -42,7 +42,7 @@ import {ElMessage} from "element-plus";
 import {getWorker} from "../api/worker";
 import {getService} from "../api/service";
 import {getComm} from "../api/commoditys";
-import {getVipsType} from "../api/vips";
+import {allVipsType} from "../api/vips";
 import {useStore} from "vuex";
 export default {
   name: "Login",
@@ -92,8 +92,9 @@ export default {
       getComm().then((res)=>{
         store.dispatch('selectItem/upcommoditysActions',res)
       })
-      getVipsType().then((res)=>{
+      allVipsType().then((res)=>{
         store.dispatch('selectItem/upviptypeActions',res)
+        console.log(res);
       })
     }
     return{

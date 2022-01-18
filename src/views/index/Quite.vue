@@ -98,15 +98,16 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
+import {onBeforeMount, reactive, toRefs} from "vue";
 import router from "../../router";
+import {moneyOrder, numberOrder} from "../../api/order";
 
 export default {
   name: "Quite",
   setup() {
     const data=reactive({
-      todayPriceNum: 3,
-      todayPrice: 68,
+      todayPriceNum: 0,
+      todayPrice: 0,
       indexVips: 32,
       indexGoods: 0,
       todayPendingNum: 2,
@@ -128,6 +129,14 @@ export default {
         router.push("/vips/guest");
       }
     }
+    onBeforeMount(()=>{
+      numberOrder({"isToday":1}).then((res)=>{
+        data.todayPriceNum=res
+      })
+      moneyOrder({"isToday":1}).then((res)=>{
+        data.todayPrice=res
+      })
+    })
     return{
       ...toRefs(data),indexto
     }
