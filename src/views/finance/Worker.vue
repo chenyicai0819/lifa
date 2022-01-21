@@ -25,13 +25,13 @@
               <el-button size="mini" type="warning" @click="editWorker(item)">修改</el-button>
             </el-descriptions-item>
             <el-descriptions-item label="基础工资">
-              <el-tag size="24px" style="font-size: 16px">{{ item.workBasic }}</el-tag>
+              <el-tag size="24px" style="font-size: 16px">{{ item.baseSalary }}</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="提成">
-              <el-tag size="24px" style="font-size: 16px">{{ item.workBonus }}</el-tag>
+              <el-tag size="24px" style="font-size: 16px">{{ item.bonus }}</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="最终发放">
-              <el-tag size="24px" style="font-size: 16px">{{ item.workSalary }}</el-tag>
+              <el-tag size="24px" style="font-size: 16px">{{ item.baseSalary+item.bonus }}</el-tag>
             </el-descriptions-item>
           </el-descriptions>
         </el-card>
@@ -76,22 +76,23 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
+import {getWorker} from "../../api/worker";
 
 export default {
   name: "Worker",
-  setup() {
-    const store =useStore();
+  setup: function () {
+    const store = useStore();
     const data = reactive({
       dialogVisible: false,
       workerNum: 0,
       allPay: 0,
       isPay: '未发放',
       wokrers: [],
-      form:{
-        workname:'', //名字
-        bankid:'', //银行卡
-        money1:'',  //基础工资
-        money2:'',  //提成
+      form: {
+        workname: '', //名字
+        bankid: '', //银行卡
+        money1: '',  //基础工资
+        money2: '',  //提成
       }
     })
     const payToWorker = () => {
@@ -103,26 +104,29 @@ export default {
     // 修改工资信息
     const editWorker = (value) => {
       console.log(value);
-      let _form=data.form
-      _form.workname="修改工资信息("+value.workName+")"
-      _form.bankid=value.workBank
-      _form.money1=value.workBasic
-      _form.money2=value.workBonus
-      data.dialogVisible=true
+      let _form = data.form
+      _form.workname = "修改工资信息(" + value.workName + ")"
+      _form.bankid = value.workBank
+      _form.money1 = value.baseSalary
+      _form.money2 = value.bonus
+      data.dialogVisible = true
     }
     const handleClose = (done) => {
       console.log(done);
     }
-    onBeforeMount(()=>{
-      data.wokrers=store.state.selectItem.WORKMANS
-      data.workerNum=store.state.selectItem.WORKMANS.length
-      for (let i = 0; i < store.state.selectItem.WORKMANS.length; i++) {
-        data.allPay=data.allPay+store.state.selectItem.WORKMANS[i].workSalary
+    onBeforeMount(() => {
+      data.wokrers = store.state.selectItem.WORKMANS
+      getWorker().then((res) => {
+        data.wokrers = res
+      })
+      data.workerNum = store.state.selectItem.WORKMANS.length
+      for (let i = 0; i < data.workerNum; i++) {
+        data.allPay = data.allPay + data.wokrers[i].baseSalary + data.wokrers[i].bonus
       }
     })
 
     return {
-      ...toRefs(data), payToWorker, SetterCommission,editWorker,handleClose,
+      ...toRefs(data), payToWorker, SetterCommission, editWorker, handleClose,
     }
   }
 }

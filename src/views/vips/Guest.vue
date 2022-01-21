@@ -88,7 +88,8 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import useStore from "vuex/dist/vuex.mjs";
+
+const {useStore} = require("vuex");
 
 export default {
   name: "Guest",

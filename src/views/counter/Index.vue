@@ -7,6 +7,7 @@
           placeholder="会员信息查询，输入会员名字"
           clearable="true"
       />
+
     </div>
     <div class="counter-index-body">
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick" class="counter-index-body-tab">
@@ -108,25 +109,30 @@
 </template>
 
 <script>
-import {onBeforeMount, reactive, toRefs} from "vue";
+import {onBeforeMount, onMounted, reactive, toRefs} from "vue";
 import moment from "moment";
 import {addBill} from "../../api/bill";
 import {ElMessage} from "element-plus";
 import {addOrder} from "../../api/order";
 import {useStore} from "vuex";
+import {getVips} from "../../api/vips";
 
 
 export default {
   name: "Index",
+
   setup() {
     const store =useStore();
+
     const data = reactive({
+      searchValue:'',
       search: '',
       activeName: 'buy-1',
       serviceItem: [],
       workMans:[],
       guestComes:[],
       commoditys:[],
+      vipslist:[],
       form: {
         service: '',
         initPrice: 0,
@@ -146,7 +152,7 @@ export default {
         initCommPrice:'',
         newCommPrice:'',
         text:'',
-      }
+      },
     })
     const handleClick = (tab, event) => {
       console.log(tab, event)
@@ -194,6 +200,7 @@ export default {
             message: '结账付款成功',
             type: 'success',
           })
+          data.form.SingleNumber=moment(new Date()).valueOf()
         }).catch(()=>{
           ElMessage.error('结账付款失败.')
         })
@@ -217,6 +224,7 @@ export default {
             message: '结账付款成功',
             type: 'success',
           })
+          data.form.SingleNumber=moment(new Date()).valueOf()
         }).catch(()=>{
           ElMessage.error('结账付款失败.')
         })
@@ -224,12 +232,17 @@ export default {
     }
     onBeforeMount(()=>{
       data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
-
       data.serviceItem=store.state.selectItem.SERVICEITEM
       data.form.SingleNumber=moment(new Date()).valueOf()
       data.commoditys=store.state.selectItem.COMMODITYS
       data.workMans=store.state.selectItem.WORKMANS
       data.guestComes=store.state.selectItem.GUESTCOMES
+      getVips().then((res)=>{
+        data.vipslist=res
+      })
+    })
+    onMounted(() => {
+      // restaurants.value = loadAll()
     })
     return {
       ...toRefs(data),
@@ -239,7 +252,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .counter-index-head {
   width: 100%;
   height: 50px;
@@ -251,6 +264,7 @@ export default {
 }
 
 .counter-index-head-input {
+
   width: 25%;
   margin-left: 5px;
   margin-top: 5px;

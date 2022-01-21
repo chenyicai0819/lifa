@@ -12,25 +12,29 @@
     </div>
     <div class="vips-chats-body">
       <h1>消息通知</h1>
+
     </div>
   </div>
 </template>
 
-<script>
+<script >
 import {reactive, toRefs} from "vue";
 
 export default {
   name: "Chats",
   setup(){
+
+
     const data=reactive({
       allchats:6,
+      state2:'',
     })
     const givechats = () => {
 
     }
 
     return{
-      ...toRefs(data),givechats
+      ...toRefs(data),givechats,
     }
   }
 }

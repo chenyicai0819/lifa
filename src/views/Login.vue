@@ -44,6 +44,8 @@ import {getService} from "../api/service";
 import {getComm} from "../api/commoditys";
 import {allVipsType} from "../api/vips";
 import {useStore} from "vuex";
+
+const {getWorkerLevel} = require("../api/worker");
 export default {
   name: "Login",
   components: {
@@ -94,7 +96,9 @@ export default {
       })
       allVipsType().then((res)=>{
         store.dispatch('selectItem/upviptypeActions',res)
-        console.log(res);
+      })
+      getWorkerLevel().then((res)=>{
+        store.dispatch('selectItem/upstafflevelsActions',res)
       })
     }
     return{

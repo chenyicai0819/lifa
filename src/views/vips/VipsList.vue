@@ -19,8 +19,8 @@
         <el-input v-model="form.selectvips" clearable="true" placeholder="会员姓名/卡号/手机号" style="width: 30%;margin-right: 10px"/>
         <el-select v-model="form.vipsType" placeholder="会员类型" style="width: 20%;margin-right: 10px">
           <el-option label="全部类型" value="0"></el-option>
-          <el-option v-for="(item,index)  in vipsTypes" :label="item.label" :value="item.label"
-                     :key="index"></el-option>
+          <el-option v-for="item  in vipsTypes" :label="item.vipType" :value="item.typeId"
+                     :key="item.typeId"></el-option>
         </el-select>
         <el-select v-model="form.vipsSex" placeholder="会员性别" style="width: 20%;margin-right: 10px">
           <el-option label="全部性别" value="0"></el-option>
@@ -40,22 +40,22 @@
               :data="
       vipsList.filter(
         (data) =>
-          !form.search || data.vipsName.toLowerCase().includes(form.search.toLowerCase())
+          !form.search || data.vipName.toLowerCase().includes(form.search.toLowerCase())
       )
     "
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
             <el-table-column label="卡号" prop="vipId" />
-            <el-table-column label="会员姓名" prop="vipsName" />
+            <el-table-column label="会员姓名" prop="vipName" />
             <el-table-column label="会员性别" prop="vipSex" />
             <el-table-column label="手机号码" prop="vipPhone" />
-            <el-table-column label="会员类型" prop="vipType" />
+            <el-table-column label="会员类型" prop="typeId" />
             <el-table-column label="卡金" prop="vipsMoney" />
-            <el-table-column label="总消费" prop="vipsConsum" />
+            <el-table-column label="总消费" prop="vipsConsume" />
             <el-table-column label="赠送金" prop="vipsBonus" />
             <el-table-column label="生日" prop="vipBirthday" />
-            <el-table-column label="开卡时间" prop="vipOpenCard" />
+            <el-table-column label="开卡时间" prop="vipOpencard" />
             <el-table-column label="最近消费时间" prop="vipsLast" />
             <el-table-column align="right">
               <template #header>
@@ -95,7 +95,7 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {getVips} from "../../api/vips";
-import useStore from "vuex/dist/vuex.mjs";
+import {useStore} from "vuex";
 
 export default {
   name: "VipsList",
@@ -143,6 +143,13 @@ export default {
         data.allvips=res.length
         for (let i = 0; i < res.length; i++) {
           data.allvipmoney=data.allvipmoney+res[i].vipsMoney
+          // 根据id判断会员男女
+          data.vipsList[i].vipSex=res[i].vipSex=='1'?"男":"女"
+          // 根据类型id判断会员类型名称
+          let obj=data.vipsTypes.find(function (obj){
+            return obj.typeId==data.vipsList[i].typeId
+          })
+          data.vipsList[i].typeId=obj.vipType
         }
 
       })

@@ -101,6 +101,8 @@
 import {onBeforeMount, reactive, toRefs} from "vue";
 import router from "../../router";
 import {moneyOrder, numberOrder} from "../../api/order";
+import {getVipsIndex} from "../../api/vips";
+import {getOpenBill} from "../../api/bill";
 
 export default {
   name: "Quite",
@@ -108,10 +110,10 @@ export default {
     const data=reactive({
       todayPriceNum: 0,
       todayPrice: 0,
-      indexVips: 32,
+      indexVips: 0,
       indexGoods: 0,
       todayPendingNum: 2,
-      todayRecharge: 600,
+      todayRecharge: 0,
       indexGuest: 2,
     })
     const indexto = (index) => {
@@ -135,6 +137,12 @@ export default {
       })
       moneyOrder({"isToday":1}).then((res)=>{
         data.todayPrice=res
+      })
+      getVipsIndex().then((res)=>{
+        data.indexVips=res
+      })
+      getOpenBill({"isToday":1}).then((res)=>{
+        data.todayRecharge=res
       })
     })
     return{

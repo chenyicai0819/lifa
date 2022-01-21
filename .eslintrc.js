@@ -1,9 +1,9 @@
 module.exports = {
-  root: true,
+  root: false,
   env: {
     node: true
   },
-  'extends': [
+  extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended'
   ],
@@ -15,3 +15,11 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
   }
 }
+// 关闭eslint
+// module.exports ={
+//   "extends": "standard",
+//     "parser": "vue-eslint-parser",
+//     "plugins": [
+//   "html"
+// ]
+// }

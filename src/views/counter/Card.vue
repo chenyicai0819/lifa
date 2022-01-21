@@ -61,10 +61,10 @@
             <el-input v-model="form.cardPay" style="width: 10%"/>
             <span>付款方式：</span>
             <el-select v-model="form.payType" placeholder="付款方式" style="width: 20%">
-              <el-option label="微信" value="1"></el-option>
-              <el-option label="支付宝" value="2"></el-option>
-              <el-option label="现金" value="3"></el-option>
-              <el-option label="银联" value="4"></el-option>、
+              <el-option label="微信" value="微信"></el-option>
+              <el-option label="支付宝" value="支付宝"></el-option>
+              <el-option label="现金" value="现金"></el-option>
+              <el-option label="银联" value="银联"></el-option>、
             </el-select>
             <span>赠送金额：</span>
             <el-input v-model="form.giftMoney" style="width: 10%"/>
@@ -138,8 +138,8 @@ export default {
         })
         // 添加账单
         addBill({'billNo':data.form.singleNumber,'billType':1,
-          'billMoney':data.form.cardPay,'billText':data.form.cardId+"开卡充值",'billWorker':data.form.payMan,
-          'billOrderWorkers':"", 'billRemark':"",'payType':data.form.payType})
+          'billMoney':data.form.cardPay,'billText':data.form.cardId+"充值",'billWorker':data.form.payMan,
+          'billOrderWorkers':"", 'billRemark':"开卡充值",'payType':data.form.payType})
       })
     }
     onBeforeMount(()=>{

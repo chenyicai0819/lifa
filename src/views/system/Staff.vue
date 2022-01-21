@@ -91,12 +91,12 @@
         <div style="margin-top: 5px">
           <span>性别：</span>
           <el-select v-model="form.dialogSex" placeholder="性别" style="width: 30%;margin-right: 5px">
-            <el-option label="男" value="0"></el-option>
-            <el-option label="女" value="1"></el-option>
+            <el-option label="男" value="男"></el-option>
+            <el-option label="女" value="女"></el-option>
           </el-select>
           <span>级别：</span>
           <el-select v-model="form.staffLevel" placeholder="级别" style="width: 30%;margin-right: 5px">
-            <el-option v-for="(item,index)  in staffLevels" :label="item.label" :value="item.label"
+            <el-option v-for="(item,index)  in staffLevels" :label="item.levelName" :value="item.levelId"
                        :key="index"></el-option>
           </el-select>
         </div>
@@ -104,12 +104,16 @@
           <span>手机：</span>
           <el-input v-model="form.dialogPhone" clearable="true" style="width: 30%"/>
           <span>入职时间：</span>
-          <el-date-picker v-model="form.dialogInTime" type="date" placeholder="入职时间" style="width: 26%">
+          <el-date-picker v-model="form.dialogInTime" type="date" placeholder="入职时间" style="width: 26%"
+                          format="YYYY-MM-DD"
+                          value-format="YYYY-MM-DD HH:mm:ss">
           </el-date-picker>
         </div>
         <div style="margin-top: 5px">
           <span>生日：</span>
-          <el-date-picker v-model="form.dialogBirthday" type="date" placeholder="员工生日" style="width: 30%">
+          <el-date-picker v-model="form.dialogBirthday" type="date" placeholder="员工生日" style="width: 30%"
+                          format="YYYY-MM-DD"
+                          value-format="YYYY-MM-DD HH:mm:ss">
           </el-date-picker>
           <span>身份证号：</span>
           <el-input v-model="form.dialogIDcard" clearable="true" style="width: 26%"/>
@@ -118,7 +122,7 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button type="primary" @click="addWorker"
         >确认</el-button
         >
       </span>
@@ -129,30 +133,33 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import useStore from "vuex/dist/vuex.mjs";
+import {addWorkers} from "../../api/worker";
+const {useStore} = require("vuex");
+const {ElMessage} = require("element-plus");
+const {getWorkerLevel, getWorker} = require("../../api/worker");
 
 export default {
   name: "Staff",
-  setup(){
-    const store =useStore();
-    const data=reactive({
-      staffLevels:[],
-      workers:[],
-      allStaff:0,
-      currentPage:1,
+  setup: function () {
+    const store = useStore();
+    const data = reactive({
+      staffLevels: [],
+      workers: [],
+      allStaff: 0,
+      currentPage: 1,
       dialogVisible: false,
-      pageSize:10,
-      form:{
-        search:'',
-        staffStart:'',
-        staffLevel:'',
-        dialogId:'',
-        dialogName:'',
-        dialogSex:'',
-        dialogPhone:'',
-        dialogInTime:'',
-        dialogIDcard:'',
-        dialogBirthday:'',
+      pageSize: 10,
+      form: {
+        search: '',
+        staffStart: '',
+        staffLevel: '',
+        dialogId: '',
+        dialogName: '',
+        dialogSex: '',
+        dialogPhone: '',
+        dialogInTime: '',
+        dialogIDcard: '',
+        dialogBirthday: '',
       }
     })
 
@@ -160,7 +167,7 @@ export default {
      * 添加新员工
      */
     const addStaff = () => {
-      data.dialogVisible=true
+      data.dialogVisible = true
     }
     /**
      * 编辑员工信息
@@ -169,30 +176,74 @@ export default {
      */
     const handleEdit = (index, row) => {
       console.log(index, row)
-      let form_=data.form
-      form_.dialogId=row.workId;form_.dialogName=row.workName;form_.dialogSex=row.workSex;form_.staffLevel=row.levelId;
-      form_.dialogPhone=row.workPhone;form_.dialogInTime=row.workDate;form_.dialogBirthday='';form_.dialogIDcard=''
-      data.dialogVisible=true
+      let form_ = data.form
+      form_.dialogId = row.workId;
+      form_.dialogName = row.workName;
+      form_.dialogSex = row.workSex;
+      form_.staffLevel = row.levelId;
+      form_.dialogPhone = row.workPhone;
+      form_.dialogInTime = row.workDate;
+      form_.dialogBirthday = row.workBirthday;
+      form_.dialogIDcard = row.workIDcard;
+      data.dialogVisible = true
     }
     const handleDelete = (index, row) => {
       console.log(index, row)
     }
     const handleSizeChange = (val) => {
-      data.pageSize=val
-      data.currentPage=1
+      data.pageSize = val
+      data.currentPage = 1
     }
     const handleCurrentChange = (val) => {
-      data.currentPage=val
+      data.currentPage = val
     }
     const handleClose = (done) => {
       console.log(done);
     }
-    onBeforeMount(()=>{
-      data.staffLevels=store.state.selectItem.STAFFLEVELS
-      data.workers=store.state.selectItem.WORKMANS
+    // 添加新员工
+    const addWorker = () => {
+      addWorkers({"workId":data.form.dialogId,"levelId":data.form.staffLevel,"workName":data.form.dialogName,
+      "workSex":data.form.dialogSex,"workPhone":data.form.dialogPhone,"workState":1,"workDate":data.form.dialogInTime,
+      "workBirthday":data.form.dialogBirthday,"workIDcard":data.form.dialogIDcard,"workBank":""}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '添加新员工成功',
+            type: 'success',
+          })
+          data.dialogVisible = false
+          //成功后重新获取员工列表
+          getWorker().then((res)=>{
+            data.workers=res
+            store.dispatch('selectItem/upworkmanActions',res)
+          })
+        }else{
+          ElMessage.error('添加新员工失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('添加新员工失败.')
+      })
+    }
+    onBeforeMount(() => {
+      data.staffLevels = store.state.selectItem.STAFFLEVELS
+      data.workers = store.state.selectItem.WORKMANS
+      getWorkerLevel().then((res) => {
+        data.staffLevels = res
+      })
+      getWorker().then((res)=>{
+        data.workers=res
+        for (let i = 0; i < res.length; i++) {
+          // 根据id判断状态
+          data.workers[i].workState = data.workers[i].workState == 1 ? "在职" : "休假"
+          // 根据类型id判断员工等级
+          let obj = data.staffLevels.find(function (obj) {
+            return obj.levelId == data.workers[i].levelId
+          })
+          data.workers[i].levelId = obj.levelName
+        }
+      })
     })
-    return{
-      ...toRefs(data),addStaff,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,handleClose,
+    return {
+      ...toRefs(data), addStaff, handleDelete, handleEdit, handleSizeChange, handleCurrentChange, handleClose,addWorker,
     }
   }
 }

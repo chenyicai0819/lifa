@@ -183,46 +183,46 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import useStore from "vuex/dist/vuex.mjs";
+const {useStore} = require("vuex");
 
 export default {
   name: "CardType",
-  setup(){
-    const store =useStore();
-    const data=reactive({
-      activeName:'cardType-1',
-      cardTypeNum:4,
-      cardTypes:[],
-      pends:[],
-      currentPage:1,
-      pageSize:10,
-      dialogVisible:false,
-      dialogVisibleForUpdate:false,
-      vipTypes:[],
-      form:{
-        search:'',
-        vipType:'',
-        dialogName:'',
-        dialogOpenPay:'',
-        dialogCardDiscount1:'',
-        dialogCardDiscount2:'',
-        dialogCardDiscount3:'',
-        dialogReMark:'',
+  setup: function () {
+    const store = useStore();
+    const data = reactive({
+      activeName: 'cardType-1',
+      cardTypeNum: 4,
+      cardTypes: [],
+      pends: [],
+      currentPage: 1,
+      pageSize: 10,
+      dialogVisible: false,
+      dialogVisibleForUpdate: false,
+      vipTypes: [],
+      form: {
+        search: '',
+        vipType: '',
+        dialogName: '',
+        dialogOpenPay: '',
+        dialogCardDiscount1: '',
+        dialogCardDiscount2: '',
+        dialogCardDiscount3: '',
+        dialogReMark: '',
       },
-      cardList:[{
-        cardId:1,
-        cardName:"测试",
-        cardOpenPay:200,
-        cardDiscount1:'0.9',
-        cardDiscount2:'0.98',
-        cardDiscount3:'1.0',
-        cardValidPeriod:'永久',
-        cardRemark:'',
+      cardList: [{
+        cardId: 1,
+        cardName: "测试",
+        cardOpenPay: 200,
+        cardDiscount1: '0.9',
+        cardDiscount2: '0.98',
+        cardDiscount3: '1.0',
+        cardValidPeriod: '永久',
+        cardRemark: '',
       }],
-      openList:[{
-        cardId:1,
-        cardName:'测试',
-        openPay:100,
+      openList: [{
+        cardId: 1,
+        cardName: '测试',
+        openPay: 100,
       }]
     })
     const handleClick = (tab, event) => {
@@ -234,7 +234,7 @@ export default {
      */
     const addCardType = () => {
       // console.log("添加卡类型");
-      data.dialogVisible=true
+      data.dialogVisible = true
     }
     /**
      * 修改卡类型
@@ -243,40 +243,43 @@ export default {
      */
     const handleEdit = (index, row) => {
       console.log(index, row)
-      let form_=data.form
-      if (data.activeName==='cardType-1'){
-        form_.dialogName=row.cardName;form_.dialogOpenPay=row.openPay;form_.dialogCardDiscount1=row.cardDiscount1;
-        form_.dialogCardDiscount2=row.cardDiscount2;form_.dialogCardDiscount3=row.cardDiscount3;
-        form_.dialogReMark=row.cardRemark;
+      let form_ = data.form
+      if (data.activeName === 'cardType-1') {
+        form_.dialogName = row.cardName;
+        form_.dialogOpenPay = row.openPay;
+        form_.dialogCardDiscount1 = row.cardDiscount1;
+        form_.dialogCardDiscount2 = row.cardDiscount2;
+        form_.dialogCardDiscount3 = row.cardDiscount3;
+        form_.dialogReMark = row.cardRemark;
 
-        data.dialogVisible=true
-      }else{
-        form_.dialogName=row.cardName
-        form_.dialogOpenPay=row.openPay
-        data.dialogVisibleForUpdate=true
+        data.dialogVisible = true
+      } else {
+        form_.dialogName = row.cardName
+        form_.dialogOpenPay = row.openPay
+        data.dialogVisibleForUpdate = true
       }
     }
     const handleDelete = (index, row) => {
       console.log(index, row)
     }
     const handleSizeChange = (val) => {
-      data.pageSize=val
-      data.currentPage=1
+      data.pageSize = val
+      data.currentPage = 1
     }
     const handleCurrentChange = (val) => {
-      data.currentPage=val
+      data.currentPage = val
     }
     const handleClose = () => {
 
     }
 
-    onBeforeMount(()=>{
-      data.cardTypes=store.state.selectItem.VIPTYPES
-      data.vipTypes=store.state.selectItem.VIPTYPES
+    onBeforeMount(() => {
+      data.cardTypes = store.state.selectItem.VIPTYPES
+      data.vipTypes = store.state.selectItem.VIPTYPES
     })
 
-    return{
-      ...toRefs(data),handleClick,addCardType,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,
+    return {
+      ...toRefs(data), handleClick, addCardType, handleDelete, handleEdit, handleSizeChange, handleCurrentChange,
       handleClose,
     }
   }
