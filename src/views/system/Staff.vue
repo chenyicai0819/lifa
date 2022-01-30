@@ -2,14 +2,14 @@
   <div class="system-staff">
     <div class="system-staff-head">
       <div>
-        <el-select v-model="form.staffStart" placeholder="状态" style="width: 30%;margin-right: 5px">
+        <el-select v-model="form.staffStart" placeholder="状态" style="width: 30%;margin-right: 5px" @change="getSomeWorkers">
           <el-option label="全部" value="0"></el-option>
           <el-option label="在职" value="1"></el-option>
           <el-option label="离职" value="2"></el-option>
         </el-select>
-        <el-select v-model="form.staffLevel" placeholder="级别" style="width: 30%;margin-right: 5px">
+        <el-select v-model="form.staffLevel" placeholder="级别" style="width: 30%;margin-right: 5px" @change="getSomeWorkers">
           <el-option label="全部" value="0"></el-option>
-          <el-option v-for="(item,index)  in staffLevels" :label="item.label" :value="item.label"
+          <el-option v-for="(item,index)  in staffLevels" :label="item.levelName" :value="item.levelId"
                      :key="index"></el-option>
         </el-select>
       </div>
@@ -136,7 +136,7 @@ import {onBeforeMount, reactive, toRefs} from "vue";
 import {addWorkers} from "../../api/worker";
 const {useStore} = require("vuex");
 const {ElMessage} = require("element-plus");
-const {getWorkerLevel, getWorker} = require("../../api/worker");
+const {getWorkerLevel, getWorker, getSomeWorker} = require("../../api/worker");
 
 export default {
   name: "Staff",
@@ -200,6 +200,23 @@ export default {
     const handleClose = (done) => {
       console.log(done);
     }
+    /**
+     * 根绝条件查询员工，下拉框发生变化时触发
+     */
+    const getSomeWorkers = () => {
+      getSomeWorker({"state":data.form.staffStart,"level":data.form.staffLevel}).then((res)=>{
+        data.workers=res
+        for (let i = 0; i < res.length; i++) {
+          // 根据id判断状态
+          data.workers[i].workState = data.workers[i].workState == 1 ? "在职" : "休假"
+          // 根据类型id判断员工等级
+          let obj = data.staffLevels.find(function (obj) {
+            return obj.levelId == data.workers[i].levelId
+          })
+          data.workers[i].levelId = obj.levelName
+        }
+      })
+    }
     // 添加新员工
     const addWorker = () => {
       addWorkers({"workId":data.form.dialogId,"levelId":data.form.staffLevel,"workName":data.form.dialogName,
@@ -243,7 +260,7 @@ export default {
       })
     })
     return {
-      ...toRefs(data), addStaff, handleDelete, handleEdit, handleSizeChange, handleCurrentChange, handleClose,addWorker,
+      ...toRefs(data), addStaff, handleDelete, handleEdit, handleSizeChange, handleCurrentChange, handleClose,addWorker,getSomeWorkers,
     }
   }
 }

@@ -3,6 +3,9 @@ import http from '../axios/config'
 const getWorker=function (){
     return http('','get','worker/all',)
 }
+const getSomeWorker=function (data){
+    return http('','get','worker/get',data)
+}
 const addWorkers = (data) => {
     return http('','post','/worker/add',data)
 }
@@ -19,5 +22,5 @@ const getWorkerLevel = () => {
     return http('','get','/workerlevel/all',)
 }
 export{
-    getWorker,getWorkPay,getWorkTest,getWw,getWorkerLevel,addWorkers,
+    getWorker,getWorkPay,getWorkTest,getWw,getWorkerLevel,addWorkers,getSomeWorker,
 }
