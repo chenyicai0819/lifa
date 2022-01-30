@@ -52,6 +52,7 @@ export default {
       console.log(key)
       console.log(keyPath);
       getTrees(key)
+
     }
     const getTrees = (key) => {
       // 从数据库获取左侧导航栏的列表

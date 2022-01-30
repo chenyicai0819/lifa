@@ -30,6 +30,8 @@
 import {inject, onBeforeMount, reactive, toRefs} from "vue";
 import {getBillInForDay, getBillOutForDay} from "../../api/bill";
 
+const {getDayBill} = require("../../api/bill");
+
 export default {
   name: "BillReport",
   setup() {
@@ -131,18 +133,34 @@ export default {
     }
 
     onBeforeMount(() => {
-      getBillInForDay().then((res)=>{
+      // 一开始默认获取今天前七天到今天的数据
+      var day1 = new Date();
+      day1.setTime(day1.getTime()-7*24*60*60*1000);
+      var s1 = day1.getFullYear()+"-" + (day1.getMonth()+1) + "-" + day1.getDate();
+      var day2 = new Date();
+      day2.setTime(day2.getTime());
+      var s2 = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
+      // 分别获取收支数据
+      // 收入
+      getDayBill({"start":s1,"end":s2,"id":1}).then((res)=>{
         for (const i in res) {
           data.option.series[0].data.push(res[i].billMoney)
+
         }
-        console.log(data.option.series[0].data);
       })
-      getBillOutForDay().then((res)=>{
+      // 支出
+      getDayBill({"start":s1,"end":s2,"id":2}).then((res)=>{
         for (const i in res) {
           data.option.series[1].data.push(res[i].billMoney)
           data.option.xAxis.data.push(res[i].billTime)
-
         }
+        // for (let i = 7; i > 0; i--) {
+        //   var day = new Date();
+        //   day.setTime(day.getTime()-i*24*60*60*1000);
+        //   var s = day.getFullYear()+"-" + (day.getMonth()+1) + "-" + day.getDate();
+        //
+        // }
+
         ech()
       })
 

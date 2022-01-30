@@ -100,6 +100,7 @@ export default {
       getWorkerLevel().then((res)=>{
         store.dispatch('selectItem/upstafflevelsActions',res)
       })
+
     }
     return{
       ...toRefs(data),login,aaa,getAll

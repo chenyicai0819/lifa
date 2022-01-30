@@ -96,6 +96,9 @@
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {getVips} from "../../api/vips";
 import {useStore} from "vuex";
+import formatDate from "../../utils/date";
+
+
 
 export default {
   name: "VipsList",
@@ -150,6 +153,9 @@ export default {
             return obj.typeId==data.vipsList[i].typeId
           })
           data.vipsList[i].typeId=obj.vipType
+          data.vipsList[i].vipBirthday=formatDate(res[i].vipBirthday)
+          data.vipsList[i].vipOpencard=formatDate(res[i].vipOpencard)
+          data.vipsList[i].vipsLast=formatDate(res[i].vipsLast)
         }
 
       })

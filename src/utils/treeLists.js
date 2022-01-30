@@ -1,13 +1,20 @@
+import router from "../router";
+
 const treeLists = function (type) {
     if (type == 1) {
+        router.push("/home")
         return TREELIST_1
     } else if (type == 2) {
+        router.push("/vips/vipslist")
         return TREELIST_2
     } else if (type == 3) {
+        router.push("/finance/ordercheck")
         return TREELIST_3
     } else if (type == 4) {
+        router.push("/digital/billreport")
         return TREELIST_4
     } else if (type == 5) {
+        router.push("/system/staff")
         return TREELIST_5
 
     }

@@ -123,7 +123,6 @@ export default {
 
   setup() {
     const store =useStore();
-
     const data = reactive({
       searchValue:'',
       search: '',
@@ -151,9 +150,10 @@ export default {
         commodity:[],
         initCommPrice:'',
         newCommPrice:'',
-        text:'',
+        text:[],
       },
     })
+
     const handleClick = (tab, event) => {
       console.log(tab, event)
     }
