@@ -10,14 +10,21 @@
 import * as echarts from 'echarts'
 import {provide} from "vue";
 
+const {onBeforeMount} = require("vue");
+
 export default {
   name: 'App',
   setup() {
     provide('ec', echarts)//provide
+
+    onBeforeMount(()=>{
+      // console.log(window.location.href);
+    })
   },
   created() {
-    console.log(sessionStorage.getItem("store"));
-    console.log(sessionStorage.length);
+    // console.log(sessionStorage.getItem("store"));
+    // console.log(sessionStorage.length);
+
     // 如果sessionStorage中存储了store
     if (sessionStorage.getItem("store")) {
       // replaceState 替换state根状态（参数为 对象）
@@ -27,7 +34,8 @@ export default {
     window.addEventListener("beforeunload",()=>{
       sessionStorage.setItem("store", JSON.stringify(this.$store.state))
     })
-  }
+  },
+
 }
 </script>
 

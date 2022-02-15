@@ -46,6 +46,7 @@ import {allVipsType} from "../api/vips";
 import {useStore} from "vuex";
 
 const {getWorkerLevel} = require("../api/worker");
+const {allCommType} = require("../api/commoditys");
 export default {
   name: "Login",
   components: {
@@ -65,8 +66,8 @@ export default {
       }
     })
     const login = () => {
-      console.log(data.logins.username);
-      console.log(data.logins.password);
+      // console.log(data.logins.username);
+      // console.log(data.logins.password);
       loginapi({'username':data.logins.username,'password':data.logins.password}).then((res)=>{
         console.log(res);
       }).catch(()=>{
@@ -100,7 +101,9 @@ export default {
       getWorkerLevel().then((res)=>{
         store.dispatch('selectItem/upstafflevelsActions',res)
       })
-
+      allCommType().then((res)=>{
+        store.dispatch('selectItem/upcommtypeActions',res)
+      })
     }
     return{
       ...toRefs(data),login,aaa,getAll

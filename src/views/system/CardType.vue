@@ -32,14 +32,10 @@
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
-            <el-table-column label="编号" prop="cardId" />
-            <el-table-column label="会员卡名称" prop="cardName" />
-<!--            <el-table-column label="开卡充值" prop="openPay" />-->
-            <el-table-column label="项目折扣" prop="cardDiscount1" />
-            <el-table-column label="商品折扣" prop="cardDiscount2" />
-            <el-table-column label="套餐折扣" prop="cardDiscount3" />
-            <el-table-column label="有效期" prop="cardValidPeriod" />
-            <el-table-column label="备注" prop="cardRemark" />
+            <el-table-column label="编号" prop="typeId" />
+            <el-table-column label="会员卡名称" prop="vipType" />
+            <el-table-column label="项目折扣" prop="vipDiscount" />
+            <el-table-column label="备注(开卡充值)" prop="vipRemark" />
             <el-table-column align="right">
               <template #header>
                 <el-input v-model="form.search" size="mini" placeholder="Type to search" />
@@ -83,9 +79,9 @@
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
-            <el-table-column label="编号" prop="cardId" />
-            <el-table-column label="会员卡名称" prop="cardName" />
-            <el-table-column label="开卡充值" prop="openPay" />
+            <el-table-column label="编号" prop="typeId" />
+            <el-table-column label="会员卡名称" prop="vipType" />
+            <el-table-column label="开卡充值" prop="vipRemark" />
             <el-table-column align="right">
               <template #default="scope">
                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
@@ -128,15 +124,7 @@
           <el-input v-model="form.dialogCardDiscount1" clearable="true" style="width: 30%"/>
         </div>
         <div style="margin-top: 5px">
-          <span>商品折扣：</span>
-          <el-input v-model="form.dialogCardDiscount2" clearable="true" style="width: 30%"/>
-        </div>
-        <div style="margin-top: 5px">
-          <span>套餐折扣：</span>
-          <el-input v-model="form.dialogCardDiscount3" clearable="true" style="width: 30%"/>
-        </div>
-        <div style="margin-top: 5px">
-          <span>备注：</span>
+          <span>备注(开卡充值)：</span>
           <el-input v-model="form.dialogReMark" clearable="true" style="width: 30%"/>
         </div>
       </div>
@@ -184,6 +172,7 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 const {useStore} = require("vuex");
+const {allVipsType} = require("../../api/vips");
 
 export default {
   name: "CardType",
@@ -209,24 +198,22 @@ export default {
         dialogCardDiscount3: '',
         dialogReMark: '',
       },
-      cardList: [{
-        cardId: 1,
-        cardName: "测试",
-        cardOpenPay: 200,
-        cardDiscount1: '0.9',
-        cardDiscount2: '0.98',
-        cardDiscount3: '1.0',
-        cardValidPeriod: '永久',
-        cardRemark: '',
-      }],
-      openList: [{
-        cardId: 1,
-        cardName: '测试',
-        openPay: 100,
-      }]
+      cardList: [], //卡类型列表
+      openList: [], // 开卡充值列表
     })
     const handleClick = (tab, event) => {
       console.log(tab, event)
+    }
+
+    /**
+     * 获取全部卡类型
+     */
+    const getAllCardType = () =>{
+      allVipsType().then((res)=>{
+        // console.log(res);
+        data.cardList=res;
+        data.openList=res;
+      })
     }
     /**
      * 添加卡类型
@@ -245,17 +232,15 @@ export default {
       console.log(index, row)
       let form_ = data.form
       if (data.activeName === 'cardType-1') {
-        form_.dialogName = row.cardName;
-        form_.dialogOpenPay = row.openPay;
-        form_.dialogCardDiscount1 = row.cardDiscount1;
-        form_.dialogCardDiscount2 = row.cardDiscount2;
-        form_.dialogCardDiscount3 = row.cardDiscount3;
-        form_.dialogReMark = row.cardRemark;
+        form_.dialogName = row.typeId;
+        form_.dialogOpenPay = row.vipType;
+        form_.dialogCardDiscount1 = row.vipDiscount;
+        form_.dialogReMark = row.vipRemark;
 
         data.dialogVisible = true
       } else {
-        form_.dialogName = row.cardName
-        form_.dialogOpenPay = row.openPay
+        form_.dialogName = row.vipType
+        form_.dialogOpenPay = row.vipRemark
         data.dialogVisibleForUpdate = true
       }
     }
@@ -274,13 +259,15 @@ export default {
     }
 
     onBeforeMount(() => {
-      data.cardTypes = store.state.selectItem.VIPTYPES
-      data.vipTypes = store.state.selectItem.VIPTYPES
+      // getAllCardType()
+      data.cardList = store.state.selectItem.VIPTYPES
+      data.openList = store.state.selectItem.VIPTYPES
+      data.cardTypeNum=data.cardList.length
     })
 
     return {
       ...toRefs(data), handleClick, addCardType, handleDelete, handleEdit, handleSizeChange, handleCurrentChange,
-      handleClose,
+      handleClose,getAllCardType,
     }
   }
 }

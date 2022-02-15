@@ -6,6 +6,9 @@ const getVips=function (){
 const getVipsType = () => {
   return http('','get','viptype/get')
 }
+const pageGetVips = (data) => {
+    return http('','get','vips/page',data)
+}
 const allVipsType = () => {
     return http('','get','viptype/all')
 }
@@ -17,5 +20,5 @@ const openCardVips = (data) => {
 }
 
 export{
-    getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,
+    getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,
 }

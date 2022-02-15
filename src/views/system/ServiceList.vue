@@ -18,7 +18,7 @@
         <div>
           <el-table
               :data="
-      sevriceList.filter(
+      serviceList.filter(
         (data) =>
           !form.search || data.name.toLowerCase().includes(form.search.toLowerCase())
       )
@@ -26,9 +26,10 @@
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
-            <el-table-column label="编号" prop="serviceId" />
-            <el-table-column label="项目名称" prop="serviceName" />
-            <el-table-column label="价格" prop="servicePrice" />
+            <el-table-column label="编号" prop="serId" />
+            <el-table-column label="项目名称" prop="serName" />
+            <el-table-column label="价格" prop="serPrice" />
+            <el-table-column label="状态" prop="serState" />
             <el-table-column align="right">
               <template #header>
                 <el-input v-model="form.search" size="mini" placeholder="Type to search" />
@@ -53,7 +54,7 @@
               :page-sizes="[10, 20, 30, 50]"
               :page-size=pageSize
               layout="total, sizes, prev, pager, next, jumper"
-              :total=allStaff
+              :total=serviceNum
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
           >
@@ -95,23 +96,27 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
+import {onBeforeMount, reactive, toRefs} from "vue";
+const {useStore} = require("vuex");
+const {pageService} = require("../../api/service");
+
+
 
 export default {
   name: "ServiceList",
   setup(){
+    const store = useStore();
     const data=reactive({
-      serviceNum:20,
+      serviceNum:0, //服务项目数量
       dialogVisible: false,
       currentPage:1,
       pageSize:10,
-      allStaff:20,
       form:{
         search:'',
         dialogName:'',
         dialogPrice:'',
       },
-      sevriceList:[],
+      serviceList:[], //服务项目列表
     })
     const addService = () => {
       data.dialogVisible=true
@@ -125,16 +130,40 @@ export default {
     const handleSizeChange = (val) => {
       data.pageSize=val
       data.currentPage=1
+      pageGetServices()
     }
     const handleCurrentChange = (val) => {
       data.currentPage=val
+      pageGetServices()
     }
     const handleClose = () => {
 
     }
 
+    /**
+     * 分页获取服务信息
+     */
+    const pageGetServices = () => {
+      pageService({"pagesize":data.pageSize,"now":data.currentPage}).then((res)=>{
+        data.serviceList=res
+        for (let i = 0; i < data.serviceList.length; i++) {
+          // 根据状态数字切换为中文，方便查看
+          if(data.serviceList[i].serState==1 ||data.serviceList[i].serState=="上线"){
+            data.serviceList[i].serState="上线"
+          }else {
+            data.serviceList[i].serState="下线"
+          }
+        }
+      })
+    }
+    onBeforeMount(() => {
+      data.serviceList = store.state.selectItem.SERVICEITEM
+      data.serviceNum=data.serviceList.length
+      pageGetServices()
+    })
+
     return{
-      ...toRefs(data),addService,handleEdit,handleDelete,handleSizeChange,handleCurrentChange,handleClose,
+      ...toRefs(data),addService,handleEdit,handleDelete,handleSizeChange,handleCurrentChange,handleClose,pageGetServices,
     }
   }
 }

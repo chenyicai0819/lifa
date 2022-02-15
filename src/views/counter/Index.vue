@@ -200,6 +200,7 @@ export default {
             message: '结账付款成功',
             type: 'success',
           })
+          // 付款成功后刷新数据
           data.form.SingleNumber=moment(new Date()).valueOf()
         }).catch(()=>{
           ElMessage.error('结账付款失败.')
@@ -225,6 +226,7 @@ export default {
             type: 'success',
           })
           data.form.SingleNumber=moment(new Date()).valueOf()
+          data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
         }).catch(()=>{
           ElMessage.error('结账付款失败.')
         })

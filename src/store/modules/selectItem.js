@@ -18,6 +18,7 @@ const selectItem= {
             {value: "2", label: "支出"},
         ],
         STAFFLEVELS:[],
+        COMMTYPE:[],
     },
     mutations: {
         // 定义mutations，用于同步修改状态
@@ -42,6 +43,9 @@ const selectItem= {
         upcurrencytype(state,value){
             state.CURRENCYTYPE=value
         },
+        upcommtype(state,value){
+            state.COMMTYPE=value
+        },
     },
     actions: {
         // 定义actions，用于异步修改状态
@@ -65,6 +69,9 @@ const selectItem= {
         },
         upcurrencytypeActions(context, value){
             context.commit('upcurrencytype', value)
+        },
+        upcommtypeActions(context, value){
+            context.commit('upcommtype', value)
         },
     },
     getters: {

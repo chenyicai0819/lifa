@@ -36,7 +36,7 @@ export default {
       username:'',
     })
     const toIndex = () => {
-      router.push("/");
+      router.push("/index");
     }
     const logout = () => {
       router.push("/login")

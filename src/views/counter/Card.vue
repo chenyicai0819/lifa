@@ -136,19 +136,24 @@ export default {
           message: '开卡成功，初始密码为12345678',
           type: 'success',
         })
+
         // 添加账单
         addBill({'billNo':data.form.singleNumber,'billType':1,
           'billMoney':data.form.cardPay,'billText':data.form.cardId+"充值",'billWorker':data.form.payMan,
-          'billOrderWorkers':"", 'billRemark':"开卡充值",'payType':data.form.payType})
+          'billOrderWorkers':"", 'billRemark':"充值",'payType':data.form.payType})
+
+        // 成功之后更新界面信息
+        data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
+        data.form.singleNumber=moment(new Date()).valueOf()
+        data.form.vipName='';data.form.vipPhone='';data.form.vipSex='';data.form.vipBirthday='';
+        getCardId()
       })
     }
-    onBeforeMount(()=>{
-      data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
-      data.vipTypes=store.state.selectItem.VIPTYPES
-      data.vipComes=store.state.selectItem.GUESTCOMES
-      data.payMans=store.state.selectItem.WORKMANS
-      data.form.singleNumber=moment(new Date()).valueOf()
 
+    /**
+     * 获取开卡用户的id
+     */
+    const getCardId = () => {
       getVipsIndex().then((res)=>{
         if (res<10){data.form.cardId="0000000"+(res+1)
         }else if (res>=10&&res<100){data.form.cardId="000000"+(res+1)
@@ -159,10 +164,19 @@ export default {
         }else if (res>1000000&&res<10000000){data.form.cardId="0"+(res+1)
         }else if (res>10000000&&res<100000000){data.form.cardId=""+(res+1)}
       })
+    }
+    onBeforeMount(()=>{
+      data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
+      data.vipTypes=store.state.selectItem.VIPTYPES
+      data.vipComes=store.state.selectItem.GUESTCOMES
+      data.payMans=store.state.selectItem.WORKMANS
+      data.form.singleNumber=moment(new Date()).valueOf()
+
+      getCardId()
     })
     return{
       ...toRefs(data),
-      handleClick,typeChange,openCard,
+      handleClick,typeChange,openCard,getCardId,
     }
   }
 }

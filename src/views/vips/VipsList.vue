@@ -94,9 +94,11 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import {getVips} from "../../api/vips";
 import {useStore} from "vuex";
 import formatDate from "../../utils/date";
+import {getVips} from "../../api/vips";
+
+const {pageGetVips} = require("../../api/vips");
 
 
 
@@ -134,9 +136,33 @@ export default {
     const handleSizeChange = (val) => {
       data.pageSize=val
       data.currentPage=1
+      pageGetVip()
     }
     const handleCurrentChange = (val) => {
       data.currentPage=val
+      pageGetVip()
+    }
+
+    /**
+     * 分页获取会员信息
+     */
+    const pageGetVip = () => {
+      pageGetVips({"pagesize":data.pageSize,"now":data.currentPage}).then((res)=>{
+        data.vipsList=res
+        for (let i = 0; i < res.length; i++) {
+          // 根据id判断会员男女
+          data.vipsList[i].vipSex=res[i].vipSex=='1'?"男":"女"
+          // 根据类型id判断会员类型名称
+          let obj=data.vipsTypes.find(function (obj){
+            return obj.typeId==data.vipsList[i].typeId
+          })
+          data.vipsList[i].typeId=obj.vipType
+          data.vipsList[i].vipBirthday=formatDate(res[i].vipBirthday)
+          data.vipsList[i].vipOpencard=formatDate(res[i].vipOpencard)
+          data.vipsList[i].vipsLast=formatDate(res[i].vipsLast)
+        }
+
+      })
     }
     // 在渲染之前获取会员列表
     onBeforeMount(()=>{
@@ -157,12 +183,12 @@ export default {
           data.vipsList[i].vipOpencard=formatDate(res[i].vipOpencard)
           data.vipsList[i].vipsLast=formatDate(res[i].vipsLast)
         }
-
       })
+      pageGetVip()
     })
 
     return{
-      ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange
+      ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,pageGetVip
     }
   }
 }

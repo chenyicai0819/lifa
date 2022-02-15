@@ -64,6 +64,7 @@ export default {
     //通过一个函数返回要监听的属性
     watch(()=>store.state.trees.menuList,()=>{
       data.menuList=store.state.trees.menuList
+
     })
     // 渲染侧边导航栏之前就进行传值
     onBeforeMount(()=>{

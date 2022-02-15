@@ -37,7 +37,6 @@
 import { reactive, ref, toRefs} from "vue";
 import { useStore } from 'vuex'
 import treeLists from "../../utils/treeLists";
-
 export default {
   name: "HeadMenu",
   setup() {
@@ -50,6 +49,7 @@ export default {
     })
     const handleSelect = (key, keyPath) => {
       console.log(key)
+
       console.log(keyPath);
       getTrees(key)
 

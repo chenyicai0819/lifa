@@ -9,7 +9,7 @@
         <span>元</span>
       </div>
       <div class="system-shop-head-system">
-        <el-button type="small" @click="addShop">添加商品</el-button>
+        <el-button type="small" @click="dialogVisible = true,titles='添加商品'">添加商品</el-button>
       </div>
     </div>
     <div class="system-shop-body">
@@ -28,9 +28,11 @@
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
-            <el-table-column label="编号" prop="comboId" />
-            <el-table-column label="套餐名称" prop="comboName" />
-            <el-table-column label="价格" prop="comboPrice" />
+            <el-table-column label="编号" prop="commId" />
+            <el-table-column label="商品名称" prop="commName" />
+            <el-table-column label="价格" prop="commPrice" />
+            <el-table-column label="库存" prop="commNum" />
+            <el-table-column label="状态" prop="commState" />
             <el-table-column align="right">
               <template #header>
                 <el-input v-model="form.search" size="mini" placeholder="Type to search" />
@@ -69,7 +71,7 @@
   <div class="dialogs">
     <el-dialog
         v-model="dialogVisible"
-        title="添加商品"
+        :title=titles
         width="50%"
         :before-close="handleClose"
         :show-close=false
@@ -80,6 +82,13 @@
           <el-input v-model="form.dialogName" clearable="true" style="width: 30%"/>
         </div>
         <div style="margin-top: 5px">
+          <span>商品类别：</span>
+          <el-select v-model="form.dialogTypes" placeholder="请选择类别" style="width: 30%">
+            <el-option v-for="(item)  in shopTypeList" :label="item.commtyName" :value="item.commtyId"
+                       :key="item.commtyId"></el-option>
+          </el-select>
+        </div>
+        <div style="margin-top: 5px">
           <span>商品价格：</span>
           <el-input v-model="form.dialogPrice" clearable="true" style="width: 30%"/>
         </div>
@@ -87,11 +96,18 @@
           <span>商品库存：</span>
           <el-input v-model="form.dialogDepot" clearable="true" style="width: 30%"/>
         </div>
+        <div style="margin-top: 5px">
+          <span>商品状态：</span>
+          <el-select v-model="form.dialogState" placeholder="商品状态" style="width: 30%">
+            <el-option label="上线" value=1></el-option>
+            <el-option label="下线" value=0></el-option>
+          </el-select>
+        </div>
       </div>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button @click="dialogVisible = false,titles='修改商品信息'">取消</el-button>
+        <el-button type="primary" @click="addShop"
         >确认</el-button
         >
       </span>
@@ -101,31 +117,87 @@
 </template>
 
 <script>
-import {reactive, toRefs} from "vue";
+import {onBeforeMount, reactive, toRefs} from "vue";
+import {priceGetComm} from "../../api/commoditys";
+const {useStore} = require("vuex");
+const {pageGetComm, addComm, upComm} = require("../../api/commoditys");
+const {ElMessage} = require("element-plus");
 
 export default {
   name: "Shop",
   setup(){
+    const store = useStore();
     const data=reactive({
-      shopNum:20,
-      shopMoney:230,
+      titles:'',
+      shopNum:0,
+      shopMoney:0,
       form:{
         search:'',
         dialogName:'',
         dialogPrice:'',
         dialogDepot:'',
-
+        dialogTypes:'',
+        dialogState:1,
       },
       shopList:[],
+      shopTypeList:[],
       dialogVisible: false,
       currentPage:1,
       pageSize:10,
     })
+    /**
+     * 根据条件判断
+     * 添加新商品/修改商品
+     */
     const addShop = () => {
-      data.dialogVisible=true
+      if (data.titles=="添加商品"){
+        addComm({"commtyId":data.form.dialogTypes,"commName":data.form.dialogName,"commPrice":data.form.dialogPrice,
+          "commNum":data.form.dialogDepot,"commState":data.form.dialogState}).then((res)=>{
+          if (res==1){
+            ElMessage({
+              message: '添加商品成功',
+              type: 'success',
+            })
+            data.dialogVisible=false
+          }else {
+            ElMessage.error('添加商品失败.')
+          }
+        }).catch(()=>{
+          ElMessage.error('添加商品失败.')
+        })
+      }else if (data.titles=="修改商品信息"){
+        upComm({"commtyId":data.form.dialogTypes,"commName":data.form.dialogName,"commPrice":data.form.dialogPrice,
+          "commNum":data.form.dialogDepot,"commState":data.form.dialogState}).then((res)=>{
+          if (res==1){
+            ElMessage({
+              message: '修改商品信息成功',
+              type: 'success',
+            })
+            data.dialogVisible=false
+            data.form.dialogDepot='';data.form.dialogPrice='';data.form.dialogName='';data.form.dialogTypes='';data.form.dialogState=1
+          }else {
+            ElMessage.error('修改商品信息商品失败.')
+          }
+        }).catch(()=>{
+          ElMessage.error('修改商品信息失败.')
+        })
+      }
+
+      // data.dialogVisible=false
     }
+
+    /**
+     * 更新商品数据信息
+     */
     const handleEdit = (index, row) => {
       console.log(index, row)
+      console.log(row)
+      let st=row.commState=="上线"?1:0
+      console.log(st);
+      data.form.dialogDepot=row.commNum;data.form.dialogPrice=row.commPrice;data.form.dialogName=row.commName;
+      data.form.dialogTypes=row.commtyId;data.form.dialogState=row.commState
+      data.titles="修改商品信息"
+      data.dialogVisible=true
     }
     const handleDelete = (index, row) => {
       console.log(index, row)
@@ -133,16 +205,54 @@ export default {
     const handleSizeChange = (val) => {
       data.pageSize=val
       data.currentPage=1
+      pageGetComms()
     }
     const handleCurrentChange = (val) => {
       data.currentPage=val
+      pageGetComms()
     }
     const handleClose = () => {
 
     }
 
+    /**
+     * 分页获取商品
+     */
+    const pageGetComms = () => {
+      pageGetComm({"pagesize":data.pageSize,"now":data.currentPage}).then((res)=>{
+        data.shopList=res;
+        for (let i = 0; i < data.shopList.length; i++) {
+          // 根据状态数字切换为中文，方便查看
+          if(data.shopList[i].commState==1 ||data.shopList[i].commState=="上线"){
+            data.shopList[i].commState="上线"
+          }else {
+            data.shopList[i].commState="下线"
+          }
+        }
+      })
+    }
+
+    /**
+     * 获取商品总价
+     */
+    const getPriceAll = () => {
+      priceGetComm().then((res)=>{
+        data.shopMoney=res
+      })
+    }
+
+    onBeforeMount(() => {
+      data.shopTypeList=store.state.selectItem.COMMTYPE //所有商品类别
+      data.shopList=store.state.selectItem.COMMODITYS //所有商品
+      data.shopNum=data.shopList.length //所有商品数量
+      getPriceAll()
+      pageGetComms()
+    })
+
     return{
-      ...toRefs(data),addShop,handleEdit,handleDelete,handleSizeChange,handleCurrentChange,handleClose,
+      ...toRefs(data),addShop,handleEdit,handleDelete,handleSizeChange,handleCurrentChange,handleClose,pageGetComms,
+      getPriceAll,
+
     }
   }
 }

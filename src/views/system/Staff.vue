@@ -243,6 +243,7 @@ export default {
     onBeforeMount(() => {
       data.staffLevels = store.state.selectItem.STAFFLEVELS
       data.workers = store.state.selectItem.WORKMANS
+      data.allStaff=data.workers.length
       getWorkerLevel().then((res) => {
         data.staffLevels = res
       })
