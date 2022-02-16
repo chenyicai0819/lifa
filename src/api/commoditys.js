@@ -9,11 +9,11 @@ const pageGetComm=function (data){
 const priceGetComm=function (){
     return http('','get','comm/price')
 }
-const addComm=function (){
-    return http('','post','comm/add')
+const addComm=function (data){
+    return http('','post','comm/add',data)
 }
-const upComm=function (){
-    return http('','post','comm/up')
+const upComm=function (data){
+    return http('','post','comm/up',data)
 }
 const allCommType=function (){
     return http('','get','commtype/all')

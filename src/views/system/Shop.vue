@@ -99,8 +99,8 @@
         <div style="margin-top: 5px">
           <span>商品状态：</span>
           <el-select v-model="form.dialogState" placeholder="商品状态" style="width: 30%">
-            <el-option label="上线" value=1></el-option>
-            <el-option label="下线" value=0></el-option>
+            <el-option label="上线" value="上线" ></el-option>
+            <el-option label="下线" value="下线"></el-option>
           </el-select>
         </div>
       </div>
@@ -133,11 +133,12 @@ export default {
       shopMoney:0,
       form:{
         search:'',
+        dialogId:'',
         dialogName:'',
         dialogPrice:'',
         dialogDepot:'',
         dialogTypes:'',
-        dialogState:1,
+        dialogState:'',
       },
       shopList:[],
       shopTypeList:[],
@@ -150,9 +151,10 @@ export default {
      * 添加新商品/修改商品
      */
     const addShop = () => {
+      let st=data.form.dialogState=="上线"?1:0
       if (data.titles=="添加商品"){
         addComm({"commtyId":data.form.dialogTypes,"commName":data.form.dialogName,"commPrice":data.form.dialogPrice,
-          "commNum":data.form.dialogDepot,"commState":data.form.dialogState}).then((res)=>{
+          "commNum":data.form.dialogDepot,"commState":st}).then((res)=>{
           if (res==1){
             ElMessage({
               message: '添加商品成功',
@@ -166,8 +168,10 @@ export default {
           ElMessage.error('添加商品失败.')
         })
       }else if (data.titles=="修改商品信息"){
-        upComm({"commtyId":data.form.dialogTypes,"commName":data.form.dialogName,"commPrice":data.form.dialogPrice,
-          "commNum":data.form.dialogDepot,"commState":data.form.dialogState}).then((res)=>{
+        // console.log(data.form.dialogState);
+
+        upComm({"commId":data.form.dialogId,"commtyId":data.form.dialogTypes,"commName":data.form.dialogName,"commPrice":data.form.dialogPrice,
+          "commNum":data.form.dialogDepot,"commState":st}).then((res)=>{
           if (res==1){
             ElMessage({
               message: '修改商品信息成功',
@@ -190,10 +194,12 @@ export default {
      * 更新商品数据信息
      */
     const handleEdit = (index, row) => {
-      console.log(index, row)
-      console.log(row)
-      let st=row.commState=="上线"?1:0
-      console.log(st);
+      // console.log(index, row)
+      // console.log(row)
+      data.form.dialogId=row.commId
+      // console.log(data.form.dialogId);
+      // let st=row.commState=="上线"?1:0
+      // console.log(st);
       data.form.dialogDepot=row.commNum;data.form.dialogPrice=row.commPrice;data.form.dialogName=row.commName;
       data.form.dialogTypes=row.commtyId;data.form.dialogState=row.commState
       data.titles="修改商品信息"
