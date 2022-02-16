@@ -171,7 +171,6 @@ export default {
       data.vipComes=store.state.selectItem.GUESTCOMES
       data.payMans=store.state.selectItem.WORKMANS
       data.form.singleNumber=moment(new Date()).valueOf()
-
       getCardId()
     })
     return{

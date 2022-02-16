@@ -103,10 +103,12 @@ import router from "../../router";
 import {moneyOrder, numberOrder} from "../../api/order";
 import {getVipsIndex} from "../../api/vips";
 import {getOpenBill} from "../../api/bill";
+import {useStore} from "vuex";
 
 export default {
   name: "Quite",
   setup() {
+    const store =useStore();
     const data=reactive({
       todayPriceNum: 0,
       todayPrice: 0,
@@ -119,17 +121,24 @@ export default {
     const indexto = (index) => {
       if (index == 1) {
         router.push("/home");
+        store.dispatch('trees/upMenuIndexAtions','1')
       } else if (index == 2) {
         router.push("/index");
+        store.dispatch('trees/upMenuIndexAtions','2')
       } else if (index == 3) {
         router.push("/vips/vipslist");
+        store.dispatch('trees/upMenuIndexAtions','2')
       } else if (index == 4) {
         router.push("/home/pending");
+        store.dispatch('trees/upMenuIndexAtions','1')
       } else if (index == 5) {
         router.push("/home/card");
+        store.dispatch('trees/upMenuIndexAtions','2')
       } else if (index == 6) {
         router.push("/vips/guest");
+        store.dispatch('trees/upMenuIndexAtions','2')
       }
+
     }
     onBeforeMount(()=>{
       numberOrder({"isToday":1}).then((res)=>{

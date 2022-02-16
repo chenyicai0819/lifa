@@ -97,7 +97,7 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-const {useStore} = require("vuex");
+import {useStore} from "vuex";
 const {pageService} = require("../../api/service");
 
 

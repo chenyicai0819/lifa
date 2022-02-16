@@ -34,25 +34,25 @@
 </template>
 
 <script>
-import { reactive, ref, toRefs} from "vue";
-import { useStore } from 'vuex'
+import {onBeforeMount, reactive, ref, toRefs, watch} from "vue";
+import {useStore} from "vuex";
 import treeLists from "../../utils/treeLists";
 export default {
   name: "HeadMenu",
   setup() {
     const store =useStore();
-    const activeIndex =  ref('1')
+    // const activeIndex =  store.state.trees.menuIndex
     const activeIndex2 = ref('1')
     const data=reactive({
+      activeIndex:'',
       fills:[],
       menuList: []
     })
     const handleSelect = (key, keyPath) => {
       console.log(key)
-
       console.log(keyPath);
       getTrees(key)
-
+      store.dispatch('trees/upMenuIndexAtions',key)
     }
     const getTrees = (key) => {
       // 从数据库获取左侧导航栏的列表
@@ -64,12 +64,18 @@ export default {
 
     }
     getTrees(1)
+    watch(()=>store.state.trees.menuIndex,()=>{//通过一个函数返回要监听的属性
+      data.activeIndex=store.state.trees.menuIndex
+      // 监听到变化后更新菜单
+      getTrees(store.state.trees.menuIndex)
+    })
+    onBeforeMount(() => {
+      // console.log(store.state.trees.menuIndex);
+      data.activeIndex=store.state.trees.menuIndex
+    })
+
     return {
-      activeIndex,
-      activeIndex2,
-      handleSelect,
-      getTrees,
-      ...toRefs(data),
+      activeIndex2, handleSelect, getTrees, ...toRefs(data),
     }
   },
 }
