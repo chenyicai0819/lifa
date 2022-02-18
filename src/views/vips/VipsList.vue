@@ -121,8 +121,11 @@ export default {
       }
     })
 
+    /**
+     * 导出会员信息
+     */
     const vipsOut = () => {
-
+      window.location.href="http://localhost:8089/vips/out"
     }
     const vipsIn = () => {
 

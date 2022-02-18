@@ -18,7 +18,9 @@ const getVipsIndex = () => {
 const openCardVips = (data) => {
     return http('','post','/vips/add',data)
 }
-
+const outAllVips = () => {
+    return http('','get','/vips/out')
+}
 export{
-    getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,
+    getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,outAllVips
 }
