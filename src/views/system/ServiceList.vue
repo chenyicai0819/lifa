@@ -38,12 +38,20 @@
                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
                 >Edit</el-button
                 >
-                <el-button
-                    size="mini"
-                    type="danger"
-                    @click="handleDelete(scope.$index, scope.row)"
-                >Delete</el-button
+                <el-popconfirm
+                    title="确定要删除这个服务项目吗?"
+                    confirm-button-text="删除"
+                    cancel-button-text="取消"
+                    @confirm="handleDelete(scope.$index, scope.row)"
                 >
+                  <template #reference>
+                    <el-button
+                        size="mini"
+                        type="danger"
+                    >Delete</el-button
+                    >
+                  </template>
+                </el-popconfirm>
               </template>
             </el-table-column>
           </el-table>
@@ -98,8 +106,8 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
-const {pageService} = require("../../api/service");
-
+const {pageService, delService} = require("../../api/service");
+const {ElMessage} = require("element-plus");
 
 
 export default {
@@ -124,8 +132,23 @@ export default {
     const handleEdit = (index, row) => {
       console.log(index, row)
     }
+    /**
+     * 删除服务项目
+     */
     const handleDelete = (index, row) => {
-      console.log(index, row)
+      delService({"id":row.serId}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '服务删除成功',
+            type: 'success',
+          })
+          pageGetServices()
+        }else {
+          ElMessage.error('服务删除失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('服务删除失败.')
+      })
     }
     const handleSizeChange = (val) => {
       data.pageSize=val

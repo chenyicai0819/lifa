@@ -12,6 +12,9 @@ const pageGetVips = (data) => {
 const allVipsType = () => {
     return http('','get','viptype/all')
 }
+const delVipsType = (data) => {
+    return http('','post','viptype/del',data)
+}
 const getVipsIndex = () => {
     return http('','get','/vips/index')
 }
@@ -22,5 +25,5 @@ const outAllVips = () => {
     return http('','get','/vips/out')
 }
 export{
-    getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,outAllVips
+    getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,outAllVips,delVipsType,
 }

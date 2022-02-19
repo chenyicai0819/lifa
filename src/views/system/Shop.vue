@@ -41,12 +41,20 @@
                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
                 >Edit</el-button
                 >
-                <el-button
-                    size="mini"
-                    type="danger"
-                    @click="handleDelete(scope.$index, scope.row)"
-                >Delete</el-button
+                <el-popconfirm
+                    title="确定要删除这个商品吗?"
+                    confirm-button-text="删除"
+                    cancel-button-text="取消"
+                    @confirm="handleDelete(scope.$index, scope.row)"
                 >
+                  <template #reference>
+                    <el-button
+                        size="mini"
+                        type="danger"
+                    >Delete</el-button
+                    >
+                  </template>
+                </el-popconfirm>
               </template>
             </el-table-column>
           </el-table>
@@ -120,7 +128,7 @@
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {priceGetComm} from "../../api/commoditys";
 const {useStore} = require("vuex");
-const {pageGetComm, addComm, upComm} = require("../../api/commoditys");
+const {pageGetComm, addComm, upComm, delComm} = require("../../api/commoditys");
 const {ElMessage} = require("element-plus");
 
 export default {
@@ -160,6 +168,8 @@ export default {
               message: '添加商品成功',
               type: 'success',
             })
+            // 刷新商品信息
+            pageGetComms()
             data.dialogVisible=false
           }else {
             ElMessage.error('添加商品失败.')
@@ -177,6 +187,8 @@ export default {
               message: '修改商品信息成功',
               type: 'success',
             })
+            // 刷新
+            pageGetComms()
             data.dialogVisible=false
             data.form.dialogDepot='';data.form.dialogPrice='';data.form.dialogName='';data.form.dialogTypes='';data.form.dialogState=1
           }else {
@@ -205,8 +217,25 @@ export default {
       data.titles="修改商品信息"
       data.dialogVisible=true
     }
+    /**
+     *
+     * 删除该商品
+     */
     const handleDelete = (index, row) => {
-      console.log(index, row)
+      // console.log(index, row)
+      delComm({"id":row.commId}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '商品删除成功',
+            type: 'success',
+          })
+          pageGetComms()
+        }else {
+          ElMessage.error('商品删除失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('商品删除失败.')
+      })
     }
     const handleSizeChange = (val) => {
       data.pageSize=val

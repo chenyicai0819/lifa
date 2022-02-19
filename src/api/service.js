@@ -6,7 +6,10 @@ const getService=function (){
 const pageService=function (data){
     return http('','get','service/page',data)
 }
+const delService=function (data){
+    return http('','post','service/del',data)
+}
 
 export{
-    getService,pageService,
+    getService,pageService,delService,
 }

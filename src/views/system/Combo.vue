@@ -101,7 +101,7 @@ export default {
   name: "Combo",
   setup(){
     const data=reactive({
-      comboNum:10,
+      comboNum:0,
       comboList:[],
       form:{
         search:'',

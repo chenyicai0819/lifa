@@ -18,6 +18,9 @@ const upComm=function (data){
 const allCommType=function (){
     return http('','get','commtype/all')
 }
+const delComm=function (data){
+    return http('','post','comm/del',data)
+}
 export{
-    getComm,pageGetComm,priceGetComm,allCommType,addComm,upComm,
+    getComm,pageGetComm,priceGetComm,allCommType,addComm,upComm,delComm,
 }

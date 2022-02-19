@@ -87,12 +87,20 @@
                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
                 >Edit</el-button
                 >
-                <el-button
-                    size="mini"
-                    type="danger"
-                    @click="handleDelete(scope.$index, scope.row)"
-                >Delete</el-button
+                <el-popconfirm
+                    title="确定要删除这个类型吗?"
+                    confirm-button-text="删除"
+                    cancel-button-text="取消"
+                    @confirm="handleDelete(scope.$index, scope.row)"
                 >
+                  <template #reference>
+                    <el-button
+                        size="mini"
+                        type="danger"
+                    >Delete</el-button
+                    >
+                  </template>
+                </el-popconfirm>
               </template>
             </el-table-column>
           </el-table>
@@ -172,7 +180,8 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 const {useStore} = require("vuex");
-const {allVipsType} = require("../../api/vips");
+const {allVipsType, delVipsType} = require("../../api/vips");
+const {ElMessage} = require("element-plus");
 
 export default {
   name: "CardType",
@@ -244,8 +253,26 @@ export default {
         data.dialogVisibleForUpdate = true
       }
     }
+
+    /**
+     * 删除会员类型
+     * @param index
+     * @param row
+     */
     const handleDelete = (index, row) => {
-      console.log(index, row)
+      delVipsType({"id":row.typeId}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '类型删除成功',
+            type: 'success',
+          })
+
+        }else {
+          ElMessage.error('类型删除失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('类型删除失败.')
+      })
     }
     const handleSizeChange = (val) => {
       data.pageSize = val
