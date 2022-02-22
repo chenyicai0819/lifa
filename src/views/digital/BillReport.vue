@@ -23,6 +23,11 @@
              :style="{ width: '95%', height: '500px' }"></div>
       </el-card>
     </div>
+
+    <div class="digital-billreport-footer">
+<!--      表格显示区域-->
+
+    </div>
   </div>
 </template>
 

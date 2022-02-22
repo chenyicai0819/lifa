@@ -21,6 +21,12 @@ const getWw = () => {
 const getWorkerLevel = () => {
     return http('','get','/workerlevel/all',)
 }
+const payRoll = (data) => {
+    return http('','post','/worker/pay',data)
+}
+const upWorker = (data) => {
+    return http('','post','/worker/up',data)
+}
 export{
-    getWorker,getWorkPay,getWorkTest,getWw,getWorkerLevel,addWorkers,getSomeWorker,
+    getWorker,getWorkPay,getWorkTest,getWw,getWorkerLevel,addWorkers,getSomeWorker,payRoll,upWorker
 }

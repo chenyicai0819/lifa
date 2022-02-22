@@ -87,7 +87,7 @@ const TREELIST_3 = [{
     "chi": [{"id": 311, "name": "水单审核", "path": "/finance/ordercheck", "parents": 310, "type": null, "chi": null}, {
         "id": 312,
         "name": "项目消费记录",
-        "path": "/",
+        "path": "/finance/servicelog",
         "parents": 310,
         "type": null,
         "chi": null
@@ -112,7 +112,7 @@ const TREELIST_3 = [{
     "path": "/",
     "parents": null,
     "type": 3,
-    "chi": [{"id": 331, "name": "员工提成核对", "path": "/", "parents": 330, "type": null, "chi": null}, {
+    "chi": [{"id": 331, "name": "员工提成核对", "path": "/finance/bonuscheck", "parents": 330, "type": null, "chi": null}, {
         "id": 332,
         "name": "员工业绩核对",
         "path": "/",
@@ -205,7 +205,7 @@ const TREELIST_5 = [{
     "path": "/",
     "parents": null,
     "type": 5,
-    "chi": [{"id": 521, "name": "服务项目提成设置", "path": "/", "parents": 520, "type": null, "chi": null}, {
+    "chi": [{"id": 521, "name": "服务项目提成设置", "path": "/system/bonus", "parents": 520, "type": null, "chi": null}, {
         "id": 522,
         "name": "商品销售提成设置",
         "path": "/",

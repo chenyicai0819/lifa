@@ -1,7 +1,7 @@
 import http from '../axios/config'
 
-const getOrder=function (){
-    return http('','get','order/get',)
+const allOrder=function (){
+    return http('','get','order/all',)
 }
 const addOrder = (data) => {
     return http('','post','order/add',data)
@@ -20,5 +20,5 @@ const moneyOrder = (data) => {
 }
 
 export{
-    getOrder,addOrder,todayOrder,upOrder,numberOrder,moneyOrder,
+    allOrder,addOrder,todayOrder,upOrder,numberOrder,moneyOrder,
 }

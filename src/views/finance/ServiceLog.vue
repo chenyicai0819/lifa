@@ -1,27 +1,18 @@
 <template>
-  <div class="finance-ordercheck">
-    <div class="finance-ordercheck-head">
-      <div class="finance-ordercheck-head-title">
-        <span>查询到今日总共有：</span>
-        <span style="color: #f5576c">{{ todayMoneyNum }}</span>
-        <span>笔水单，总金额为：</span>
-        <span style="color: #f5576c">{{ todayMoney }}</span>
-        <span>元。</span>
+  <div class="finance-servicelog">
+    <div class="finance-servicelog-head">
+      <div class="finance-servicelog-head-title">
+        
       </div>
     </div>
     <div class="counter-pending-body">
       <el-card class="box-card" shadow="hover" >
         <div class="box-card-head">
-          <span>水单详细记录</span>
+          <span>项目消费记录</span>
         </div>
-        <div>
+        <div >
           <el-table
-              :data="
-      orders.filter(
-        (data) =>
-          !form.search || data.orderMan.toLowerCase().includes(form.search.toLowerCase())
-      )
-    "
+              :data="orders"
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
@@ -35,29 +26,7 @@
             <el-table-column label="中工" prop="orderOrderWorker" />
             <el-table-column label="时间" prop="orderDate" />
             <el-table-column label="备注" prop="orderRemake" />
-            <el-table-column align="right">
-              <template #header>
-                <el-input v-model="form.search" size="mini" placeholder="Type to search" />
-              </template>
-              <template #default="scope">
-                <el-button size="mini" @click="handleCheck(scope.$index, scope.row)" type="primary"
-                >审核通过</el-button
-                >
-              </template>
-            </el-table-column>
           </el-table>
-        </div>
-        <div class="demo-pagination-block">
-          <el-pagination
-              v-model:currentPage="currentPage"
-              :page-sizes="[10, 20, 30, 50]"
-              :page-size=pageSize
-              layout="total, sizes, prev, pager, next, jumper"
-              :total=todayMoneyNum
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-          >
-          </el-pagination>
         </div>
       </el-card>
     </div>
@@ -66,20 +35,13 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import {allOrder} from "../../api/order";
+const {allOrder} = require("../../api/order");
 
 export default {
-  name: "OrderCheck",
+  name: "ServiceLog",
   setup(){
     const data=reactive({
-      todayMoneyNum:0,
-      todayMoney:0,
       orders:[],
-      currentPage:1,
-      pageSize:10,
-      form:{
-        search:'',
-      },
     })
 
     const handleCheck = (index, row) => {
@@ -98,11 +60,12 @@ export default {
     }
     onBeforeMount(()=>{
       allOrder().then((res)=>{
-        data.orders=res
-        data.todayMoneyNum=res.length
-        for (const resKey in res) {
-          data.todayMoney+=data.orders[resKey].orderMoney
+        for (let i = 0; i < res.length; i++) {
+          if (res[i].orderWorker!="" && res[i].orderOrderWorker!=""){
+            data.orders[i]=res[i]
+          }
         }
+        // console.log(res);
       })
     })
 
@@ -115,13 +78,12 @@ export default {
 </script>
 
 <style scoped>
-.finance-ordercheck {
+.finance-servicelog{
   overflow-x: hidden;
   overflow-y: scroll;
   height: 600px;
 }
-
-.finance-ordercheck-head {
+.finance-servicelog-head {
   width: 100%;
   height: 50px;
   background-color: #cca8f5;
@@ -131,18 +93,19 @@ export default {
   border-radius: 3px
 }
 
-.finance-ordercheck-head > div {
+.finance-servicelog-head > div {
   float: left;
   margin-top: 5px;
   margin-left: 5px;
 }
 
-.finance-ordercheck-head-title {
+.finance-servicelog-head-title {
   padding-top: 10px;
 }
 
 .box-card {
   width: 100%;
+
   padding: 0 0;
   margin-top: 5px;
   /*display: flex;*/

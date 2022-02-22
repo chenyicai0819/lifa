@@ -191,7 +191,8 @@ export default {
         addOrder({'orderId':data.form.SingleNumber,
           'orderPrice':data.form.initPrice,'orderText':data.serviceItem[data.form.service].serName,'orderMan':data.form.guestName,
           'orderPhone':data.form.guestPhone,'orderSex':data.form.guestSex,'payType':data.form.payType,'orderMoney':data.form.realPrice,
-          'orderWorker':data.form.workMan, 'orderOrderWorker':data.form.orderMan,'orderCome':data.form.guestCome,'orderRemake':data.form.remark,})
+          'orderWorker':data.form.workMan, 'orderOrderWorker':data.form.orderMan,'orderCome':data.form.guestCome,'orderRemake':data.form.remark,
+          'bonus1':store.state.users.worker1Bonus,'bonus2':store.state.users.worker2Bonus,})
         addBill({'billNo':data.form.SingleNumber,'billType':1,
           'billMoney':data.form.realPrice,'billText':data.serviceItem[data.form.service].serName,'billWorker':data.form.workMan,
           'billOrderWorkers':data.form.orderMan, 'billRemark':data.form.remark,'payType':data.form.payType}).then((res)=>{
@@ -216,7 +217,8 @@ export default {
         addOrder({'orderId':data.form.SingleNumber,
           'orderPrice':data.form.initPrice,'orderText':data.form.text,'orderMan':data.form.guestName,
           'orderPhone':data.form.guestPhone,'orderSex':data.form.guestSex,'payType':data.form.payType,'orderMoney':data.form.realPrice,
-          'orderWorker':data.form.workMan, 'orderOrderWorker':data.form.orderMan,'orderCome':data.form.guestCome,'orderRemake':data.form.remark,})
+          'orderWorker':data.form.workMan, 'orderOrderWorker':data.form.orderMan,'orderCome':data.form.guestCome,'orderRemake':data.form.remark,
+          'bonus1':store.state.users.worker1Bonus,'bonus2':store.state.users.worker2Bonus,})
         addBill({'billNo':data.form.SingleNumber,'billType':1,
           'billMoney':data.form.realPrice,'billText':data.form.text,'billWorker':data.form.workMan,
           'billOrderWorkers':data.form.orderMan, 'billRemark':data.form.remark,'payType':data.form.payType}).then((res)=>{

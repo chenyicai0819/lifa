@@ -16,7 +16,7 @@
     </div>
     <div class="finance-worker-body">
       <el-scrollbar height="100%">
-        <el-card class="box-card-table" shadow="hover" v-for="(item,index) in wokrers" :key="index">
+        <el-card class="box-card-table" shadow="hover" v-for="(item,index) in workers" :key="index">
           <el-descriptions :title=" item.workName">
             <el-descriptions-item label="联系方式">{{ item.workPhone }}</el-descriptions-item>
             <el-descriptions-item label="银行卡">{{ item.workBank }}</el-descriptions-item>
@@ -76,7 +76,10 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
-import {getWorker} from "../../api/worker";
+import {getWorker, upWorker} from "../../api/worker";
+const {ElMessage} = require("element-plus");
+const {watch} = require("vue");
+const {payRoll} = require("../../api/worker");
 
 export default {
   name: "Worker",
@@ -87,7 +90,7 @@ export default {
       workerNum: 0,
       allPay: 0,
       isPay: '未发放',
-      wokrers: [],
+      workers: [],
       form: {
         workname: '', //名字
         bankid: '', //银行卡
@@ -96,6 +99,25 @@ export default {
       }
     })
     const payToWorker = () => {
+      for (let i = 0; i < data.workers.length; i++) {
+        payRoll({"saWorkId":data.workers[i].workId,"saMoney":data.workers[i].baseSalary,"saBonus":data.workers[i].bonus}).then((res)=>{
+          if (res==1){
+            ElMessage({
+              message: data.workers[i].workName+'工资已成功发放',
+              type: 'success',
+            })
+            // 将本月奖金归零
+            upWorker({"workId":data.workers[i].workId,"bonus":0})
+            // 更新员工工资信息
+            getWorker().then((res) => {
+              data.workers = res
+            })
+            data.isPay="已发放"
+          }else {
+            ElMessage.error(data.workers[i].workName+'工资发放失败.')
+          }
+        })
+      }
 
     }
     const SetterCommission = () => {
@@ -114,14 +136,18 @@ export default {
     const handleClose = (done) => {
       console.log(done);
     }
+    watch(()=>data.allPay,()=>{//通过一个函数返回要监听的属性
+      // 当总工资发生变化时，提示本月工资未发放
+      data.isPay="未发放"
+    })
     onBeforeMount(() => {
-      data.wokrers = store.state.selectItem.WORKMANS
+      data.workers = store.state.selectItem.WORKMANS
       getWorker().then((res) => {
-        data.wokrers = res
+        data.workers = res
       })
       data.workerNum = store.state.selectItem.WORKMANS.length
       for (let i = 0; i < data.workerNum; i++) {
-        data.allPay = data.allPay + data.wokrers[i].baseSalary + data.wokrers[i].bonus
+        data.allPay = data.allPay + data.workers[i].baseSalary + data.workers[i].bonus
       }
     })
 

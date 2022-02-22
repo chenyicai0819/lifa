@@ -66,10 +66,10 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import {allOrder} from "../../api/order";
+import {getOrder} from "../../api/order";
 
 export default {
-  name: "OrderCheck",
+  name: "BonusCheck",
   setup(){
     const data=reactive({
       todayMoneyNum:0,
@@ -97,7 +97,7 @@ export default {
 
     }
     onBeforeMount(()=>{
-      allOrder().then((res)=>{
+      getOrder().then((res)=>{
         data.orders=res
         data.todayMoneyNum=res.length
         for (const resKey in res) {
@@ -115,12 +115,6 @@ export default {
 </script>
 
 <style scoped>
-.finance-ordercheck {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  height: 600px;
-}
-
 .finance-ordercheck-head {
   width: 100%;
   height: 50px;

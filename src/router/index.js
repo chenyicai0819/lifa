@@ -111,6 +111,11 @@ const routes = [
         name: 'shop',
         component: ()=>import('../views/system/Shop')
       },
+      {
+        path: 'bonus',
+        name: 'bonus',
+        component: ()=>import('../views/system/Bonus')
+      },
     ]
   },
   {
@@ -128,6 +133,16 @@ const routes = [
         path: 'ordercheck',
         name: 'ordercheck',
         component: ()=>import('../views/finance/OrderCheck')
+      },
+      {
+        path: 'bonuscheck',
+        name: 'bonuscheck',
+        component: ()=>import('../views/finance/BonusCheck')
+      },
+      {
+        path: 'servicelog',
+        name: 'servicelog',
+        component: ()=>import('../views/finance/ServiceLog')
       },
     ]
   },
