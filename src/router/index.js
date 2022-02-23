@@ -144,6 +144,16 @@ const routes = [
         name: 'servicelog',
         component: ()=>import('../views/finance/ServiceLog')
       },
+      {
+        path: 'shoplog',
+        name: 'shoplog',
+        component: ()=>import('../views/finance/ShopLog')
+      },
+      {
+        path: 'cardlog',
+        name: 'cardlog',
+        component: ()=>import('../views/finance/CardLog')
+      },
     ]
   },
   {

@@ -15,7 +15,7 @@
         <div class="box-card-table-head">
           <span>疗程套餐列表</span>
         </div>
-        <div>
+        <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
               :data="
       comboList.filter(

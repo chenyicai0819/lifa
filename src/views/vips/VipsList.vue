@@ -35,7 +35,7 @@
         <div class="box-card-table-head">
           <span>会员列表</span>
         </div>
-        <div>
+        <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
               :data="
       vipsList.filter(
@@ -93,11 +93,11 @@
 </template>
 
 <script>
+
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
 import formatDate from "../../utils/date";
 import {getVips} from "../../api/vips";
-
 const {pageGetVips} = require("../../api/vips");
 
 
@@ -198,6 +198,9 @@ export default {
 </script>
 
 <style scoped>
+.vips-vipsList{
+
+}
 .vips-vipsList-head {
   width: 100%;
   height: 50px;

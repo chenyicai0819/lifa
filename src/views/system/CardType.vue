@@ -73,7 +73,7 @@
         <div class="box-card-table-head">
           <span>开卡充值设置</span>
         </div>
-        <div>
+        <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
               :data="openList"
               style="width: 100%"

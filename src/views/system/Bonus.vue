@@ -25,30 +25,55 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-const {useStore} = require("vuex");
+// const {useStore} = require("vuex");
+const {upSystem} = require("../../api/systems");
 import {ElMessage} from "element-plus";
+import {getSystem} from "../../api/systems";
 
 export default {
   name: "Bonus",
   setup(){
-    const store = useStore();
+    // const store = useStore();
     const data = reactive({
       bonus1:0,
       bonus2:0,
+      upBonus1:0,
+      upBonus2:0,
     })
-
+    /**
+     * 更新提成
+     */
     const upBonus = () => {
-      store.dispatch('users/upWorker1BonusActions',data.bonus1)
-      store.dispatch('users/upWorker2BonusActions',data.bonus2)
-      ElMessage({
-        message: '提成更新成功，请重新登录',
-        type: 'success',
+      // store.dispatch('users/upWorker1BonusActions',data.bonus1)
+      // store.dispatch('users/upWorker2BonusActions',data.bonus2)
+      upSystem({"text":data.bonus1,"name":"发型师提成"}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '发型师提成提成更新成功',
+            type: 'success',
+          })
+        }
+      })
+      upSystem({"text":data.bonus2,"name":"中工提成"}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '中工提成提成更新成功',
+            type: 'success',
+          })
+        }
       })
     }
 
     onBeforeMount(()=>{
-      data.bonus1=store.state.users.worker1Bonus
-      data.bonus2=store.state.users.worker2Bonus
+      // 弃用，改为数据库获取
+      // data.bonus1=store.state.users.worker1Bonus
+      // data.bonus2=store.state.users.worker2Bonus
+      getSystem({"name":"发型师提成"}).then((res)=>{
+        data.bonus1=Number(res.text)
+      })
+      getSystem({"name":"中工提成"}).then((res)=>{
+        data.bonus2=Number(res.text)
+      })
     })
     return{
       ...toRefs(data),upBonus,

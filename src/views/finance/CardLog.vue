@@ -1,31 +1,28 @@
 <template>
-  <div class="finance-servicelog">
-    <div class="finance-servicelog-head">
-      <div class="finance-servicelog-head-title">
-        
+  <div class="finance-cardlog">
+    <div class="finance-cardlog-head">
+      <div class="finance-cardlog-head-title">
+
       </div>
     </div>
     <div class="counter-pending-body">
       <el-card class="box-card" shadow="hover" >
         <div class="box-card-head">
-          <span>项目消费记录</span>
+          <span>开卡充值记录</span>
         </div>
         <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
-              :data="orders"
+              :data="bills"
               style="width: 100%"
           >
             <el-table-column type="selection" width="35" />
-            <el-table-column label="单号" prop="orderId" />
-            <el-table-column label="客户姓名" prop="orderMan" />
-            <el-table-column label="消费金额" prop="orderMoney" />
+            <el-table-column label="单号" prop="billNo" />
+            <el-table-column label="标题" prop="billText" />
+            <el-table-column label="金额" prop="billMoney" />
             <el-table-column label="支付方式" prop="payType" />
-            <el-table-column label="服务内容" prop="orderText" />
-            <el-table-column label="售价" prop="orderPrice" />
-            <el-table-column label="员工信息" prop="orderWorker" />
-            <el-table-column label="中工" prop="orderOrderWorker" />
-            <el-table-column label="时间" prop="orderDate" />
-            <el-table-column label="备注" prop="orderRemake" />
+            <el-table-column label="工作人员" prop="billWorker" />
+            <el-table-column label="时间" prop="billTime" />
+            <el-table-column label="备注" prop="billRemark" />
           </el-table>
         </div>
       </el-card>
@@ -35,14 +32,14 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-const {allOrder} = require("../../api/order");
+const {allBill} = require("../../api/bill");
 const {formatTime} = require("../../utils/date");
 
 export default {
-  name: "ServiceLog",
+  name: "CardLog",
   setup(){
     const data=reactive({
-      orders:[],
+      bills:[],
     })
 
     const handleCheck = (index, row) => {
@@ -60,15 +57,13 @@ export default {
 
     }
     onBeforeMount(()=>{
-      allOrder().then((res)=>{
+      allBill().then((res)=>{
         for (let i = 0; i < res.length; i++) {
-          if (res[i].orderWorker!="" && res[i].orderOrderWorker!=""){
-            data.orders[i]=res[i]
-            data.orders[i].orderDate=formatTime(res[i].orderDate)
+          if (res[i].billRemark=="充值"){
+            data.bills[i]=res[i]
+            data.bills[i].billTime=formatTime(res[i].billTime)
           }
-
         }
-        // console.log(res);
       })
     })
 
@@ -81,10 +76,10 @@ export default {
 </script>
 
 <style scoped>
-.finance-servicelog{
+.finance-cardlog{
 
 }
-.finance-servicelog-head {
+.finance-cardlog-head {
   width: 100%;
   height: 50px;
   background-color: #cca8f5;
@@ -94,13 +89,13 @@ export default {
   border-radius: 3px
 }
 
-.finance-servicelog-head > div {
+.finance-cardlog-head > div {
   float: left;
   margin-top: 5px;
   margin-left: 5px;
 }
 
-.finance-servicelog-head-title {
+.finance-cardlog-head-title {
   padding-top: 10px;
 }
 

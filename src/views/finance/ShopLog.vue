@@ -1,14 +1,14 @@
 <template>
-  <div class="finance-servicelog">
-    <div class="finance-servicelog-head">
-      <div class="finance-servicelog-head-title">
-        
+  <div class="finance-shoplog">
+    <div class="finance-shoplog-head">
+      <div class="finance-shoplog-head-title">
+
       </div>
     </div>
     <div class="counter-pending-body">
       <el-card class="box-card" shadow="hover" >
         <div class="box-card-head">
-          <span>项目消费记录</span>
+          <span>商品消费记录</span>
         </div>
         <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
@@ -22,8 +22,6 @@
             <el-table-column label="支付方式" prop="payType" />
             <el-table-column label="服务内容" prop="orderText" />
             <el-table-column label="售价" prop="orderPrice" />
-            <el-table-column label="员工信息" prop="orderWorker" />
-            <el-table-column label="中工" prop="orderOrderWorker" />
             <el-table-column label="时间" prop="orderDate" />
             <el-table-column label="备注" prop="orderRemake" />
           </el-table>
@@ -34,12 +32,13 @@
 </template>
 
 <script>
+
 import {onBeforeMount, reactive, toRefs} from "vue";
 const {allOrder} = require("../../api/order");
 const {formatTime} = require("../../utils/date");
 
 export default {
-  name: "ServiceLog",
+  name: "ShopLog",
   setup(){
     const data=reactive({
       orders:[],
@@ -62,8 +61,9 @@ export default {
     onBeforeMount(()=>{
       allOrder().then((res)=>{
         for (let i = 0; i < res.length; i++) {
-          if (res[i].orderWorker!="" && res[i].orderOrderWorker!=""){
+          if (res[i].orderWorker==="" && res[i].orderOrderWorker===""){
             data.orders[i]=res[i]
+            console.log(res[i]);
             data.orders[i].orderDate=formatTime(res[i].orderDate)
           }
 
@@ -81,10 +81,10 @@ export default {
 </script>
 
 <style scoped>
-.finance-servicelog{
+.finance-shoplog{
 
 }
-.finance-servicelog-head {
+.finance-shoplog-head {
   width: 100%;
   height: 50px;
   background-color: #cca8f5;
@@ -94,13 +94,13 @@ export default {
   border-radius: 3px
 }
 
-.finance-servicelog-head > div {
+.finance-shoplog-head > div {
   float: left;
   margin-top: 5px;
   margin-left: 5px;
 }
 
-.finance-servicelog-head-title {
+.finance-shoplog-head-title {
   padding-top: 10px;
 }
 

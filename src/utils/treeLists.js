@@ -91,10 +91,10 @@ const TREELIST_3 = [{
         "parents": 310,
         "type": null,
         "chi": null
-    }, {"id": 313, "name": "商品消费记录", "path": "/", "parents": 310, "type": null, "chi": null}, {
+    }, {"id": 313, "name": "商品消费记录", "path": "/finance/shoplog", "parents": 310, "type": null, "chi": null}, {
         "id": 314,
         "name": "充值开卡记录",
-        "path": "/",
+        "path": "/finance/cardlog",
         "parents": 310,
         "type": null,
         "chi": null

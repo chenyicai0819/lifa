@@ -14,7 +14,7 @@
         <div class="box-card-head">
           <span>水单详细记录</span>
         </div>
-        <div>
+        <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
               :data="
       orders.filter(
@@ -67,6 +67,7 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {allOrder} from "../../api/order";
+import formatDate from "../../utils/date";
 
 export default {
   name: "OrderCheck",
@@ -99,8 +100,10 @@ export default {
     onBeforeMount(()=>{
       allOrder().then((res)=>{
         data.orders=res
+
         data.todayMoneyNum=res.length
         for (const resKey in res) {
+          data.orders[resKey].orderDate=formatDate(res[resKey].orderDate)
           data.todayMoney+=data.orders[resKey].orderMoney
         }
       })
@@ -116,9 +119,7 @@ export default {
 
 <style scoped>
 .finance-ordercheck {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  height: 600px;
+
 }
 
 .finance-ordercheck-head {

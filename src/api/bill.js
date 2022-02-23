@@ -1,7 +1,7 @@
 import http from '../axios/config'
 
-const getBill = () => {
-    return http('','get','bill/get')
+const allBill = () => {
+    return http('','get','bill/all')
 }
 const todayBill = () => {
     return http('','get','bill/today')
@@ -23,5 +23,5 @@ const getDayBill = (data) => {
 }
 
 export{
-    getBill,getBillInForDay,getBillOutForDay,addBill,todayBill,getOpenBill,getDayBill
+    allBill,getBillInForDay,getBillOutForDay,addBill,todayBill,getOpenBill,getDayBill
 }
