@@ -34,9 +34,8 @@
 <script>
 
 import {onBeforeMount, reactive, toRefs} from "vue";
+import formatDate from "../../utils/date";
 const {allOrder} = require("../../api/order");
-const {formatTime} = require("../../utils/date");
-
 export default {
   name: "ShopLog",
   setup(){
@@ -62,9 +61,8 @@ export default {
       allOrder().then((res)=>{
         for (let i = 0; i < res.length; i++) {
           if (res[i].orderWorker==="" && res[i].orderOrderWorker===""){
-            data.orders[i]=res[i]
-            console.log(res[i]);
-            data.orders[i].orderDate=formatTime(res[i].orderDate)
+            data.orders[res.length-i]=res[i]
+            data.orders[res.length-i].orderDate=formatDate(res[i].orderDate)
           }
 
         }

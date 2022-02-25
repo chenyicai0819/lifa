@@ -247,7 +247,7 @@ const TREELIST_5 = [{
     "path": "/",
     "parents": null,
     "type": 5,
-    "chi": [{"id": 541, "name": "系统日志", "path": "/", "parents": 540, "type": null, "chi": null}]
+    "chi": [{"id": 541, "name": "系统日志", "path": "/system/logs", "parents": 540, "type": null, "chi": null}]
 }];
 
 

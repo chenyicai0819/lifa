@@ -34,7 +34,7 @@
 <script>
 import {inject, onBeforeMount, reactive, toRefs} from "vue";
 import {getBillInForDay, getBillOutForDay} from "../../api/bill";
-
+import formatDate from "../../utils/date";
 const {getDayBill} = require("../../api/bill");
 
 export default {
@@ -42,6 +42,7 @@ export default {
   setup() {
     let echarts = inject("ec");
     const data = reactive({
+      dates:[],
       defaultTime: [
         new Date(2000, 1, 1, 0, 0, 0),
         new Date(2000, 2, 1, 23, 59, 59),
@@ -79,7 +80,6 @@ export default {
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false,
           data: []
         },
         yAxis: {
@@ -145,20 +145,62 @@ export default {
       var day2 = new Date();
       day2.setTime(day2.getTime());
       var s2 = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
+      for (let i = 0; i < 7; i++) {
+        var day3 = new Date();
+        day3.setTime(day3.getTime()-(6-i)*24*60*60*1000);
+        data.dates[i]=day3.getFullYear()+"-" + (day3.getMonth()+1) + "-" + day3.getDate();
+      }
+
+      data.option.xAxis.data=data.dates
       // 分别获取收支数据
       // 收入
       getDayBill({"start":s1,"end":s2,"id":1}).then((res)=>{
-        for (const i in res) {
-          data.option.series[0].data.push(res[i].billMoney)
+        // console.log(res);
+        if (res.length==0){
+          for (let i = 0; i < 7; i++) {
+            data.option.series[0].data.push(0)
+          }
+        }else{
+          let index=0;
+          for (let i = 0; i < data.dates.length; i++) {
+            // console.log(data.dates[i] +"=="+ formatDate(res[index].billTime))
+            if (data.dates[i]==formatDate(res[index].billTime)){
 
+              data.option.series[0].data.push(res[index].billMoney)
+              if (index<res.length){
+                index++
+              }
+            }else{
+              data.option.series[0].data.push(0)
+            }
+          }
         }
+
+        // console.log(data.option.series[0].data)
+
       })
       // 支出
       getDayBill({"start":s1,"end":s2,"id":2}).then((res)=>{
-        for (const i in res) {
-          data.option.series[1].data.push(res[i].billMoney)
-          data.option.xAxis.data.push(res[i].billTime)
+        if (res.length==0){
+          for (let i = 0; i < 7; i++) {
+            data.option.series[1].data.push(0)
+          }
+        }else{
+          let index=0;
+          for (let i = 0; i < data.dates.length; i++) {
+            // console.log(data.dates[i] +"=="+ formatDate(res[index].billTime))
+            if (data.dates[i]==formatDate(res[index].billTime)){
+
+              data.option.series[1].data.push(res[index].billMoney)
+              if (index<res.length){
+                index++
+              }
+            }else{
+              data.option.series[1].data.push(0)
+            }
+          }
         }
+
         // for (let i = 7; i > 0; i--) {
         //   var day = new Date();
         //   day.setTime(day.getTime()-i*24*60*60*1000);

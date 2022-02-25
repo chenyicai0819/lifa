@@ -12,7 +12,7 @@
         <div class="box-card-head">
           <span>水单详细记录</span>
         </div>
-        <div>
+        <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
               :data="
       orders.filter(
@@ -116,6 +116,7 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {todayOrder} from "../../api/order";
+import formatDate from "../../utils/date";
 
 export default {
   name: "Order",
@@ -153,6 +154,9 @@ export default {
     onBeforeMount(()=>{
       todayOrder().then((res)=>{
         data.orders=res
+        for (let i = 0; i < res.length; i++) {
+          data.orders[i].orderDate=formatDate(res[i].orderDate)
+        }
         data.orderNum=res.length
       })
     })

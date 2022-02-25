@@ -12,7 +12,7 @@
         <div class="box-card-head">
           <span>挂单详细记录</span>
         </div>
-        <div>
+        <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
               :data="
       pends.filter(

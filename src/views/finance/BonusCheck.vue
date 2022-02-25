@@ -15,6 +15,9 @@
         >
         </el-option>
       </el-select>
+      <div style="font-size: 18px;color: #FFFFFF;margin-top: 10px;">
+        当前提成标准：发型师：{{bonus1}} 中工：{{bonus2}}
+      </div>
     </div>
     <div class="counter-pending-body">
       <el-card class="box-card" shadow="hover" >
@@ -44,10 +47,9 @@
 
 import {useStore} from "vuex";
 import {onBeforeMount, reactive, toRefs} from "vue";
+import formatDate from "../../utils/date";
 const {allBill} = require("../../api/bill");
 const {getSystem} = require("../../api/systems");
-const {formatTime} = require("../../utils/date");
-
 export default {
   name: "BonusCheck",
   setup(){
@@ -120,7 +122,7 @@ export default {
           // 充值没有提成
           if (res[i].billRemark!="充值") {
             data.bills[index] = res[i]
-            data.bills[index].billTime = formatTime(res[i].billTime)
+            data.bills[index].billTime = formatDate(res[i].billTime)
             index++
           }
         }

@@ -116,6 +116,11 @@ const routes = [
         name: 'bonus',
         component: ()=>import('../views/system/Bonus')
       },
+      {
+        path: 'logs',
+        name: 'logs',
+        component: ()=>import('../views/system/Logs')
+      },
     ]
   },
   {

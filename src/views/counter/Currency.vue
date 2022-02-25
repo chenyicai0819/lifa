@@ -44,7 +44,7 @@
         <div class="box-card-table-head">
           <span>收支详细记录</span>
         </div>
-        <div>
+        <div style="overflow-x: hidden;overflow-y: scroll;height: 450px;">
           <el-table
               :data="
       bills.filter(
@@ -190,6 +190,7 @@ import {onBeforeMount, reactive, toRefs} from "vue";
 import {todayBill} from "../../api/bill";
 import {getWorker} from "../../api/worker";
 import {useStore} from "vuex";
+import formatDate from "../../utils/date";
 
 export default {
   name: "Currency",
@@ -245,7 +246,7 @@ export default {
       console.log(data.form.selectDate[0]);
       console.log(data.form.selectDate[1]);
       console.log(data.form.selectType)
-      console.log("查询");
+      // console.log("查询");
     }
     const handleEdit = (index, row) => {
       console.log(index, row)
@@ -278,6 +279,7 @@ export default {
           data.bills[resKey].billType=data.bills[resKey].billType==1?"收入":"支出"
           data.bills[resKey].billType==1?data.outMoneyNum++:data.inMoneyNum++
           data.bills[resKey].billType==1?data.outMoney=data.outMoney+data.bills[resKey].billMoney:data.inMoney=data.inMoney+data.bills[resKey].billMoney
+          data.bills[resKey].billTime=formatDate(data.bills[resKey].billTime)
         }
       })
       getWorker().then((res)=>{

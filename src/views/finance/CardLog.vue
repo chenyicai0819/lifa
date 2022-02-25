@@ -32,9 +32,8 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
+import formatDate from "../../utils/date";
 const {allBill} = require("../../api/bill");
-const {formatTime} = require("../../utils/date");
-
 export default {
   name: "CardLog",
   setup(){
@@ -60,8 +59,8 @@ export default {
       allBill().then((res)=>{
         for (let i = 0; i < res.length; i++) {
           if (res[i].billRemark=="充值"){
-            data.bills[i]=res[i]
-            data.bills[i].billTime=formatTime(res[i].billTime)
+            data.bills[res.length-i]=res[i]
+            data.bills[res.length-i].billTime=formatDate(res[i].billTime)
           }
         }
       })
