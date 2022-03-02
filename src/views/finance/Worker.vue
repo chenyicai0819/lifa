@@ -78,6 +78,7 @@ import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
 import {getWorker, upWorker} from "../../api/worker";
 const {ElMessage} = require("element-plus");
+import router from "../../router";
 const {watch} = require("vue");
 const {payRoll} = require("../../api/worker");
 
@@ -121,7 +122,7 @@ export default {
 
     }
     const SetterCommission = () => {
-
+      router.push("/system/bonus")
     }
     // 修改工资信息
     const editWorker = (value) => {

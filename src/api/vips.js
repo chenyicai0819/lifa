@@ -24,6 +24,16 @@ const openCardVips = (data) => {
 const outAllVips = () => {
     return http('','get','/vips/out')
 }
+const getNowMoney = (data) => {
+    return http('','post','/vips/getmoney',data)
+}
+const upVip = (data) => {
+    return http('','post','/vips/up',data)
+}
+const getVipByEvery = (data) => {
+    return http('','post','/vips/getbyevery',data)
+}
 export{
-    getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,outAllVips,delVipsType,
+    getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,outAllVips,delVipsType,getNowMoney,
+    upVip,getVipByEvery
 }

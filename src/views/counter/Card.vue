@@ -11,7 +11,7 @@
     <div class="counter-card-body">
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick" class="counter-index-body-tab">
         <el-tab-pane label="基本信息" name="card-1">基本信息</el-tab-pane>
-        <el-tab-pane label="上传会员照片" name="card-2">上传会员照片</el-tab-pane>
+        <el-tab-pane label="会员充值" name="card-2">会员充值</el-tab-pane>
         <el-tab-pane label="会员详细档案" name="card-3">会员详细档案</el-tab-pane>
       </el-tabs>
       <div class="counter-card-body-card-1" v-if="activeName=='card-1'">
@@ -79,6 +79,32 @@
           </div>
         </el-card>
       </div>
+      <div class="counter-card-body-card-2" v-if="activeName=='card-2'">
+        <el-card class="box-card" shadow="hover" >
+          <div style="padding-top: 5px;padding-bottom: 5px;padding-left: 20px;width: 900px">
+            请输入充值的卡号：
+            <el-input v-model="upIdCard" placeholder="会员卡卡号" @blur="getNowMoneys" style="width: 200px;margin-right: 20px"/>
+            请输入充值的金额：
+            <el-input-number v-model="upMoney" :min="1" :max="1000" style="margin-right: 20px"/>
+            该账户剩余金额：{{nowMoney}}
+          </div>
+          <div style="padding-top: 5px;padding-bottom: 5px;padding-left: 20px;width: 600px">
+            <span>付款方式：</span>
+            <el-select v-model="form.payType" placeholder="付款方式" style="width: 20%;padding-right: 20px">
+              <el-option label="微信" value="微信"></el-option>
+              <el-option label="支付宝" value="支付宝"></el-option>
+              <el-option label="现金" value="现金"></el-option>
+              <el-option label="银联" value="银联"></el-option>、
+            </el-select>
+            <span>操作人员：</span>
+            <el-select v-model="form.payMan" placeholder="操作人员">
+              <el-option v-for="(item,index)  in payMans" :label="item.workName" :value="item.workName"
+                         :key="index"></el-option>
+            </el-select>
+            <el-button type="primary" @click="upVipsMoney" style="margin-left: 20px">充值</el-button>
+          </div>
+        </el-card>
+      </div>
     </div>
   </div>
 </template>
@@ -86,10 +112,12 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import moment from "moment";
-import {getVipsIndex, openCardVips} from "../../api/vips";
+import {getNowMoney, getVipsIndex, openCardVips} from "../../api/vips";
 import {useStore} from "vuex";
 import {ElMessage} from "element-plus";
 import {addBill} from "../../api/bill";
+
+const {upVip} = require("../../api/vips");
 
 export default {
   name: "Card",
@@ -101,6 +129,9 @@ export default {
       vipComes:[],
       payMans:[],
       search:'',
+      upIdCard:'',
+      upMoney:100,
+      nowMoney:0,
       form:{
         cardId:'',
         vipTYpesId:'',
@@ -119,6 +150,34 @@ export default {
         payMan:'',
       }
     })
+    /**
+     * 获取会员账户余额
+     */
+    const getNowMoneys = () => {
+      getNowMoney({"id":data.upIdCard}).then((res)=>{
+        data.nowMoney=res
+      })
+    }
+    const upVipsMoney = () => {
+      // 充值
+      let mon=data.nowMoney+data.upMoney;
+      upVip({"vipId":data.upIdCard,"vipsMoney":mon}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: data.upIdCard+'充值成功',
+            type: 'success',
+          })
+          addBill({'billNo':moment(new Date()).valueOf(),'billType':1,
+            'billMoney':mon,'billText':data.upIdCard+"充值",'billWorker':data.form.payMan,
+            'billOrderWorkers':"", 'billRemark':"充值",'payType':data.form.payType})
+        }else {
+          ElMessage.error('充值失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('充值失败.')
+      })
+    }
+
     const handleClick = (tab, event) => {
       console.log(tab, event)
     }
@@ -175,7 +234,7 @@ export default {
     })
     return{
       ...toRefs(data),
-      handleClick,typeChange,openCard,getCardId,
+      handleClick,typeChange,openCard,getCardId,upVipsMoney,getNowMoneys,
     }
   }
 }

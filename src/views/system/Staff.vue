@@ -134,6 +134,7 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {addWorkers} from "../../api/worker";
+import formatDate from "../../utils/date";
 const {useStore} = require("vuex");
 const {ElMessage} = require("element-plus");
 const {getWorkerLevel, getWorker, getSomeWorker} = require("../../api/worker");
@@ -175,7 +176,7 @@ export default {
      * @param row
      */
     const handleEdit = (index, row) => {
-      console.log(index, row)
+      // console.log(index, row)
       let form_ = data.form
       form_.dialogId = row.workId;
       form_.dialogName = row.workName;
@@ -252,6 +253,7 @@ export default {
         for (let i = 0; i < res.length; i++) {
           // 根据id判断状态
           data.workers[i].workState = data.workers[i].workState == 1 ? "在职" : "休假"
+          data.workers[i].workDate=formatDate(res[i].workDate)
           // 根据类型id判断员工等级
           let obj = data.staffLevels.find(function (obj) {
             return obj.levelId == data.workers[i].levelId

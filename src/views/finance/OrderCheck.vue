@@ -2,11 +2,14 @@
   <div class="finance-ordercheck">
     <div class="finance-ordercheck-head">
       <div class="finance-ordercheck-head-title">
-        <span>查询到今日总共有：</span>
+        <span>查询到总共有：</span>
         <span style="color: #f5576c">{{ todayMoneyNum }}</span>
         <span>笔水单，总金额为：</span>
         <span style="color: #f5576c">{{ todayMoney }}</span>
         <span>元。</span>
+      </div>
+      <div class="finance-ordercheck-head-system">
+        <el-button type="small" style="margin-right: 10px" @click="outExecl">导出表格</el-button>
       </div>
     </div>
     <div class="counter-pending-body">
@@ -82,6 +85,12 @@ export default {
         search:'',
       },
     })
+    /**
+     * 导出记录
+     */
+    const outExecl = () => {
+      window.location.href="http://localhost:8089/order/out"
+    }
 
     const handleCheck = (index, row) => {
       console.log(index, row)
@@ -99,19 +108,19 @@ export default {
     }
     onBeforeMount(()=>{
       allOrder().then((res)=>{
-        data.orders=res
 
         data.todayMoneyNum=res.length
-        for (const resKey in res) {
-          data.orders[resKey].orderDate=formatDate(res[resKey].orderDate)
-          data.todayMoney+=data.orders[resKey].orderMoney
+        for (let i = 0; i < res.length; i++) {
+          data.orders[res.length-i]=res[i]
+          data.orders[res.length-i].orderDate=formatDate(res[i].orderDate)
+          data.todayMoney+=res[i].orderMoney
         }
       })
     })
 
     return{
       ...toRefs(data),
-      handleCheck,handleSizeChange,handleCurrentChange,handleClose,
+      handleCheck,handleSizeChange,handleCurrentChange,handleClose,outExecl,
     }
   }
 }
@@ -141,7 +150,15 @@ export default {
 .finance-ordercheck-head-title {
   padding-top: 10px;
 }
-
+.finance-ordercheck-head-system{
+  width: 75%;
+  height: 50%;
+  margin-left: 4%;
+  position: relative;
+  display: flex;
+  justify-content: right;
+  top: 5px;
+}
 .box-card {
   width: 100%;
   padding: 0 0;

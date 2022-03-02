@@ -27,7 +27,8 @@
           <el-option label="男" value="1"></el-option>
           <el-option label="女" value="2"></el-option>
         </el-select>
-        <el-button type="primary">查询</el-button>
+        <el-button type="primary" @click="selectByList">查询</el-button>
+
       </el-card>
     </div>
     <div class="vips-vipsList-body">
@@ -98,7 +99,7 @@ import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
 import formatDate from "../../utils/date";
 import {getVips} from "../../api/vips";
-const {pageGetVips} = require("../../api/vips");
+const {pageGetVips, getVipByEvery} = require("../../api/vips");
 
 
 
@@ -126,6 +127,35 @@ export default {
      */
     const vipsOut = () => {
       window.location.href="http://localhost:8089/vips/out"
+    }
+    /**
+     * 根据条件查询会员
+     */
+    const selectByList = () => {
+      console.log(data.form.vipsSex+","+data.form.vipsType)
+      let out;
+      if (data.form.vipsSex!=0&&data.form.vipsType!=0){
+        out={"vipsSex":data.form.vipsSex,"typeId":data.form.vipsSex}
+      }else if (data.form.vipsSex==0&&data.form.vipsType!=0){
+        out={"typeId":data.form.vipsSex}
+      }else if (data.form.vipsSex!=0&&data.form.vipsType==0){
+        out={"vipsSex":data.form.vipsSex}
+      }
+      getVipByEvery(out).then((res)=> {
+        data.vipsList=res
+        for (let i = 0; i < res.length; i++) {
+          // 根据id判断会员男女
+          data.vipsList[i].vipSex=res[i].vipSex=='1'?"男":"女"
+          // 根据类型id判断会员类型名称
+          let obj=data.vipsTypes.find(function (obj){
+            return obj.typeId==data.vipsList[i].typeId
+          })
+          data.vipsList[i].typeId=obj.vipType
+          data.vipsList[i].vipBirthday=formatDate(res[i].vipBirthday)
+          data.vipsList[i].vipOpencard=formatDate(res[i].vipOpencard)
+          data.vipsList[i].vipsLast=formatDate(res[i].vipsLast)
+        }
+      })
     }
     const vipsIn = () => {
 
@@ -191,7 +221,8 @@ export default {
     })
 
     return{
-      ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,pageGetVip
+      ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,pageGetVip,
+      selectByList,
     }
   }
 }
