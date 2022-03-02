@@ -1,13 +1,30 @@
 <template>
   <div class="counter-index">
     <div class="counter-index-head">
-      <el-input
-          class="counter-index-head-input"
-          v-model="search"
-          placeholder="会员信息查询，输入会员名字"
-          clearable="true"
-      />
-
+      <el-popover placement="bottom" :width="400" trigger="click" v-model:visible="visible">
+        <template #reference>
+          <el-input
+              class="counter-index-head-input"
+              v-model="form.search"
+              placeholder="会员信息查询，输入会员名字"
+              clearable="true"
+              @click="visible = true"
+          />
+        </template>
+        <el-table :data="vipslist.filter(
+        (data) =>
+          !form.search || data.vipName.toLowerCase().includes(form.search.toLowerCase())
+      )">
+          <el-table-column label="会员姓名" prop="vipName" />
+          <el-table-column label="手机号码" prop="vipPhone" />
+          <el-table-column label="卡金" prop="vipsMoney" />
+          <el-table-column align="right">
+            <template #default="scope">
+              <el-button size="mini" @click="orderVip(scope.row)" type="primary">Edit</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-popover>
     </div>
     <div class="counter-index-body">
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick" class="counter-index-body-tab">
@@ -117,13 +134,12 @@ import {addOrder} from "../../api/order";
 import {useStore} from "vuex";
 import {getVips} from "../../api/vips";
 
-
 export default {
   name: "Index",
-
   setup() {
     const store =useStore();
     const data = reactive({
+      visible:false,
       searchValue:'',
       search: '',
       activeName: 'buy-1',
@@ -133,6 +149,7 @@ export default {
       commoditys:[],
       vipslist:[],
       form: {
+        search:'',
         service: '',
         initPrice: 0,
         newPrice: '',
@@ -153,7 +170,15 @@ export default {
         text:[],
       },
     })
-
+    /**
+     * 搜索时选中的vip信息
+     */
+    const orderVip = (event) => {
+      data.form.guestName=event.vipName
+      data.form.guestPhone=event.vipPhone
+      data.form.guestSex=event.vipSex
+      data.visible = false
+    }
     const handleClick = (tab, event) => {
       console.log(tab, event)
     }
@@ -250,7 +275,7 @@ export default {
     })
     return {
       ...toRefs(data),
-      handleClick,serviceChange,commChange,Bill,setRealPrice,
+      handleClick,serviceChange,commChange,Bill,setRealPrice,orderVip,
     }
   },
 }
