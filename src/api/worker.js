@@ -27,6 +27,10 @@ const payRoll = (data) => {
 const upWorker = (data) => {
     return http('','post','/worker/up',data)
 }
+const getWorkForId = (data) => {
+    return http('','post','/worker/oneforid',data)
+}
 export{
-    getWorker,getWorkPay,getWorkTest,getWw,getWorkerLevel,addWorkers,getSomeWorker,payRoll,upWorker
+    getWorker,getWorkPay,getWorkTest,getWw,getWorkerLevel,addWorkers,getSomeWorker,payRoll,upWorker,
+    getWorkForId,
 }

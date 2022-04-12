@@ -4,6 +4,8 @@ const users={
         username:'未登录',
         worker1Bonus:0.2,
         worker2Bonus:0.1,
+        outURL:'http://localhost:8082/',
+        // outURL:'http://8.129.212.155:8082/',
     },
     mutations: {
         // 定义mutations，用于同步修改状态

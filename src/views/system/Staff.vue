@@ -137,7 +137,7 @@ import {addWorkers} from "../../api/worker";
 import formatDate from "../../utils/date";
 const {useStore} = require("vuex");
 const {ElMessage} = require("element-plus");
-const {getWorkerLevel, getWorker, getSomeWorker} = require("../../api/worker");
+const {getWorkerLevel, getWorker, getSomeWorker, getWorkForId} = require("../../api/worker");
 
 export default {
   name: "Staff",
@@ -178,13 +178,16 @@ export default {
     const handleEdit = (index, row) => {
       // console.log(index, row)
       let form_ = data.form
+      getWorkForId({"id":row.workId}).then((res)=>{
+        form_.dialogInTime = res.workDate;
+        form_.dialogBirthday = res.workBirthday;
+      })
+
       form_.dialogId = row.workId;
       form_.dialogName = row.workName;
       form_.dialogSex = row.workSex;
       form_.staffLevel = row.levelId;
       form_.dialogPhone = row.workPhone;
-      form_.dialogInTime = row.workDate;
-      form_.dialogBirthday = row.workBirthday;
       form_.dialogIDcard = row.workIDcard;
       data.dialogVisible = true
     }

@@ -11,16 +11,16 @@
               @click="visible = true"
           />
         </template>
-        <el-table :data="vipslist.filter(
-        (data) =>
-          !form.search || data.vipName.toLowerCase().includes(form.search.toLowerCase())
-      )">
+        <el-table :data="vipslist.filter((data) =>!form.search || data.vipName.toLowerCase().includes(form.search.toLowerCase()))"
+                  style="height: 400px;"
+                  empty-text="没有会员"
+        >
           <el-table-column label="会员姓名" prop="vipName" />
           <el-table-column label="手机号码" prop="vipPhone" />
           <el-table-column label="卡金" prop="vipsMoney" />
           <el-table-column align="right">
             <template #default="scope">
-              <el-button size="mini" @click="orderVip(scope.row)" type="primary">Edit</el-button>
+              <el-button size="mini" @click="orderVip(scope.row)" type="primary">选择</el-button>
             </template>
           </el-table-column>
         </el-table>

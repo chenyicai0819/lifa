@@ -71,10 +71,12 @@
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {allOrder} from "../../api/order";
 import formatDate from "../../utils/date";
+import {useStore} from "vuex";
 
 export default {
   name: "OrderCheck",
   setup(){
+    const store = useStore();
     const data=reactive({
       todayMoneyNum:0,
       todayMoney:0,
@@ -89,7 +91,7 @@ export default {
      * 导出记录
      */
     const outExecl = () => {
-      window.location.href="http://localhost:8089/order/out"
+      window.location.href=store.state.users.outURL+"order/out"
     }
 
     const handleCheck = (index, row) => {

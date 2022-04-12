@@ -16,16 +16,16 @@
     <div class="vips-vipsList-select">
       <el-card class="box-card" shadow="hover" :body-style="{ padding: '5px' }">
         <span>查询信息：</span>
-        <el-input v-model="form.selectvips" clearable="true" placeholder="会员姓名/卡号/手机号" style="width: 30%;margin-right: 10px"/>
+<!--        <el-input v-model="form.selectvips" clearable="true" placeholder="会员姓名/卡号/手机号" style="width: 30%;margin-right: 10px"/>-->
         <el-select v-model="form.vipsType" placeholder="会员类型" style="width: 20%;margin-right: 10px">
           <el-option label="全部类型" value="0"></el-option>
           <el-option v-for="item  in vipsTypes" :label="item.vipType" :value="item.typeId"
                      :key="item.typeId"></el-option>
         </el-select>
         <el-select v-model="form.vipsSex" placeholder="会员性别" style="width: 20%;margin-right: 10px">
-          <el-option label="全部性别" value="0"></el-option>
+          <el-option label="全部性别" value="2"></el-option>
           <el-option label="男" value="1"></el-option>
-          <el-option label="女" value="2"></el-option>
+          <el-option label="女" value="0"></el-option>
         </el-select>
         <el-button type="primary" @click="selectByList">查询</el-button>
 
@@ -91,6 +91,50 @@
       </el-card>
     </div>
   </div>
+<!--弹框、-->
+  <div class="dialogs">
+    <el-dialog
+        v-model="dialogVisible"
+        title="修改会员信息"
+        width="50%"
+        :before-close="handleClose"
+        :show-close=false
+    >
+      <div>
+        <p>主体内容</p>
+        <div>
+          <span>会员姓名：</span>
+          <el-input v-model="edit.name" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>会员性别：</span>
+          <el-select v-model="edit.sex" placeholder="性别" style="width: 30%;margin-right: 5px">
+            <el-option label="男" value="1"></el-option>
+            <el-option label="女" value="0"></el-option>
+          </el-select>
+        </div>
+        <div style="margin-top: 5px">
+          <span>联系方式：</span>
+          <el-input v-model="edit.phone" clearable="true" style="width: 30%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>会员生日：</span>
+          <el-date-picker v-model="edit.birthday" type="date" placeholder="员工生日" style="width: 30%"
+                          format="YYYY-MM-DD"
+                          value-format="YYYY-MM-DD HH:mm:ss">
+          </el-date-picker>
+        </div>
+      </div>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+        >确认</el-button
+        >
+      </span>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -99,7 +143,7 @@ import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
 import formatDate from "../../utils/date";
 import {getVips} from "../../api/vips";
-const {pageGetVips, getVipByEvery} = require("../../api/vips");
+const {pageGetVips, getVipByEvery, getOneForId} = require("../../api/vips");
 
 
 
@@ -109,6 +153,7 @@ export default {
     const store =useStore();
     const data=reactive({
       allvips:0,
+      dialogVisible:false,
       allvipmoney:0,
       vipsList:[],
       currentPage:1,
@@ -119,6 +164,12 @@ export default {
         vipsSex:'',
         vipsType:'',
         search:'',
+      },
+      edit:{
+        name:'',
+        sex:'',
+        phone:'',
+        birthday:'',
       }
     })
 
@@ -126,22 +177,14 @@ export default {
      * 导出会员信息
      */
     const vipsOut = () => {
-      window.location.href="http://localhost:8089/vips/out"
+      window.location.href=store.state.users.outURL+"/vips/out"
     }
     /**
      * 根据条件查询会员
      */
     const selectByList = () => {
       console.log(data.form.vipsSex+","+data.form.vipsType)
-      let out;
-      if (data.form.vipsSex!=0&&data.form.vipsType!=0){
-        out={"vipsSex":data.form.vipsSex,"typeId":data.form.vipsSex}
-      }else if (data.form.vipsSex==0&&data.form.vipsType!=0){
-        out={"typeId":data.form.vipsSex}
-      }else if (data.form.vipsSex!=0&&data.form.vipsType==0){
-        out={"vipsSex":data.form.vipsSex}
-      }
-      getVipByEvery(out).then((res)=> {
+      getVipByEvery({"vipSex":data.form.vipsSex,"typeId":data.form.vipsType}).then((res)=> {
         data.vipsList=res
         for (let i = 0; i < res.length; i++) {
           // 根据id判断会员男女
@@ -161,7 +204,17 @@ export default {
 
     }
     const handleEdit = (index, row) => {
-      console.log(index, row)
+      // console.log(index, row)
+      getOneForId({"id":row.vipId}).then((res)=>{
+        data.edit.sex=res.vipSex
+        data.edit.birthday=res.vipBirthday
+      })
+      // 点击修改会员信息后，给修改时的参数赋值，不直接影响原来的参数
+      data.edit.name=row.vipName
+
+      data.edit.phone=row.vipPhone
+
+      data.dialogVisible=true
     }
     const handleDelete = (index, row) => {
       console.log(index, row)

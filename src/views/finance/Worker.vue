@@ -12,6 +12,7 @@
       <div class="finance-worker-head-system">
         <el-button type="small" @click="payToWorker">发放工资</el-button>
         <el-button type="small" @click="SetterCommission">提成调整</el-button>
+        <el-button type="small" @click="outExecl">导出表格</el-button>
       </div>
     </div>
     <div class="finance-worker-body">
@@ -137,6 +138,13 @@ export default {
     const handleClose = (done) => {
       console.log(done);
     }
+    /**
+     *
+     * 导出表格
+     */
+    const outExecl = () => {
+      window.location.href="http://localhost:8089/worker/outmoneytable"
+    }
     watch(()=>data.allPay,()=>{//通过一个函数返回要监听的属性
       // 当总工资发生变化时，提示本月工资未发放
       data.isPay="未发放"
@@ -153,7 +161,7 @@ export default {
     })
 
     return {
-      ...toRefs(data), payToWorker, SetterCommission, editWorker, handleClose,
+      ...toRefs(data), payToWorker, SetterCommission, editWorker, handleClose,outExecl,
     }
   }
 }

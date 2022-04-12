@@ -33,7 +33,10 @@ const upVip = (data) => {
 const getVipByEvery = (data) => {
     return http('','post','/vips/getbyevery',data)
 }
+const getOneForId = (data) => {
+    return http('','post','/vips/oneforid',data)
+}
 export{
     getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,outAllVips,delVipsType,getNowMoney,
-    upVip,getVipByEvery
+    upVip,getVipByEvery,getOneForId
 }
