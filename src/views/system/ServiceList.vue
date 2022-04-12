@@ -7,7 +7,7 @@
         <span>种服务项目</span>
       </div>
       <div class="system-serviceList-head-system">
-        <el-button type="small" @click="addService">添加服务项目</el-button>
+        <el-button type="small" @click="dialogVisible=true;dialogName='添加服务项目'">添加服务项目</el-button>
       </div>
     </div>
     <div class="system-serviceList-body">
@@ -76,7 +76,7 @@
   <div class="dialogs">
     <el-dialog
         v-model="dialogVisible"
-        title="添加服务项目"
+        :title=dialogName
         width="50%"
         :before-close="handleClose"
         :show-close=false
@@ -94,7 +94,7 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button type="primary" @click="addService"
         >确认</el-button
         >
       </span>
@@ -106,7 +106,7 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
-const {pageService, delService} = require("../../api/service");
+const {pageService, delService, addServiceApi} = require("../../api/service");
 const {ElMessage} = require("element-plus");
 
 
@@ -117,6 +117,7 @@ export default {
     const data=reactive({
       serviceNum:0, //服务项目数量
       dialogVisible: false,
+      dialogName:"",
       currentPage:1,
       pageSize:10,
       form:{
@@ -126,11 +127,13 @@ export default {
       },
       serviceList:[], //服务项目列表
     })
-    const addService = () => {
-      data.dialogVisible=true
-    }
+    /**
+     * 更新服务项目
+     */
     const handleEdit = (index, row) => {
       console.log(index, row)
+      data.dialogName="修改服务项目"
+      data.dialogVisible=true
     }
     /**
      * 删除服务项目
@@ -147,7 +150,7 @@ export default {
           ElMessage.error('服务删除失败.')
         }
       }).catch(()=>{
-        ElMessage.error('服务删除失败.')
+        ElMessage.error('出错了.')
       })
     }
     const handleSizeChange = (val) => {
@@ -179,6 +182,30 @@ export default {
         }
       })
     }
+
+    /**
+     * 确定添加服务项目
+     */
+    const addService = () => {
+
+      addServiceApi({"name":data.form.dialogName,"price":data.form.dialogPrice}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '添加新服务成功',
+            type: 'success',
+          })
+          // 成功后更新列表
+          pageGetServices()
+          data.dialogVisible=false
+        }else {
+          ElMessage.error('添加新服务失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('出错了.')
+      })
+
+
+    }
     onBeforeMount(() => {
       data.serviceList = store.state.selectItem.SERVICEITEM
       data.serviceNum=data.serviceList.length
@@ -187,6 +214,7 @@ export default {
 
     return{
       ...toRefs(data),addService,handleEdit,handleDelete,handleSizeChange,handleCurrentChange,handleClose,pageGetServices,
+
     }
   }
 }

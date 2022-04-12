@@ -7,7 +7,7 @@
         <span>条消息记录！</span>
       </div>
       <div class="vips-chats-head-system">
-        <el-button type="small" @click="givechats">发送信息</el-button>
+        <el-button type="small" @click="dialogVisible=true">发送信息</el-button>
       </div>
     </div>
     <div class="vips-chats-body">
@@ -25,6 +25,7 @@
             <el-table-column label="标题" prop="chatName" />
             <el-table-column label="主要内容" prop="chatText" />
             <el-table-column label="日期" prop="chatTime" />
+            <el-table-column label="是否发送" prop="chatTo" />
             <el-table-column label="备注" prop="chatRemate" />
             <el-table-column align="right">
               <template #header>
@@ -57,13 +58,53 @@
 <!--          </el-pagination>-->
         </div>
       </el-card>
-
     </div>
+  </div>
+  <div class="vips-chats-edit">
+    <el-dialog
+        v-model="dialogVisible"
+        title="编辑群发信息"
+        width="50%"
+        :before-close="handleClose"
+        :show-close=false
+    >
+      <div>
+<!--        <p>主体内容</p>-->
+        <div>
+          <span>群发信息标题：</span>
+          <el-input v-model="edit.name" clearable="true" style="width: 60%"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>群发信息内容：</span>
+          <el-input v-model="edit.text"
+                    style="width: 60%"
+                    autosize
+                    type="textarea"/>
+        </div>
+        <div style="margin-top: 5px">
+          <span>是否定时发送：</span>
+          <el-switch v-model="edit.timing" @change="isTiming"/>
+        </div>
+        <div v-if="edit.timing==true" class="example-basic" style="margin-top: 5px">
+          <span>定时发送时间：</span>
+          <el-time-picker v-model="edit.time" placeholder="定时发送时间" />
+        </div>
+      </div>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+        >确认</el-button
+        >
+      </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script >
 import {reactive, toRefs} from "vue";
+
 
 export default {
   name: "Chats",
@@ -75,9 +116,16 @@ export default {
       state2:'',
       search:'',
       chatLists:[
-        {"chatId":"00001","chatName":"测试","chatText":"测试内容","chatTime":"2022-04-10","chatRemate":"无"}
+        {"chatId":"00001","chatName":"测试","chatText":"测试内容","chatTime":"2022-04-10","chatTo":"是","chatRemate":"无"}
       ],
       allvips:100,
+      dialogVisible:false,
+      edit:{
+        name:'',
+        text:'',
+        timing:false,
+        time:'',
+      }
     })
     const givechats = () => {
 
@@ -91,9 +139,15 @@ export default {
     const getList = () => {
       data.allchats=data.chatLists.length
     }
+    /**
+     *判断是否定时发送信息
+     */
+    const isTiming = () => {
+
+    }
     getList()
     return{
-      ...toRefs(data),givechats,handleEdit,handleDelete,getList
+      ...toRefs(data),givechats,handleEdit,handleDelete,getList,isTiming
     }
   }
 }
@@ -157,5 +211,8 @@ export default {
 .box-card-table-head {
   display: flex;
   justify-content: left;
+}
+.example-basic .el-date-editor {
+  margin: 8px;
 }
 </style>

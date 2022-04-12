@@ -10,7 +10,7 @@
       </div>
       <div class="vips-vipsList-head-system">
         <el-button type="small" @click="vipsOut">导出备份</el-button>
-        <el-button type="small" @click="vipsIn">批量导入会员</el-button>
+        <el-button type="small" @click="dialogVisibleForUp=true">批量导入会员</el-button>
       </div>
     </div>
     <div class="vips-vipsList-select">
@@ -97,11 +97,10 @@
         v-model="dialogVisible"
         title="修改会员信息"
         width="50%"
-        :before-close="handleClose"
         :show-close=false
     >
       <div>
-        <p>主体内容</p>
+<!--        <p>主体内容</p>-->
         <div>
           <span>会员姓名：</span>
           <el-input v-model="edit.name" clearable="true" style="width: 30%"/>
@@ -135,6 +134,34 @@
       </template>
     </el-dialog>
   </div>
+<!--  批量添加弹框-->
+  <div class="dialogs-add">
+    <el-dialog
+        v-model="dialogVisibleForUp"
+        title="批量导入会员信息"
+        width="50%"
+        :show-close=false
+    >
+      <el-upload
+          class="upload-demo"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          multiple
+          :limit="3"
+          :on-exceed="handleExceed"
+          :file-list="fileList"
+      >
+        <el-button type="primary">Click to upload</el-button>
+        <template #tip>
+          <div class="el-upload__tip">
+            xls/xlsx files with a size less than 2000KB.
+          </div>
+        </template>
+      </el-upload>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -146,7 +173,6 @@ import {getVips} from "../../api/vips";
 const {pageGetVips, getVipByEvery, getOneForId} = require("../../api/vips");
 
 
-
 export default {
   name: "VipsList",
   setup(){
@@ -154,6 +180,7 @@ export default {
     const data=reactive({
       allvips:0,
       dialogVisible:false,
+      dialogVisibleForUp:false,
       allvipmoney:0,
       vipsList:[],
       currentPage:1,
@@ -170,7 +197,8 @@ export default {
         sex:'',
         phone:'',
         birthday:'',
-      }
+      },
+      fileList:[],
     })
 
     /**
@@ -273,9 +301,23 @@ export default {
       pageGetVip()
     })
 
+    // 上传文件处理函数
+    const handlePreview = () => {
+
+    }
+    const handleRemove = () => {
+
+    }
+    const beforeRemove = () => {
+
+    }
+    const handleExceed = () => {
+
+    }
+
     return{
       ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,pageGetVip,
-      selectByList,
+      selectByList,handlePreview,handleRemove,beforeRemove,handleExceed
     }
   }
 }

@@ -9,7 +9,9 @@ const pageService=function (data){
 const delService=function (data){
     return http('','post','service/del',data)
 }
-
+const addServiceApi=function (data){
+    return http('','post','service/add',data)
+}
 export{
-    getService,pageService,delService,
+    getService,pageService,delService,addServiceApi,
 }
