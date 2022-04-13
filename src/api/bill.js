@@ -21,7 +21,10 @@ const getOpenBill = (data) => {
 const getDayBill = (data) => {
     return http('','get','/bill/day',data)
 }
+const pageBill = (data) => {
+    return http('','get','/bill/page',data)
+}
 
 export{
-    allBill,getBillInForDay,getBillOutForDay,addBill,todayBill,getOpenBill,getDayBill
+    allBill,getBillInForDay,getBillOutForDay,addBill,todayBill,getOpenBill,getDayBill,pageBill
 }

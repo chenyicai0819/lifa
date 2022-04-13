@@ -15,6 +15,9 @@ const allVipsType = () => {
 const delVipsType = (data) => {
     return http('','post','viptype/del',data)
 }
+const getDiscountById = (data) => {
+    return http('','post','viptype/discount',data)
+}
 const getVipsIndex = () => {
     return http('','get','/vips/index')
 }
@@ -38,5 +41,5 @@ const getOneForId = (data) => {
 }
 export{
     getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,outAllVips,delVipsType,getNowMoney,
-    upVip,getVipByEvery,getOneForId
+    upVip,getVipByEvery,getOneForId,getDiscountById
 }

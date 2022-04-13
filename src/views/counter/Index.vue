@@ -132,7 +132,7 @@ import {addBill} from "../../api/bill";
 import {ElMessage} from "element-plus";
 import {addOrder} from "../../api/order";
 import {useStore} from "vuex";
-import {getVips} from "../../api/vips";
+import {getDiscountById, getVips} from "../../api/vips";
 
 export default {
   name: "Index",
@@ -148,6 +148,7 @@ export default {
       guestComes:[],
       commoditys:[],
       vipslist:[],
+      vipsDiscount:1,
       form: {
         search:'',
         service: '',
@@ -178,6 +179,12 @@ export default {
       data.form.guestPhone=event.vipPhone
       data.form.guestSex=event.vipSex
       data.visible = false
+      // 选中会员的时候识别折扣，并改变真实价格
+      getDiscountById({"id":event.typeId}).then((res)=>{
+        data.vipsDiscount=res.vipDiscount
+        setRealPrice()
+      })
+
     }
     const handleClick = (tab, event) => {
       console.log(tab, event)
@@ -186,7 +193,7 @@ export default {
       // console.log(val);
       // console.log(data.serviceItem[val].serPrice);
       data.form.initPrice=data.serviceItem[val].serPrice
-      data.form.realPrice=data.form.initPrice
+      data.form.realPrice=data.form.initPrice*data.vipsDiscount
     }
     const commChange = (val) => {
       data.form.initCommPrice=0
@@ -194,16 +201,16 @@ export default {
         // console.log(data.commoditys[valKey].commPrice);
         data.form.initCommPrice= data.form.initCommPrice+ data.commoditys[valKey].commPrice
       }
-      data.form.realPrice==data.form.initCommPrice
+      data.form.realPrice==data.form.initCommPrice*data.vipsDiscount
     }
     /**
      * 设置真实价格
      */
     const setRealPrice = () => {
           if (data.activeName=="buy-1"){
-            data.form.realPrice=data.form.newPrice
+            data.form.realPrice=data.form.newPrice*data.vipsDiscount
           }else if (data.activeName=="buy-2"){
-            data.form.realPrice=data.form.newCommPrice
+            data.form.realPrice=data.form.newCommPrice*data.vipsDiscount
           }
     }
     /**

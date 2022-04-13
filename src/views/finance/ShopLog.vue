@@ -26,6 +26,18 @@
             <el-table-column label="备注" prop="orderRemake" />
           </el-table>
         </div>
+        <div class="demo-pagination-block">
+          <el-pagination
+              v-model:currentPage="currentPage"
+              :page-sizes="[10, 20, 30, 50]"
+              :page-size=pageSize
+              layout="total, sizes, prev, pager, next, jumper"
+              :total=allShop
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+          >
+          </el-pagination>
+        </div>
       </el-card>
     </div>
   </div>
@@ -35,12 +47,15 @@
 
 import {onBeforeMount, reactive, toRefs} from "vue";
 import formatDate from "../../utils/date";
-const {allOrder} = require("../../api/order");
+const {pageOrder,allOrder} = require("../../api/order");
 export default {
   name: "ShopLog",
   setup(){
     const data=reactive({
       orders:[],
+      currentPage:1,
+      pageSize:10,
+      allShop:0,
     })
 
     const handleCheck = (index, row) => {
@@ -50,29 +65,46 @@ export default {
     const handleSizeChange = (val) => {
       data.pageSize=val
       data.currentPage=1
+      pageGetShop()
     }
     const handleCurrentChange = (val) => {
       data.currentPage=val
+      pageGetShop()
     }
     const handleClose = () => {
 
+    }
+    /**
+     * 分页获取商品
+     */
+    const pageGetShop = () => {
+      data.orders=[]
+      pageOrder({"pagesize":data.pageSize,"now":data.currentPage}).then((res)=>{
+        for (let i = 0; i < res.length; i++) {
+          if (res[i].orderWorker==="" && res[i].orderOrderWorker===""){
+            data.orders.push(res[i])
+          }
+        }
+        for (let i = 0; i <data.orders.length ; i++) {
+          data.orders[i].orderDate=formatDate(res[i].orderDate)
+        }
+      })
     }
     onBeforeMount(()=>{
       allOrder().then((res)=>{
         for (let i = 0; i < res.length; i++) {
           if (res[i].orderWorker==="" && res[i].orderOrderWorker===""){
-            data.orders[res.length-i]=res[i]
-            data.orders[res.length-i].orderDate=formatDate(res[i].orderDate)
+            data.allShop++
           }
-
         }
         // console.log(res);
       })
+      pageGetShop()
     })
 
     return{
       ...toRefs(data),
-      handleCheck,handleSizeChange,handleCurrentChange,handleClose,
+      handleCheck,handleSizeChange,handleCurrentChange,handleClose,pageGetShop,
     }
   }
 }

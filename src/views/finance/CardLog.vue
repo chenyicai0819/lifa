@@ -25,6 +25,18 @@
             <el-table-column label="备注" prop="billRemark" />
           </el-table>
         </div>
+        <div class="demo-pagination-block">
+          <el-pagination
+              v-model:currentPage="currentPage"
+              :page-sizes="[10, 20, 30, 50]"
+              :page-size=pageSize
+              layout="total, sizes, prev, pager, next, jumper"
+              :total=allBill
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+          >
+          </el-pagination>
+        </div>
       </el-card>
     </div>
   </div>
@@ -33,12 +45,15 @@
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
 import formatDate from "../../utils/date";
-const {allBill} = require("../../api/bill");
+import {pageBill,allBill} from "../../api/bill";
 export default {
   name: "CardLog",
   setup(){
     const data=reactive({
       bills:[],
+      currentPage:1,
+      pageSize:10,
+      allBill:0,
     })
 
     const handleCheck = (index, row) => {
@@ -48,26 +63,42 @@ export default {
     const handleSizeChange = (val) => {
       data.pageSize=val
       data.currentPage=1
+      pageGetCard()
     }
     const handleCurrentChange = (val) => {
       data.currentPage=val
+      pageGetCard()
     }
     const handleClose = () => {
 
+    }
+    const pageGetCard = () => {
+      data.bills=[]
+      pageBill({"pagesize":data.pageSize,"now":data.currentPage}).then((res)=>{
+        console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          if (res[i].billRemark=="充值"){
+            data.bills.push(res[i])
+          }
+        }
+        for (let i = 0; i < data.bills.length; i++) {
+          data.bills[i].billTime=formatDate(res[i].billTime)
+        }
+      })
     }
     onBeforeMount(()=>{
       allBill().then((res)=>{
         for (let i = 0; i < res.length; i++) {
           if (res[i].billRemark=="充值"){
-            data.bills[res.length-i]=res[i]
-            data.bills[res.length-i].billTime=formatDate(res[i].billTime)
+            data.allBill++
           }
         }
       })
+      pageGetCard()
     })
 
     return{
-      ...toRefs(data),
+      ...toRefs(data),pageGetCard,
       handleCheck,handleSizeChange,handleCurrentChange,handleClose,
     }
   }

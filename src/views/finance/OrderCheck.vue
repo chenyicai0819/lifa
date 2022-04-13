@@ -2,7 +2,7 @@
   <div class="finance-ordercheck">
     <div class="finance-ordercheck-head">
       <div class="finance-ordercheck-head-title">
-        <span>查询到总共有：</span>
+        <span>共有：</span>
         <span style="color: #f5576c">{{ todayMoneyNum }}</span>
         <span>笔水单，总金额为：</span>
         <span style="color: #f5576c">{{ todayMoney }}</span>
@@ -69,9 +69,11 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import {allOrder} from "../../api/order";
+
 import formatDate from "../../utils/date";
 import {useStore} from "vuex";
+
+const {pageOrder,allOrder} = require("../../api/order");
 
 export default {
   name: "OrderCheck",
@@ -101,28 +103,42 @@ export default {
     const handleSizeChange = (val) => {
       data.pageSize=val
       data.currentPage=1
+      pageGetOrder()
     }
     const handleCurrentChange = (val) => {
       data.currentPage=val
+      pageGetOrder()
     }
     const handleClose = () => {
 
+    }
+    /**
+     * 分页获取项目记录
+     */
+    const pageGetOrder = () => {
+      pageOrder({"pagesize":data.pageSize,"now":data.currentPage}).then((res)=>{
+        data.orders=res
+        for (let i = 0; i < res.length; i++) {
+          data.orders[i].orderDate=formatDate(res[i].orderDate)
+        }
+      })
     }
     onBeforeMount(()=>{
       allOrder().then((res)=>{
 
         data.todayMoneyNum=res.length
         for (let i = 0; i < res.length; i++) {
-          data.orders[res.length-i]=res[i]
-          data.orders[res.length-i].orderDate=formatDate(res[i].orderDate)
+          // data.orders[res.length-i]=res[i]
+          // data.orders[res.length-i].orderDate=formatDate(res[i].orderDate)
           data.todayMoney+=res[i].orderMoney
         }
       })
+      pageGetOrder()
     })
 
     return{
       ...toRefs(data),
-      handleCheck,handleSizeChange,handleCurrentChange,handleClose,outExecl,
+      handleCheck,handleSizeChange,handleCurrentChange,handleClose,outExecl,pageGetOrder,
     }
   }
 }

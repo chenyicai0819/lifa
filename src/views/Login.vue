@@ -77,7 +77,7 @@ export default {
             type: 'success',
           })
           localStorage.setItem("loginToken","test")
-          store.dispatch('users/upUsernameActions',data.logins.username)
+          store.dispatch('users/upUsernameActions',data.logins.userid)
           getAll()
           router.push("/index")
         }else{
