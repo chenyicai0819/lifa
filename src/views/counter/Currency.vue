@@ -15,8 +15,8 @@
         <span> &nbsp; 元（人民币）。</span>
       </div>
       <div class="counter-currency-head-system">
-        <el-button type="small" @click="addOut">添加支出</el-button>
-        <el-button type="small" @click="addIn">添加收入</el-button>
+        <el-button type="small" @click="dialogVisible = true;">添加支出</el-button>
+        <el-button type="small" @click="dialogVisible = true;">添加收入</el-button>
         <el-button type="small" style="margin-right: 10px" @click="outExecl">导出表格</el-button>
       </div>
     </div>
@@ -115,8 +115,8 @@
         <div style="margin-top: 5px">
           <span>类型：</span>
           <el-select v-model="form.selectType" placeholder="选择收支类型" style="width: 50%">
-            <el-option v-for="(item,index)  in currencyTypes" :label="item.label" :value="item.label"
-                       :key="index"></el-option>
+            <el-option label="支出" value="2"></el-option>
+            <el-option label="收入" value="1"></el-option>
           </el-select>
         </div>
         <div style="margin-top: 5px">
@@ -139,7 +139,7 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button type="primary" @click="addBills"
         >确认</el-button
         >
       </span>
@@ -191,6 +191,9 @@ import {todayBill} from "../../api/bill";
 import {getWorker} from "../../api/worker";
 import {useStore} from "vuex";
 import formatDate from "../../utils/date";
+import moment from "moment";
+
+const {addBill} = require("../../api/bill");
 
 export default {
   name: "Currency",
@@ -230,14 +233,6 @@ export default {
       }
     })
 
-    const addIn = () => {
-      data.dialogType = "添加收入"
-      data.dialogVisible = true
-    }
-    const addOut = () => {
-      data.dialogType = "添加支出"
-      data.dialogVisible = true
-    }
     const outExecl = () => {
       console.log("导出表格");
     }
@@ -269,27 +264,43 @@ export default {
     const handleClose = (done) => {
       console.log(done);
     }
-    onBeforeMount(() => {
-      data.currencyTypes=store.state.selectItem.CURRENCYTYPE
+    /**
+     * 点击确定时添加收入和支出
+     */
+    const addBills = () => {
+      addBill({'billNo':moment(new Date()).valueOf(),'billType':data.form.selectType,
+        'billMoney':data.form.dialogMoney,'billText':data.form.dialogText,'billWorker':data.form.dialogMan,
+        'billOrderWorkers':"", 'billRemark':"主动添加",'payType':"银联"})
+      getTodayBill()
+      data.dialogVisible = false
+    }
+    /**
+     * 获取每日收支
+     */
+    const getTodayBill = () => {
       data.alltotal = data.outMoneyNum + data.inMoneyNum
       data.inMoney=0,data.inMoneyNum=0,data.outMoneyNum=0,data.outMoney=0
       todayBill().then((res)=>{
         data.bills=res
         for (const resKey in res) {
-          data.bills[resKey].billType=data.bills[resKey].billType==1?"收入":"支出"
           data.bills[resKey].billType==1?data.outMoneyNum++:data.inMoneyNum++
           data.bills[resKey].billType==1?data.outMoney=data.outMoney+data.bills[resKey].billMoney:data.inMoney=data.inMoney+data.bills[resKey].billMoney
           data.bills[resKey].billTime=formatDate(data.bills[resKey].billTime)
+          data.bills[resKey].billType=data.bills[resKey].billType==1?"收入":"支出"
         }
       })
+    }
+    onBeforeMount(() => {
+      data.currencyTypes=store.state.selectItem.CURRENCYTYPE
+      getTodayBill()
       getWorker().then((res)=>{
         data.workMans=res;
       })
     })
     return {
-      ...toRefs(data), addIn, addOut, outExecl, selectTypes,
+      ...toRefs(data), outExecl, selectTypes,addBills,
       handleEdit, handleDelete, handleSizeChange, handleCurrentChange,
-      handleClose,
+      handleClose,getTodayBill,
     }
   }
 }

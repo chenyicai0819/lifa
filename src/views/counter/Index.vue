@@ -184,7 +184,6 @@ export default {
         data.vipsDiscount=res.vipDiscount
         setRealPrice()
       })
-
     }
     const handleClick = (tab, event) => {
       console.log(tab, event)
@@ -193,7 +192,7 @@ export default {
       // console.log(val);
       // console.log(data.serviceItem[val].serPrice);
       data.form.initPrice=data.serviceItem[val].serPrice
-      data.form.realPrice=data.form.initPrice*data.vipsDiscount
+      data.form.realPrice=Math.floor(data.form.newPrice*data.vipsDiscount)
     }
     const commChange = (val) => {
       data.form.initCommPrice=0
@@ -201,16 +200,16 @@ export default {
         // console.log(data.commoditys[valKey].commPrice);
         data.form.initCommPrice= data.form.initCommPrice+ data.commoditys[valKey].commPrice
       }
-      data.form.realPrice==data.form.initCommPrice*data.vipsDiscount
+      data.form.realPrice=Math.floor(data.form.newPrice*data.vipsDiscount)
     }
     /**
      * 设置真实价格
      */
     const setRealPrice = () => {
           if (data.activeName=="buy-1"){
-            data.form.realPrice=data.form.newPrice*data.vipsDiscount
+            data.form.realPrice=Math.floor(data.form.newPrice*data.vipsDiscount)
           }else if (data.activeName=="buy-2"){
-            data.form.realPrice=data.form.newCommPrice*data.vipsDiscount
+            data.form.realPrice=Math.floor(data.form.newPrice*data.vipsDiscount)
           }
     }
     /**
@@ -247,7 +246,7 @@ export default {
         // console.log(data.form.text);
         // 商品结账
         addOrder({'orderId':data.form.SingleNumber,
-          'orderPrice':data.form.initPrice,'orderText':data.form.text,'orderMan':data.form.guestName,
+          'orderPrice':data.form.initCommPrice,'orderText':data.form.text,'orderMan':data.form.guestName,
           'orderPhone':data.form.guestPhone,'orderSex':data.form.guestSex,'payType':data.form.payType,'orderMoney':data.form.realPrice,
           'orderWorker':data.form.workMan, 'orderOrderWorker':data.form.orderMan,'orderCome':data.form.guestCome,'orderRemake':data.form.remark,
           'bonus1':store.state.users.worker1Bonus,'bonus2':store.state.users.worker2Bonus,})

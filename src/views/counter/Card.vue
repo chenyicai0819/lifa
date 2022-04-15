@@ -1,16 +1,34 @@
 <template>
   <div class="counter-card">
     <div class="counter-index-head">
-      <el-input
-          class="counter-index-head-input"
-          v-model="search"
-          placeholder="会员信息查询，输入会员名字"
-          clearable="true"
-      />
+      <el-popover placement="bottom" :width="400" trigger="click" v-model:visible="visible">
+        <template #reference>
+          <el-input
+              class="counter-index-head-input"
+              v-model="search"
+              placeholder="会员信息查询，输入会员名字"
+              clearable="true"
+              @click="visible = true"
+          />
+        </template>
+        <el-table :data="vipslist.filter((data) =>!search || data.vipName.toLowerCase().includes(search.toLowerCase()))"
+                  style="height: 400px;"
+                  empty-text="没有会员"
+        >
+          <el-table-column label="会员姓名" prop="vipName" />
+          <el-table-column label="手机号码" prop="vipPhone" />
+          <el-table-column label="卡金" prop="vipsMoney" />
+          <el-table-column align="right">
+            <template #default="scope">
+              <el-button size="mini" @click="orderVip(scope.row)" type="primary">选择</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-popover>
     </div>
     <div class="counter-card-body">
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick" class="counter-index-body-tab">
-        <el-tab-pane label="基本信息" name="card-1">基本信息</el-tab-pane>
+        <el-tab-pane label="开卡充值" name="card-1">开卡充值</el-tab-pane>
         <el-tab-pane label="会员充值" name="card-2">会员充值</el-tab-pane>
         <el-tab-pane label="会员详细档案" name="card-3">会员详细档案</el-tab-pane>
       </el-tabs>
@@ -85,7 +103,7 @@
             请输入充值的卡号：
             <el-input v-model="upIdCard" placeholder="会员卡卡号" @blur="getNowMoneys" style="width: 200px;margin-right: 20px"/>
             请输入充值的金额：
-            <el-input-number v-model="upMoney" :min="1" :max="1000" style="margin-right: 20px"/>
+            <el-input-number v-model="upMoney" :min="1" :max="1000" style="margin-right: 20px" @change="changeMoney"/>
             该账户剩余金额：{{nowMoney}}
           </div>
           <div style="padding-top: 5px;padding-bottom: 5px;padding-left: 20px;width: 600px">
@@ -105,6 +123,24 @@
           </div>
         </el-card>
       </div>
+      <div class="counter-card-body-card-3" v-if="activeName=='card-3'">
+        <el-card class="box-card" shadow="hover" v-if="showVipsMsg!=null">
+          <el-descriptions :title="showVipsMsg.vipName" >
+            <el-descriptions-item label="用户ID：">{{ showVipsMsg.vipId }}</el-descriptions-item>
+            <el-descriptions-item label="联系方式：">{{ showVipsMsg.vipPhone }}</el-descriptions-item>
+            <el-descriptions-item label="性别:">{{card3.sex}}</el-descriptions-item>
+            <el-descriptions-item label="会员卡金:">{{showVipsMsg.vipsMoney}}￥</el-descriptions-item>
+            <el-descriptions-item label="会员消费:">{{showVipsMsg.vipsConsume}}￥</el-descriptions-item>
+            <el-descriptions-item label="赠送金:">{{showVipsMsg.vipsBonus}}￥</el-descriptions-item>
+            <el-descriptions-item label="会员生日:">{{card3.birthday}}</el-descriptions-item>
+            <el-descriptions-item label="开卡时间:">{{card3.openday}}</el-descriptions-item>
+            <el-descriptions-item label="最后消费时间:">{{card3.lastday}}</el-descriptions-item>
+            <el-descriptions-item label="会员等级：">
+              <el-tag size="default">{{card3.type}}</el-tag>
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-card>
+      </div>
     </div>
   </div>
 </template>
@@ -116,8 +152,9 @@ import {getNowMoney, getVipsIndex, openCardVips} from "../../api/vips";
 import {useStore} from "vuex";
 import {ElMessage} from "element-plus";
 import {addBill} from "../../api/bill";
+import formatDate from "../../utils/date";
 
-const {upVip} = require("../../api/vips");
+const {getVips, upVip} = require("../../api/vips");
 
 export default {
   name: "Card",
@@ -126,12 +163,17 @@ export default {
     const data=reactive({
       activeName:'card-1',
       vipTypes:[],
+      vipslist:[],
       vipComes:[],
       payMans:[],
+      showVipsMsg:{},
       search:'',
       upIdCard:'',
       upMoney:100,
+      upNowVipType:1,
+      upVipType:1,
       nowMoney:0,
+      visible:false,
       form:{
         cardId:'',
         vipTYpesId:'',
@@ -148,6 +190,13 @@ export default {
         payType:'',
         giftMoney:'',
         payMan:'',
+      },
+      card3:{
+        type:'',
+        sex:'',
+        birthday:'',
+        openday:'',
+        lastday:'',
       }
     })
     /**
@@ -161,7 +210,13 @@ export default {
     const upVipsMoney = () => {
       // 充值
       let mon=data.nowMoney+data.upMoney;
-      upVip({"vipId":data.upIdCard,"vipsMoney":mon}).then((res)=>{
+      // console.log(data.upNowVipType);
+      // console.log(data.upVipType);
+      // 如果会员当前等级小于充值后的等级，就将其等级更新
+      if (data.upNowVipType<data.upVipType){
+        data.upNowVipType=data.upVipType
+      }
+      upVip({"vipId":data.upIdCard,"vipsMoney":mon,"typeId":data.upNowVipType}).then((res)=>{
         if (res==1){
           ElMessage({
             message: data.upIdCard+'充值成功',
@@ -224,6 +279,37 @@ export default {
         }else if (res>10000000&&res<100000000){data.form.cardId=""+(res+1)}
       })
     }
+
+    /**
+     * 搜索时选中的vip信息
+     */
+    const orderVip = (event) => {
+      if (data.activeName=="card-2"){
+        data.upIdCard=event.vipId
+        data.nowMoney=event.vipsMoney
+        data.upNowVipType=event.typeId
+      }else if (data.activeName=="card-3"){
+        console.log(event);
+        data.showVipsMsg=event
+        data.card3.type=data.vipTypes[event.typeId-1].vipType
+        data.card3.sex=event.vipSex==1?"男":"女"
+        data.card3.birthday=formatDate(event.vipBirthday)
+        data.card3.openday=formatDate(event.vipOpencard)
+        data.card3.lastday=formatDate(event.vipsLast)
+      }
+
+      data.visible=false
+    }
+    /**
+     * 充值金额改变时,根据充值的金额判断更新的会员等级
+     */
+    const changeMoney = () => {
+      if (data.upMoney<188){data.upVipType=1}
+      else if (data.upMoney>=188 && data.upMoney<288){data.upVipType=2}
+      else if (data.upMoney>=288 && data.upMoney<388){data.upVipType=3}
+      else if (data.upMoney>=388 && data.upMoney<488){data.upVipType=4}
+      else if (data.upMoney>=488){data.upVipType=5}
+    }
     onBeforeMount(()=>{
       data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
       data.vipTypes=store.state.selectItem.VIPTYPES
@@ -231,10 +317,13 @@ export default {
       data.payMans=store.state.selectItem.WORKMANS
       data.form.singleNumber=moment(new Date()).valueOf()
       getCardId()
+      getVips().then((res)=>{
+        data.vipslist=res
+      })
     })
     return{
       ...toRefs(data),
-      handleClick,typeChange,openCard,getCardId,upVipsMoney,getNowMoneys,
+      handleClick,typeChange,openCard,getCardId,upVipsMoney,getNowMoneys,orderVip,changeMoney,
     }
   }
 }

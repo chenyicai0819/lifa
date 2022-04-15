@@ -10,6 +10,9 @@ const getUser=function (data) {
 const logupapi =function (data){
     return http('','post','logup',data)
 }
+const getUserById =function (data){
+    return http('','post','id',data)
+}
 export {
-    loginapi,logupapi,getUser
+    loginapi,logupapi,getUser,getUserById
 }

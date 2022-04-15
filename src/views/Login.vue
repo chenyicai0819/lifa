@@ -47,6 +47,7 @@ import {allVipsType} from "../api/vips";
 import {useStore} from "vuex";
 
 const {getWorkerLevel} = require("../api/worker");
+const {getUserById} = require("../api/login");
 const {allCommType} = require("../api/commoditys");
 export default {
   name: "Login",
@@ -77,9 +78,14 @@ export default {
             type: 'success',
           })
           localStorage.setItem("loginToken","test")
-          store.dispatch('users/upUsernameActions',data.logins.userid)
-          getAll()
-          router.push("/index")
+          getUserById({"id":data.logins.userid}).then((res)=>{
+            store.dispatch('users/upUsernameActions',res.username)
+            console.log(res.username);
+            getAll()
+            router.push("/index")
+          })
+
+
         }else{
           ElMessage.error('账号不存在或者密码不正确！')
         }

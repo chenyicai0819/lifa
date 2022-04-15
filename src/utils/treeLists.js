@@ -98,7 +98,7 @@ const TREELIST_3 = [{
         "parents": 310,
         "type": null,
         "chi": null
-    }, {"id": 315, "name": "订购套餐记录", "path": "/", "parents": 310, "type": null, "chi": null}]
+    }]
 }, {
     "id": 320,
     "name": "店面财务数据",
@@ -205,21 +205,22 @@ const TREELIST_5 = [{
     "path": "/",
     "parents": null,
     "type": 5,
-    "chi": [{"id": 521, "name": "服务项目提成设置", "path": "/system/bonus", "parents": 520, "type": null, "chi": null}, {
-        "id": 522,
-        "name": "商品销售提成设置",
-        "path": "/",
-        "parents": 520,
-        "type": null,
-        "chi": null
-    }, {"id": 523, "name": "开卡充值提成设置", "path": "/", "parents": 520, "type": null, "chi": null}, {
-        "id": 524,
-        "name": "套餐订购提成设置",
-        "path": "/",
-        "parents": 520,
-        "type": null,
-        "chi": null
-    }]
+    "chi": [{"id": 521, "name": "服务项目提成设置", "path": "/system/bonus", "parents": 520, "type": null, "chi": null}, ]
+    // {
+    //     "id": 522,
+    //     "name": "商品销售提成设置",
+    //     "path": "/",
+    //     "parents": 520,
+    //     "type": null,
+    //     "chi": null
+    // }, {"id": 523, "name": "开卡充值提成设置", "path": "/", "parents": 520, "type": null, "chi": null}, {
+    //     "id": 524,
+    //     "name": "套餐订购提成设置",
+    //     "path": "/",
+    //     "parents": 520,
+    //     "type": null,
+    //     "chi": null
+    // }
 }, {
     "id": 530,
     "name": "短信设置",
