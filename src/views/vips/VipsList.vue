@@ -142,24 +142,69 @@
         width="50%"
         :show-close=false
     >
+<!--      下载导入模板-->
+      <div style="text-align: center; margin-bottom: 40px">
+        <el-button
+            type="primary"
+            icon="el-icon-download"
+            @click="downloadTemplate"
+        >下载批量导入模板</el-button
+        >
+      </div>
+<!--      上传文件-->
       <el-upload
-          class="upload-demo"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :before-remove="beforeRemove"
+          class="vipload"
+          name="vipFile"
+          drag
+          :action="insertVipBatchURL"
           multiple
           :limit="3"
-          :on-exceed="handleExceed"
-          :file-list="fileList"
+          style="text-align: center"
+          :on-success="uploadSuccess"
+          :on-exceed="onExceed"
+          :on-progress="onProgress"
+          :on-remove="onRemove"
+          accept=".xlsx"
       >
-        <el-button type="primary">Click to upload</el-button>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <template #tip>
           <div class="el-upload__tip">
-            xls/xlsx files with a size less than 2000KB.
+            只能上传下载的
+            <span style="color: red; cursor: pointer" @click="downloadVipTemplate"
+            >耗材文件模板</span
+            >，请不要上传其他文件
           </div>
         </template>
       </el-upload>
+    </el-dialog>
+
+    <el-dialog
+        title="添加成功"
+        v-model="dialogBatchSucessVisible"
+        class="hc-addBatch-dialog"
+        width="560px"
+        top="200px"
+        center
+        append-to-body
+    >
+      <p>
+        成功添加了 <span style="color: red">{{ insertBatchNum }}</span> 条耗材数据，请确认您添加的耗材数量与其保持一致。
+      </p>
+      <p>
+        如果不一致，请检查 xlsx 文件，如果您的 xlsx
+        文件里的某行完全空白，此时不用担心，系统已经完全添加完数据。
+      </p>
+      <p>
+        但是如果某行数据不完全，那么该行无法添加成功，此时请您单独添加该行数据。
+      </p>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="dialogBatchSucessVisible = false"
+          >确 定</el-button
+          >
+        </span>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -170,7 +215,10 @@ import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
 import formatDate from "../../utils/date";
 import {getVips} from "../../api/vips";
+import {ElMessage} from "element-plus";
+
 const {pageGetVips, getVipByEvery, getOneForId} = require("../../api/vips");
+const {downloadVipTemplate} = require("../../api/files");
 
 
 export default {
@@ -181,11 +229,13 @@ export default {
       allvips:0,
       dialogVisible:false,
       dialogVisibleForUp:false,
+      dialogBatchSucessVisible:false,
       allvipmoney:0,
       vipsList:[],
       currentPage:1,
       pageSize:10,
       vipsTypes:[],
+      insertVipBatchURL: process.env.VUE_APP_BASE_API + '/file/insertVipBatch',
       form:{
         selectvips:'',
         vipsSex:'',
@@ -199,6 +249,7 @@ export default {
         birthday:'',
       },
       fileList:[],
+      insertBatchNum: 0,
     })
 
     /**
@@ -278,6 +329,13 @@ export default {
 
       })
     }
+    /**
+     * 下载文件模板
+     */
+    const downloadTemplate = () => {
+      console.log("下载")
+      downloadVipTemplate()
+    }
     // 在渲染之前获取会员列表
     onBeforeMount(()=>{
       data.vipsTypes=store.state.selectItem.VIPTYPES
@@ -301,23 +359,51 @@ export default {
       pageGetVip()
     })
 
-    // 上传文件处理函数
-    const handlePreview = () => {
+    /**
+     * 上传文件成功回调
+     */
+    const uploadSuccess = (response, file, fileList) => {
+      if (response.status == "false") {
+        uploadError(response.info, file, fileList);
+      } else {
+        ElMessage({
+          message: response.info,
+          type: 'success',
+        })
+        data.insertBatchNum = response.obj;
+        data.dialogBatchSucessVisible = true;
+      }
+    }
+    const onRemove = () => {
 
     }
-    const handleRemove = () => {
-
+    /**
+     * 正在上传文件回调
+     */
+    const onProgress = () => {
+      ElMessage("正在上传 ......")
     }
-    const beforeRemove = () => {
-
+    /**
+     * 上传限制次数回调
+     */
+    const onExceed = () => {
+      ElMessage({
+        message: "一次性只能上传三个文件，请把上传成功的文件删除！",
+        type: 'warning',
+      })
     }
-    const handleExceed = () => {
-
+    /**
+     * 上传文件失败回调
+     */
+    const uploadError=(err, file, fileList)=> {
+      ElMessage.error("上传失败！原因：" + err)
+      console.log(file+fileList)
     }
+
 
     return{
       ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,pageGetVip,
-      selectByList,handlePreview,handleRemove,beforeRemove,handleExceed
+      selectByList,uploadSuccess,onExceed,onProgress,onRemove,downloadTemplate,uploadError
     }
   }
 }
