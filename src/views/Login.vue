@@ -3,7 +3,7 @@
     <div class="login-card">
       <n-card>
         <n-tabs default-value="signin" size="large">
-          <n-tab-pane name="signin" tab="登录">
+          <n-tab-pane name="signin" tab="登录" @keyup.enter="login">
 
               <n-form-item-row label="账号">
                 <el-input v-model="logins.userid" placeholder="账号" />
@@ -11,7 +11,7 @@
               <n-form-item-row label="密码">
                 <el-input v-model="logins.password" placeholder="密码" show-password="true" />
               </n-form-item-row>
-            <n-button type="primary" block @click="login">登录</n-button>
+            <n-button type="primary" block @click="login" >登录</n-button>
           </n-tab-pane>
           <n-tab-pane name="signup" tab="注册">
             <n-form>
@@ -84,7 +84,6 @@ export default {
             getAll()
             router.push("/index")
           })
-
 
         }else{
           ElMessage.error('账号不存在或者密码不正确！')
