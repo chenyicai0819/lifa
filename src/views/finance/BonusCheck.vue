@@ -96,7 +96,7 @@ export default {
           // console.log(index)
         }
       }
-      console.log(data.form);
+      // console.log(data.form);
     }
     const handleCheck = (index, row) => {
       console.log(index, row)

@@ -116,6 +116,7 @@
           </div>
           <div style="margin-top: 10px">
             <el-button type="primary" style="height: 50px;width: 200px" @click="Bill">结 账</el-button>
+            <el-button type="success" style="height: 50px;width: 200px" @click="testali">结 账</el-button>
           </div>
         </el-card>
       </div>
@@ -133,6 +134,7 @@ import {ElMessage} from "element-plus";
 import {addOrder} from "../../api/order";
 import {useStore} from "vuex";
 import {getDiscountById, getVips} from "../../api/vips";
+import {alipay} from "../../api/pay";
 
 export default {
   name: "Index",
@@ -265,6 +267,16 @@ export default {
         })
       }
     }
+    const testali = () => {
+      alipay({"out_trade_no":data.form.SingleNumber,
+        "subject":data.form.guestName,
+        "total_amount":data.form.realPrice,
+        "body":data.serviceItem[data.form.service].serName}).then((res)=>{
+        console.log(res);
+        document.querySelector('body').innerHTML = res;//查找到当前页面的body，将后台返回的form替换掉他的内容
+        document.forms[0].submit();  //执行submit表单提交，让页面重定向，跳转到支付宝页面
+      })
+    }
     onBeforeMount(()=>{
       data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
       data.serviceItem=store.state.selectItem.SERVICEITEM
@@ -280,7 +292,7 @@ export default {
       // restaurants.value = loadAll()
     })
     return {
-      ...toRefs(data),
+      ...toRefs(data),testali,
       handleClick,serviceChange,commChange,Bill,setRealPrice,orderVip,
     }
   },

@@ -223,7 +223,7 @@ export default {
             type: 'success',
           })
           addBill({'billNo':moment(new Date()).valueOf(),'billType':1,
-            'billMoney':mon,'billText':data.upIdCard+"充值",'billWorker':data.form.payMan,
+            'billMoney':data.upMoney,'billText':data.upIdCard+"充值",'billWorker':data.form.payMan,
             'billOrderWorkers':"", 'billRemark':"充值",'payType':data.form.payType})
         }else {
           ElMessage.error('充值失败.')
@@ -270,13 +270,13 @@ export default {
     const getCardId = () => {
       getVipsIndex().then((res)=>{
         if (res<10){data.form.cardId="0000000"+(res+1)
-        }else if (res>=10&&res<100){data.form.cardId="000000"+(res+1)
-        }else if (res>=100&&res<1000){data.form.cardId="00000"+(res+1)
-        }else if (res>=1000&&res<10000){data.form.cardId="0000"+(res+1)
-        }else if (res>10000&&res<100000){data.form.cardId="000"+(res+1)
-        }else if (res>100000&&res<1000000){data.form.cardId="00"+(res+1)
-        }else if (res>1000000&&res<10000000){data.form.cardId="0"+(res+1)
-        }else if (res>10000000&&res<100000000){data.form.cardId=""+(res+1)}
+        }else if (res>=9&&res<99){data.form.cardId="000000"+(res+1)
+        }else if (res>=99&&res<999){data.form.cardId="00000"+(res+1)
+        }else if (res>=999&&res<9999){data.form.cardId="0000"+(res+1)
+        }else if (res>=9999&&res<99999){data.form.cardId="000"+(res+1)
+        }else if (res>=99999&&res<999999){data.form.cardId="00"+(res+1)
+        }else if (res>=999999&&res<9999999){data.form.cardId="0"+(res+1)
+        }else if (res>=9999999&&res<99999999){data.form.cardId=""+(res+1)}
       })
     }
 

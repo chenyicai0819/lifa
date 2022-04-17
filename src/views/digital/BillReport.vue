@@ -115,13 +115,13 @@ export default {
     }
     const select = () => {
 
-      console.log(data.statisticsType);
+      // console.log(data.statisticsType);
       if (data.statisticsType==1){
         getBillInForDay().then((res)=>{
           for (const i in res) {
             data.option.series[0].data.push(res[i].billMoney)
           }
-          console.log(data.option.series[0].data);
+          // console.log(data.option.series[0].data);
         })
         getBillOutForDay().then((res)=>{
           for (const i in res) {
@@ -156,47 +156,47 @@ export default {
       // 收入
       getDayBill({"start":s1,"end":s2,"id":1}).then((res)=>{
         // console.log(res);
+        for (let i = 0; i < 7; i++) {
+          data.option.series[0].data.push(0)
+        }
         if (res.length==0){
-          for (let i = 0; i < 7; i++) {
-            data.option.series[0].data.push(0)
-          }
+          // console.log(res);
         }else{
           let index=0;
           for (let i = 0; i < data.dates.length; i++) {
             // console.log(data.dates[i] +"=="+ formatDate(res[index].billTime))
             if (data.dates[i]==formatDate(res[index].billTime)){
-
-              data.option.series[0].data.push(res[index].billMoney)
+              data.option.series[0].data[i]=(res[index].billMoney)
               if (index<res.length){
                 index++
               }
             }else{
-              data.option.series[0].data.push(0)
+              data.option.series[0].data[i]=(0)
             }
           }
         }
-
-        // console.log(data.option.series[0].data)
+        // console.log(data.option.series[0].data);
 
       })
       // 支出
       getDayBill({"start":s1,"end":s2,"id":2}).then((res)=>{
+        for (let i = 0; i < 7; i++) {
+          data.option.series[1].data.push(0)
+        }
         if (res.length==0){
-          for (let i = 0; i < 7; i++) {
-            data.option.series[1].data.push(0)
-          }
+          // console.log(res);
         }else{
           let index=0;
           for (let i = 0; i < data.dates.length; i++) {
             // console.log(data.dates[i] +"=="+ formatDate(res[index].billTime))
             if (data.dates[i]==formatDate(res[index].billTime)){
 
-              data.option.series[1].data.push(res[index].billMoney)
+              data.option.series[1].data[i]=(res[index].billMoney)
               if (index<res.length){
                 index++
               }
             }else{
-              data.option.series[1].data.push(0)
+              data.option.series[1].data[i]=(0)
             }
           }
         }

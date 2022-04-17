@@ -21,7 +21,10 @@ const moneyOrder = (data) => {
 const pageOrder=function (data){
     return http('','get','order/page',data)
 }
+const getOrderForDay=function (data){
+    return http('','get','order/day',data)
+}
 
 export{
-    allOrder,addOrder,todayOrder,upOrder,numberOrder,moneyOrder,pageOrder
+    allOrder,addOrder,todayOrder,upOrder,numberOrder,moneyOrder,pageOrder,getOrderForDay
 }

@@ -80,8 +80,9 @@ import {useStore} from "vuex";
 import {getWorker, upWorker} from "../../api/worker";
 const {ElMessage} = require("element-plus");
 import router from "../../router";
-const {watch} = require("vue");
+// const {watch} = require("vue");
 const {payRoll} = require("../../api/worker");
+const {getSystem,upSystem} =require("../../api/systems")
 
 export default {
   name: "Worker",
@@ -91,7 +92,7 @@ export default {
       dialogVisible: false,
       workerNum: 0,
       allPay: 0,
-      isPay: '未发放',
+      isPay: '',
       workers: [],
       form: {
         workname: '', //名字
@@ -115,6 +116,14 @@ export default {
               data.workers = res
             })
             data.isPay="已发放"
+            upSystem({"name":"员工工资","text":"已发放"}).then((res)=>{
+              if (res==1){
+                ElMessage({
+                  message: '完成本月工资发放',
+                  type: 'success',
+                })
+              }
+            })
           }else {
             ElMessage.error(data.workers[i].workName+'工资发放失败.')
           }
@@ -145,10 +154,10 @@ export default {
     const outExecl = () => {
       window.location.href="http://localhost:8089/worker/outmoneytable"
     }
-    watch(()=>data.allPay,()=>{//通过一个函数返回要监听的属性
-      // 当总工资发生变化时，提示本月工资未发放
-      data.isPay="未发放"
-    })
+    // watch(()=>data.allPay,()=>{//通过一个函数返回要监听的属性
+    //   // 当总工资发生变化时，提示本月工资未发放
+    //   data.isPay="未发放"
+    // })
     onBeforeMount(() => {
       data.workers = store.state.selectItem.WORKMANS
       getWorker().then((res) => {
@@ -158,6 +167,9 @@ export default {
       for (let i = 0; i < data.workerNum; i++) {
         data.allPay = data.allPay + data.workers[i].baseSalary + data.workers[i].bonus
       }
+      getSystem({"name":"员工工资"}).then((res)=>{
+        data.isPay=res.text;
+      })
     })
 
     return {

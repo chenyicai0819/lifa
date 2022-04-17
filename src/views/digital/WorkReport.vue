@@ -9,12 +9,13 @@
             end-placeholder="End date"
             :default-time="defaultTime"
             style="margin-right: 10px"
+            @change="DateChange"
         ></el-date-picker>
         <el-select v-model="statisticsType" placeholder="统计方式" style="width: 20%;margin-right: 10px">
           <el-option label="按天统计" value="1"></el-option>
           <el-option label="按月统计" value="2"></el-option>
         </el-select>
-        <el-button type="primary" @click="select">查询</el-button>
+        <el-button type="primary" @click="selectItem">查询</el-button>
       </div>
     </div>
     <div class="digital-workreport-body">
@@ -28,7 +29,10 @@
 
 <script>
 import {inject, onBeforeMount, reactive, toRefs} from "vue";
-import {getWorker, getWorkPay, getWorkTest, getWw} from "../../api/worker";
+import {getWorker} from "../../api/worker";
+import formatDate from "../../utils/date";
+const {getOrderForDay} = require("../../api/order");
+
 
 export default {
   name: "WorkReport",
@@ -40,11 +44,13 @@ export default {
         new Date(2000, 2, 1, 23, 59, 59),
       ],
       form: {},
+      dates:[],
+      workerList:[],
       statisticsType: '',
       statisticsDate: '',
       option: {
         title: {
-          text: '收入与支出趋势图'
+          text: '员工业绩趋势图'
         },
         tooltip: {
           trigger: 'axis'
@@ -65,20 +71,24 @@ export default {
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false,
           data: []
         },
         yAxis: {
           type: 'value'
         },
-        series: [
-
-        ]
+        series: []
       }
     })
     const selectItem = () => {
-      console.log(data.statisticsType);
+      // console.log(data.statisticsType);
       ech()
+    }
+    /**
+     * 时间改变时的方法
+     * @constructor
+     */
+    const DateChange = () => {
+      console.log(data.statisticsDate[0]);
     }
     const ech = () => {
       let workreport = echarts.init(document.getElementById("workreport"));
@@ -91,43 +101,63 @@ export default {
       };
     }
     onBeforeMount(() => {
-      // 生成固定数量的位置给员工
-      for (let i = 0; i < 3; i++) {
-        data.option.series[i]={
-          name: '',
-          type: 'line',
-          data: []
-        }
+      // 一开始默认获取今天前七天到今天的数据
+      var day1 = new Date();
+      day1.setTime(day1.getTime()-7*24*60*60*1000);
+      var s1 = day1.getFullYear()+"-" + (day1.getMonth()+1) + "-" + day1.getDate();
+      var day2 = new Date();
+      day2.setTime(day2.getTime());
+      var s2 = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
+      for (let i = 0; i < 7; i++) {
+        var day3 = new Date();
+        day3.setTime(day3.getTime()-(6-i)*24*60*60*1000);
+        data.dates[i]=day3.getFullYear()+"-" + (day3.getMonth()+1) + "-" + day3.getDate();
       }
-      // data.option.series
+      data.option.xAxis.data=data.dates
       // 获取员工信息
       getWorker().then((res)=>{
-        for (const i in res) {
-          data.option.legend.data.push(res[i].workName)
+        data.workerList=res
+        for (let i = 0; i < data.workerList.length; i++) {
+          // 给图像添加坐标系
+          data.option.legend.data.push(data.workerList[i].workName)
+          // 生成固定数量的位置给员工
+          data.option.series[i]={
+            name: data.workerList[i].workName,
+            type: 'line',
+            stack:data.workerList[i].workName,
+            data: []
+          }
+          // console.log(data.option.series[i]);
+          getOrderForDay({"start":s1,"end":s2,"name":data.workerList[i].workName,"type":1}).then((res)=>{
+            for (let k = 0; k < 7; k++) {
+              data.option.series[i].data.push(0)
+            }
+            if (res.length==0){
+              // money.push(0)
 
-          console.log(data.option.legend.data);
+            }else{
+              let index=0;
+              for (let j = 0; j < data.dates.length; j++) {
+                // console.log(data.dates[j] +"=="+ formatDate(res[index].orderDate))
+                if (data.dates[j]==formatDate(res[index].orderDate)){
+                  data.option.series[i].data[j]=(res[index].orderMoney)
+                  // money.push(res[index].orderMoney)
+                  if (index<res.length){
+                    index++
+                  }
+                }else{
+                  // money.push(0)
+                  data.option.series[i].data[j]=(0)
+                }
+              }
+            }
+          })
+
+          // console.log(data.option.series[i].data);
         }
-      })
-      // 获取员工业绩信息
-      getWorkPay().then((res)=>{
-        data.option.series[0].name=res[0].workerName
-        for (const i in res) {
-          data.option.xAxis.data.push(res[i].workerDay)
-          data.option.series[0].data.push(res[i].workerPay)
-        }
-      })
-      getWw().then((res)=>{
-        data.option.series[1].name=res[0].workerName
-        for (const i in res) {
-          data.option.series[1].data.push(res[i].workerPay)
-        }
-      })
-      getWorkTest().then((res)=>{
-        data.option.series[2].name=res[0].workerName
-        for (const i in res) {
-          data.option.series[2].data.push(res[i].workerPay)
-        }
-        ech()
+        // 完成所有员工信息获取后绘制图像
+        // ech()
+        // console.log(JSON.stringify(data.option.legend.data));
       })
     })
 
@@ -135,7 +165,7 @@ export default {
 
     return{
       ...toRefs(data),
-      select,ech,
+      ech,selectItem,DateChange,
     }
   }
 }
