@@ -12,6 +12,12 @@ const routes = [
     component: ()=>import('../views/Login')
   },
   {
+    path: '/successReturn',
+    name: 'successReturn',
+    meta: { permission: false },
+    component: ()=>import('../views/counter/SuccessReturn')
+  },
+  {
     path: '/index',
     name: 'index',
     meta: { permission: true },
@@ -177,12 +183,17 @@ const routes = [
         name: 'workreport',
         component: ()=>import('../views/digital/WorkReport')
       },
+      {
+        path: 'orderreport',
+        name: 'orderreport',
+        component: ()=>import('../views/digital/OrderReport')
+      },
     ]
   },
   {
     path: '/about',
     name: 'About',
-    meta: { permission: true },
+    meta: { permission: false },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.

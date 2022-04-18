@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import {inject, onBeforeMount, reactive, toRefs} from "vue";
+import {inject, onMounted, reactive, toRefs} from "vue";
 import {getWorker} from "../../api/worker";
 import formatDate from "../../utils/date";
 const {getOrderForDay} = require("../../api/order");
@@ -100,10 +100,10 @@ export default {
         workreport.resize();
       };
     }
-    onBeforeMount(() => {
+    onMounted(() => {
       // 一开始默认获取今天前七天到今天的数据
       var day1 = new Date();
-      day1.setTime(day1.getTime()-7*24*60*60*1000);
+      day1.setTime(day1.getTime()-6*24*60*60*1000);
       var s1 = day1.getFullYear()+"-" + (day1.getMonth()+1) + "-" + day1.getDate();
       var day2 = new Date();
       day2.setTime(day2.getTime());

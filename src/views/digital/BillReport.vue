@@ -32,10 +32,11 @@
 </template>
 
 <script>
-import {inject, onBeforeMount, reactive, toRefs} from "vue";
-import {getBillInForDay, getBillOutForDay} from "../../api/bill";
+import {inject, reactive, toRefs} from "vue";
+// import {getBillInForDay, getBillOutForDay} from "../../api/bill";
 import formatDate from "../../utils/date";
 const {getDayBill} = require("../../api/bill");
+const {onMounted} = require("vue");
 
 export default {
   name: "BillReport",
@@ -102,6 +103,7 @@ export default {
       }
     })
     const ech = () => {
+      // console.log("绘图")
       let billreport = echarts.init(document.getElementById("billreport"));
       // 绘制图表
       const res=data.option
@@ -112,36 +114,36 @@ export default {
       window.onresize = function () {//自适应大小
         billreport.resize();
       };
+      // console.log("绘图成功")
     }
     const select = () => {
-
+      getMsg()
       // console.log(data.statisticsType);
-      if (data.statisticsType==1){
-        getBillInForDay().then((res)=>{
-          for (const i in res) {
-            data.option.series[0].data.push(res[i].billMoney)
-          }
-          // console.log(data.option.series[0].data);
-        })
-        getBillOutForDay().then((res)=>{
-          for (const i in res) {
-            data.option.series[1].data.push(res[i].billMoney)
-            data.option.xAxis.data.push(res[i].billTime)
-
-          }
-          ech()
-        })
-      }else if (data.statisticsType==2){
-        // 根据月份获取
-      }
+      // if (data.statisticsType==1){
+      //   getBillInForDay().then((res)=>{
+      //     for (const i in res) {
+      //       data.option.series[0].data.push(res[i].billMoney)
+      //     }
+      //     // console.log(data.option.series[0].data);
+      //   })
+      //   getBillOutForDay().then((res)=>{
+      //     for (const i in res) {
+      //       data.option.series[1].data.push(res[i].billMoney)
+      //       data.option.xAxis.data.push(res[i].billTime)
+      //
+      //     }
+      //     ech()
+      //   })
+      // }else if (data.statisticsType==2){
+      //   // 根据月份获取
+      // }
       ech();
     }
-
-    onBeforeMount(() => {
+    const getMsg = () => {
       // 一开始默认获取今天前七天到今天的数据
       var day1 = new Date();
-      day1.setTime(day1.getTime()-7*24*60*60*1000);
-      var s1 = day1.getFullYear()+"-" + (day1.getMonth()+1) + "-" + day1.getDate();
+      day1.setTime(day1.getTime()-6*24*60*60*1000);
+      var s1 = day1.getFullYear()+"-" + (day1.getMonth()+1) + "-" + (day1.getDate());
       var day2 = new Date();
       day2.setTime(day2.getTime());
       var s2 = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
@@ -164,7 +166,8 @@ export default {
         }else{
           let index=0;
           for (let i = 0; i < data.dates.length; i++) {
-            // console.log(data.dates[i] +"=="+ formatDate(res[index].billTime))
+            // console.log(res[index].billMoney)
+            console.log(data.dates[i] +"=="+ formatDate(res[index].billTime))
             if (data.dates[i]==formatDate(res[index].billTime)){
               data.option.series[0].data[i]=(res[index].billMoney)
               if (index<res.length){
@@ -200,20 +203,22 @@ export default {
             }
           }
         }
-
+        // console.log(data.option.series[1].data);
         // for (let i = 7; i > 0; i--) {
         //   var day = new Date();
         //   day.setTime(day.getTime()-i*24*60*60*1000);
         //   var s = day.getFullYear()+"-" + (day.getMonth()+1) + "-" + day.getDate();
         //
         // }
-
-        ech()
       })
+    }
+
+    onMounted(() => {
+      getMsg()
 
     })
     return {
-      ...toRefs(data),ech,select
+      ...toRefs(data),ech,select,getMsg
     }
   }
 }

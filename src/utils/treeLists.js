@@ -155,7 +155,7 @@ const TREELIST_4 = [{
     "path": "/",
     "parents": null,
     "type": 4,
-    "chi": [{"id": 431, "name": "项目消费报表", "path": "/", "parents": 430, "type": null, "chi": null}, {
+    "chi": [{"id": 431, "name": "项目消费报表", "path": "/digital/orderreport", "parents": 430, "type": null, "chi": null}, {
         "id": 432,
         "name": "商品销售报表",
         "path": "/",

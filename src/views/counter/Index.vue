@@ -115,8 +115,8 @@
             </el-select>
           </div>
           <div style="margin-top: 10px">
-            <el-button type="primary" style="height: 50px;width: 200px" @click="Bill">结 账</el-button>
-            <el-button type="success" style="height: 50px;width: 200px" @click="testali">结 账</el-button>
+            <el-button type="primary" style="height: 50px;width: 200px" @click="pay">结 账</el-button>
+<!--            <el-button type="success" style="height: 50px;width: 200px" @click="payali">结 账</el-button>-->
           </div>
         </el-card>
       </div>
@@ -214,8 +214,27 @@ export default {
             data.form.realPrice=Math.floor(data.form.newPrice*data.vipsDiscount)
           }
     }
+
     /**
-     * 结账
+     * 点击结账
+     */
+    const pay = () => {
+      // localStorage.setItem("activeName",data.activeName)
+      // localStorage.setItem("payform",data.form)
+      // localStorage.setItem("serName",data.serviceItem[data.form.service].serName)
+      store.dispatch('paysItem/upActiveNameActions',data.activeName)
+      store.dispatch('paysItem/upFormActions',data.form)
+      store.dispatch('paysItem/upSerNameActions',data.serviceItem[data.form.service].serName)
+      if (data.form.payType=="支付宝"){
+        // 如果支付成功，则在支付成功界面添加订单信息
+        //跳转支付宝支付
+        payali()
+      }else {
+        Bill()
+      }
+    }
+    /**
+     * 结账并添加数据
      * @constructor
      */
     const Bill = () => {
@@ -267,7 +286,7 @@ export default {
         })
       }
     }
-    const testali = () => {
+    const payali = () => {
       alipay({"out_trade_no":data.form.SingleNumber,
         "subject":data.form.guestName,
         "total_amount":data.form.realPrice,
@@ -275,8 +294,22 @@ export default {
         console.log(res);
         document.querySelector('body').innerHTML = res;//查找到当前页面的body，将后台返回的form替换掉他的内容
         document.forms[0].submit();  //执行submit表单提交，让页面重定向，跳转到支付宝页面
+        Bill()
       })
     }
+    // const checkPaySuccess = () => {
+    //
+    //   let alipaySuccess=localStorage.getItem("alipaySuccess")
+    //
+    //   if (alipaySuccess==1){
+    //     data.activeName=localStorage.getItem("activeName")
+    //     data.form=localStorage.getItem("payform")
+    //     console.log("支付宝支付成功，")
+    //     Bill()
+    //     localStorage.setItem("alipaySuccess",0)
+    //   }
+    // }
+    // checkPaySuccess()
     onBeforeMount(()=>{
       data.form.SingleDate=moment().format("YYYY-MM-DD HH:mm:ss");
       data.serviceItem=store.state.selectItem.SERVICEITEM
@@ -290,9 +323,10 @@ export default {
     })
     onMounted(() => {
       // restaurants.value = loadAll()
+
     })
     return {
-      ...toRefs(data),testali,
+      ...toRefs(data),payali,pay,
       handleClick,serviceChange,commChange,Bill,setRealPrice,orderVip,
     }
   },
