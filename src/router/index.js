@@ -188,6 +188,11 @@ const routes = [
         name: 'orderreport',
         component: ()=>import('../views/digital/OrderReport')
       },
+      {
+        path: 'shopreport',
+        name: 'shopreport',
+        component: ()=>import('../views/digital/ShopReport')
+      },
     ]
   },
   {

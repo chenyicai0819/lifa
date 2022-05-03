@@ -21,6 +21,10 @@ const allCommType=function (){
 const delComm=function (data){
     return http('','post','comm/del',data)
 }
+
+const SomeComm=function (data){
+    return http('','get','comm/type',data)
+}
 export{
-    getComm,pageGetComm,priceGetComm,allCommType,addComm,upComm,delComm,
+    getComm,pageGetComm,priceGetComm,allCommType,addComm,upComm,delComm,SomeComm
 }

@@ -25,24 +25,23 @@
             <el-table-column label="标题" prop="chatName" />
             <el-table-column label="主要内容" prop="chatText" />
             <el-table-column label="日期" prop="chatTime" />
-            <el-table-column label="是否发送" prop="chatTo" />
-            <el-table-column label="备注" prop="chatRemate" />
-            <el-table-column align="right">
-              <template #header>
-                <el-input v-model="search" size="mini" placeholder="搜索标题" />
-              </template>
-              <template >
-                <el-button size="mini"
-                >Edit</el-button
-                >
-                <el-button
-                    size="mini"
-                    type="danger"
+            <el-table-column label="接收人" prop="chatVips" />
+<!--            <el-table-column align="right">-->
+<!--              <template #header>-->
+<!--                <el-input v-model="search" size="mini" placeholder="搜索标题" />-->
+<!--              </template>-->
+<!--              <template >-->
+<!--                <el-button size="mini"-->
+<!--                >Edit</el-button-->
+<!--                >-->
+<!--                <el-button-->
+<!--                    size="mini"-->
+<!--                    type="danger"-->
 
-                >Delete</el-button
-                >
-              </template>
-            </el-table-column>
+<!--                >Delete</el-button-->
+<!--                >-->
+<!--              </template>-->
+<!--            </el-table-column>-->
           </el-table>
         </div>
         <div class="demo-pagination-block">
@@ -87,13 +86,17 @@
         </div>
         <div v-if="edit.timing==true" class="example-basic" style="margin-top: 5px">
           <span>定时发送时间：</span>
-          <el-time-picker v-model="edit.time" placeholder="定时发送时间" />
+          <el-date-picker v-model="edit.time"
+                          type="date"
+                          placeholder="定时发送时间"
+                          format="YYYY/MM/DD"
+                          value-format="YYYY-MM-DD HH:mm:ss"/>
         </div>
       </div>
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button type="primary" @click="addChat()"
         >确认</el-button
         >
       </span>
@@ -104,7 +107,10 @@
 
 <script >
 import {reactive, toRefs} from "vue";
+import {getAllChat, insertChat, pushChat} from "../../api/chats";
 
+const {formatTime} = require("../../utils/date");
+const {ElMessage} = require("element-plus");
 
 export default {
   name: "Chats",
@@ -115,9 +121,7 @@ export default {
       allchats:0,
       state2:'',
       search:'',
-      chatLists:[
-        {"chatId":"00001","chatName":"测试","chatText":"测试内容","chatTime":"2022-04-10","chatTo":"是","chatRemate":"无"}
-      ],
+      chatLists:[],
       allvips:100,
       dialogVisible:false,
       edit:{
@@ -136,18 +140,65 @@ export default {
     const handleDelete = (index, row) => {
       console.log(index, row)
     }
+
+    /**
+     * 获取所有的信息列表
+     */
     const getList = () => {
-      data.allchats=data.chatLists.length
+
+      getAllChat().then((res)=>{
+        data.chatLists=res
+        for (let i = 0; i < res.length; i++) {
+          data.chatLists[i].chatTime=formatTime(res[i].chatTime)
+          if (res[i].chatMan===1){
+            data.chatLists[i].chatVips="所有人"
+          }
+        }
+        data.allchats=res.length
+      })
+
     }
+
+    /**
+     * 添加新的信息发送
+     */
+    const addChat = () => {
+      if (data.edit.timing===false){
+        // 立即发送
+        pushChat({"chatName":data.edit.name,"chatText":data.edit.text})
+      }
+      // console.log();
+      var out;
+      if (data.edit.time==''){
+        out={"chatName":data.edit.name,"chatText":data.edit.text,
+          "chatMan":1}
+      }else {
+        out={"chatName":data.edit.name,"chatText":data.edit.text,
+          "chatMan":1,"chatTime":data.edit.time}
+      }
+      insertChat(out).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '消息添加成功',
+            type: 'success',
+          })
+          data.dialogVisible = false
+        }else {
+          ElMessage.error('消息添加失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('出错了.')
+      })
+    }
+
     /**
      *判断是否定时发送信息
      */
     const isTiming = () => {
-
     }
     getList()
     return{
-      ...toRefs(data),givechats,handleEdit,handleDelete,getList,isTiming
+      ...toRefs(data),givechats,handleEdit,handleDelete,getList,isTiming,addChat
     }
   }
 }

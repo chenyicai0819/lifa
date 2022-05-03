@@ -153,6 +153,7 @@ import {useStore} from "vuex";
 import {ElMessage} from "element-plus";
 import {addBill} from "../../api/bill";
 import formatDate from "../../utils/date";
+import {getInWorker} from "../../api/worker"
 
 const {getVips, upVip} = require("../../api/vips");
 
@@ -289,7 +290,7 @@ export default {
         data.nowMoney=event.vipsMoney
         data.upNowVipType=event.typeId
       }else if (data.activeName=="card-3"){
-        console.log(event);
+        // console.log(event);
         data.showVipsMsg=event
         data.card3.type=data.vipTypes[event.typeId-1].vipType
         data.card3.sex=event.vipSex==1?"男":"女"
@@ -314,7 +315,10 @@ export default {
       data.form.singleDate=moment().format("YYYY-MM-DD HH:mm:ss");
       data.vipTypes=store.state.selectItem.VIPTYPES
       data.vipComes=store.state.selectItem.GUESTCOMES
-      data.payMans=store.state.selectItem.WORKMANS
+      // data.payMans=store.state.selectItem.WORKMANS
+      getInWorker().then((res)=>{
+        data.payMans=res
+      })
       data.form.singleNumber=moment(new Date()).valueOf()
       getCardId()
       getVips().then((res)=>{

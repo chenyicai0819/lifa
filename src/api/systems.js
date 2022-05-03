@@ -6,7 +6,10 @@ const upSystem = (data) => {
 const getSystem = (data) => {
     return http('','post','/systems/get',data)
 }
+const getAllLog = () => {
+    return http('','get','/systems/log/all')
+}
 
 export {
-    upSystem,getSystem,
+    upSystem,getSystem,getAllLog
 }

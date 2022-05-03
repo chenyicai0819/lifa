@@ -8,7 +8,7 @@
           <el-option label="离职" value="2"></el-option>
         </el-select>
         <el-select v-model="form.staffLevel" placeholder="级别" style="width: 30%;margin-right: 5px" @change="getSomeWorkers">
-          <el-option label="全部" value="0"></el-option>
+          <el-option label="全部" value=""></el-option>
           <el-option v-for="(item,index)  in staffLevels" :label="item.levelName" :value="item.levelId"
                      :key="index"></el-option>
         </el-select>
@@ -213,6 +213,7 @@ export default {
         for (let i = 0; i < res.length; i++) {
           // 根据id判断状态
           data.workers[i].workState = data.workers[i].workState == 1 ? "在职" : "休假"
+          data.workers[i].workDate=formatDate(res[i].workDate)
           // 根据类型id判断员工等级
           let obj = data.staffLevels.find(function (obj) {
             return obj.levelId == data.workers[i].levelId

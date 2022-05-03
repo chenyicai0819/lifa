@@ -65,7 +65,7 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button type="primary" @click="upSalary"
         >确认</el-button
         >
       </span>
@@ -95,6 +95,7 @@ export default {
       isPay: '',
       workers: [],
       form: {
+        workId:'',
         workname: '', //名字
         bankid: '', //银行卡
         money1: '',  //基础工资
@@ -136,12 +137,13 @@ export default {
     }
     // 修改工资信息
     const editWorker = (value) => {
-      console.log(value);
+      // console.log(value);
       let _form = data.form
       _form.workname = "修改工资信息(" + value.workName + ")"
       _form.bankid = value.workBank
       _form.money1 = value.baseSalary
       _form.money2 = value.bonus
+      _form.workId = value.workId
       data.dialogVisible = true
     }
     const handleClose = (done) => {
@@ -152,7 +154,29 @@ export default {
      * 导出表格
      */
     const outExecl = () => {
-      window.location.href="http://localhost:8089/worker/outmoneytable"
+      window.location.href=process.env.VUE_APP_BASE_API+"/worker/outmoneytable"
+    }
+
+    /**
+     * 更新员工薪资信息
+     */
+    const upSalary = () => {
+      upWorker({"workBank":data.form.bankid,"baseSalary":data.form.money1,"bonus":data.form.money2,"workId":data.form.workId}).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '信息更新成功',
+            type: 'success',
+          })
+          getWorker().then((res) => {
+            data.workers = res
+          })
+          data.dialogVisible=false
+        }else {
+          ElMessage.error('信息更新失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('出错了...')
+      })
     }
     // watch(()=>data.allPay,()=>{//通过一个函数返回要监听的属性
     //   // 当总工资发生变化时，提示本月工资未发放
@@ -173,7 +197,7 @@ export default {
     })
 
     return {
-      ...toRefs(data), payToWorker, SetterCommission, editWorker, handleClose,outExecl,
+      ...toRefs(data), payToWorker, SetterCommission, editWorker, handleClose,outExecl,upSalary
     }
   }
 }

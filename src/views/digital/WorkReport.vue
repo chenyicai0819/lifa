@@ -91,10 +91,11 @@ export default {
       console.log(data.statisticsDate[0]);
     }
     const ech = () => {
+      document.getElementById("workreport").removeAttribute('_echarts_instance_')
       let workreport = echarts.init(document.getElementById("workreport"));
       // 绘制图表
       const res=data.option
-      workreport.setOption(res)
+      workreport.setOption(res,true)
 
       window.onresize = function () {//自适应大小
         workreport.resize();

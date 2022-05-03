@@ -27,8 +27,11 @@ const getOrderForDay=function (data){
 const getOrderForDayAndOrderName=function (data){
     return http('','get','order/dayforname',data)
 }
+const getDayOrderForComm=function (data){
+    return http('','get','order/dayforcomm',data)
+}
 
 export{
     allOrder,addOrder,todayOrder,upOrder,numberOrder,moneyOrder,pageOrder,getOrderForDay,
-    getOrderForDayAndOrderName,
+    getOrderForDayAndOrderName,getDayOrderForComm,
 }

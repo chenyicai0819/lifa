@@ -136,6 +136,8 @@ import {useStore} from "vuex";
 import {getDiscountById, getVips} from "../../api/vips";
 import {alipay} from "../../api/pay";
 
+const {getInWorker} = require("../../api/worker");
+
 export default {
   name: "Index",
   setup() {
@@ -315,8 +317,11 @@ export default {
       data.serviceItem=store.state.selectItem.SERVICEITEM
       data.form.SingleNumber=moment(new Date()).valueOf()
       data.commoditys=store.state.selectItem.COMMODITYS
-      data.workMans=store.state.selectItem.WORKMANS
+      getInWorker().then((res)=>{
+        data.workMans=res
+      })
       data.guestComes=store.state.selectItem.GUESTCOMES
+      console.log(data.guestComes);
       getVips().then((res)=>{
         data.vipslist=res
       })

@@ -1,6 +1,6 @@
 <template>
-  <div class="digital-orderreport">
-    <div class="digital-orderreport-head">
+  <div class="digital-shopreport">
+    <div class="digital-shopreport-head">
       <div style="padding: 5px">
         <el-date-picker
             v-model="statisticsDate"
@@ -9,48 +9,65 @@
             end-placeholder="End date"
             :default-time="defaultTime"
             style="margin-right: 10px"
-            @change="DateChange"
         ></el-date-picker>
         <el-select v-model="statisticsType" placeholder="统计方式" style="width: 20%;margin-right: 10px">
           <el-option label="按天统计" value="1"></el-option>
           <el-option label="按月统计" value="2"></el-option>
         </el-select>
-        <el-button type="primary" @click="selectItem">查询</el-button>
+        <el-select v-model="commType" placeholder="选择商品类型" style="width: 20%;margin-right: 10px">
+          <el-option label="全部商品" value="0"></el-option>
+          <el-option
+              v-for="(item,index) in commTypes"
+              :key="index"
+              :label="item.commtyName"
+              :value="item.commtyId"
+          >
+          </el-option>
+        </el-select>
+        <el-button type="primary" @click="select">查询</el-button>
       </div>
     </div>
-    <div class="digital-orderreport-body">
+    <div class="digital-shopreport-body">
       <el-card class="box-card" shadow="hover" :body-style="{ padding: '5px' }">
-        <div id="orderreport"
+        <div id="shopreport"
              :style="{ width: '95%', height: '500px' }"></div>
       </el-card>
+    </div>
+
+    <div class="digital-shopreport-footer">
+      <!--      表格显示区域-->
+
     </div>
   </div>
 </template>
 
 <script>
-import {toRefs,onMounted} from "vue";
+import {inject,toRefs,reactive,onBeforeMount} from "vue";
 import formatDate from "../../utils/date";
+import {SomeComm,allCommType} from "../../api/commoditys";
+import {getDayOrderForComm} from "../../api/order";
 
-const {reactive, inject} = require("vue");
-const {getOrderForDayAndOrderName} = require("../../api/order");
-const {getService} = require("../../api/service");
 export default {
-  name: "OrderReport",
+  name: "ShopReport",
   setup(){
     let echarts = inject("ec");
     const data=reactive({
+      dates:[],
       defaultTime: [
         new Date(2000, 1, 1, 0, 0, 0),
         new Date(2000, 2, 1, 23, 59, 59),
       ],
       form: {},
-      services:[],
-      dates: [],
+      // 统计类型，按天、按月
       statisticsType: '',
+      // 选择日期
       statisticsDate: '',
+      //商品类型
+      commTypes:[],
+      commType:'0',
       option: {
         title: {
-          text: '项目销售趋势图'
+          text: '商品销售趋势图'
         },
         tooltip: {
           trigger: 'axis'
@@ -77,41 +94,44 @@ export default {
           type: 'value'
         },
         series: []
-      }
+      },
+      shops:[],
     })
-
-    const selectItem = () => {
-      ech()
-    }
-    /**
-     * 获取服务项目名称，并分配空位进行绘图
-     */
-    const getServiceName = () => {
-      getService().then((res)=>{
-        for (let i = 0; i < res.length; i++) {
-          data.services.push(res[i].serName)
-        }
-      })
-    }
-    /**
-     * 根据服务项目名称获取记录
-     */
-    const getOrderForName = () => {
-
-    }
     const ech = () => {
-      document.getElementById("orderreport").removeAttribute('_echarts_instance_')
-      let orderreport = echarts.init(document.getElementById("orderreport"));
+      console.log(data.shops)
+      document.getElementById("shopreport").removeAttribute('_echarts_instance_')
+      let shopreport = echarts.init(document.getElementById("shopreport"));
       // 绘制图表
       const res=data.option
-      orderreport.setOption(res,true)
+      // data.option.series[0].data=[12,21,23,34,45,43,32]
+      // data.option.series[1].data=[11,22,33,22,12,23,12]
+      shopreport.setOption(res,true)
+
 
       window.onresize = function () {//自适应大小
-        orderreport.resize();
+        shopreport.resize();
       };
     }
+    const select = () => {
+      getMsg()
+      setTimeout(() => {
+        ech()
+      }, 500);
 
-    onMounted(() => {
+    }
+    /**
+     * 获取商品类型
+     */
+    const getCommTypes = () => {
+      allCommType().then((res)=>{
+        data.commTypes=res
+        // console.log(res);
+      })
+    }
+
+    const getMsg = () => {
+      // console.log("获取数据")
+
       // 一开始默认获取今天前七天到今天的数据
       var day1 = new Date();
       day1.setTime(day1.getTime()-6*24*60*60*1000);
@@ -125,22 +145,24 @@ export default {
         data.dates[i]=day3.getFullYear()+"-" + (day3.getMonth()+1) + "-" + day3.getDate();
       }
       data.option.xAxis.data=data.dates
-      getService().then((res)=>{
+      SomeComm({"type":data.commType}).then((res)=>{
+        data.option.series=[]
+        data.shops=[]
+        data.option.legend.data=[]
+        // 获得所有的商品之后，循环遍历
         for (let i = 0; i < res.length; i++) {
-          data.services.push(res[i].serName)
+          data.shops.push(res[i].commName)
           // 给图像添加坐标系
-          data.option.legend.data.push(res[i].serName)
-          // 生成固定数量的位置给员工
+          data.option.legend.data.push(res[i].commName)
+          // 生成固定数量的位置给商品
           data.option.series[i]={
-            name: res[i].serName,
+            name: res[i].commName,
             type: 'line',
-            stack:res[i].serName,
+            stack:res[i].commName,
             data: []
           }
-          /**
-           * 此处的money实际上只是次数，并不是真实的价格
-           */
-          getOrderForDayAndOrderName({"start":s1,"end":s2,"name":res[i].serName}).then((res)=>{
+
+          getDayOrderForComm({"start":s1,"end":s2,"name":res[i].commName}).then((res)=>{
             for (let k = 0; k < 7; k++) {
               data.option.series[i].data.push(0)
             }
@@ -165,18 +187,23 @@ export default {
             }
           })
         }
+
       })
+    }
+    onBeforeMount(()=>{
+      getCommTypes()
+      getMsg()
     })
 
     return{
-      ...toRefs(data),selectItem,getServiceName,getOrderForName,ech,
+      ...toRefs(data),ech,select,getMsg,getCommTypes
     }
   }
 }
 </script>
 
 <style scoped>
-.digital-orderreport-head {
+.digital-shopreport-head {
   width: 100%;
   height: 50px;
   background-color: #cca8f5;

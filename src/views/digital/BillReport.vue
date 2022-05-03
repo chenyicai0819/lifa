@@ -26,7 +26,15 @@
 
     <div class="digital-billreport-footer">
 <!--      表格显示区域-->
-
+      <el-table :data="tableData" height="250" style="width: 100%">
+        <el-table-column prop="name" label="类型" width="180" />
+        <el-table-column
+            v-for="items in dates"
+            :key="items"
+            :prop="items"
+            :label="items"
+        ></el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -57,6 +65,9 @@ export default {
       inBill: [],
       // 支出
       outBill: [],
+      // 表格数据
+      tableHead:['1','2'],
+      tableData:[],
       // echats绘图
       option: {
         title: {
@@ -104,12 +115,15 @@ export default {
     })
     const ech = () => {
       // console.log("绘图")
+      // 解决部署之后echarts二次绘图失败的问题
+      document.getElementById("billreport").removeAttribute('_echarts_instance_')
       let billreport = echarts.init(document.getElementById("billreport"));
       // 绘制图表
       const res=data.option
       // data.option.series[0].data=[12,21,23,34,45,43,32]
       // data.option.series[1].data=[11,22,33,22,12,23,12]
-      billreport.setOption(res)
+      billreport.setOption(res,true)
+
 
       window.onresize = function () {//自适应大小
         billreport.resize();
@@ -139,6 +153,24 @@ export default {
       // }
       ech();
     }
+    /**
+     * 给表格的数组赋值
+     */
+    const getTable = () => {
+
+      let name=['收入', '支出']
+      for (let j = 0; j < name.length; j++) {
+        let obj={}
+        obj["name"]=name[j]
+        for (let i = 0; i < data.dates.length; i++) {
+          // let he={}
+          // he["tabledates"]=data.dates[i]
+          // data.tableHead[i]=he
+          obj[data.dates[i]]=data.option.series[j].data[i]
+        }
+        data.tableData.push(obj)
+      }
+    }
     const getMsg = () => {
       // 一开始默认获取今天前七天到今天的数据
       var day1 = new Date();
@@ -167,7 +199,7 @@ export default {
           let index=0;
           for (let i = 0; i < data.dates.length; i++) {
             // console.log(res[index].billMoney)
-            console.log(data.dates[i] +"=="+ formatDate(res[index].billTime))
+            // console.log(data.dates[i] +"=="+ formatDate(res[index].billTime))
             if (data.dates[i]==formatDate(res[index].billTime)){
               data.option.series[0].data[i]=(res[index].billMoney)
               if (index<res.length){
@@ -203,6 +235,7 @@ export default {
             }
           }
         }
+
         // console.log(data.option.series[1].data);
         // for (let i = 7; i > 0; i--) {
         //   var day = new Date();
@@ -211,6 +244,7 @@ export default {
         //
         // }
       })
+      getTable()
     }
 
     onMounted(() => {
@@ -218,7 +252,7 @@ export default {
 
     })
     return {
-      ...toRefs(data),ech,select,getMsg
+      ...toRefs(data),ech,select,getMsg,getTable
     }
   }
 }
