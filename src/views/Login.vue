@@ -73,6 +73,7 @@ export default {
       // console.log(data.logins.password);
       loginapi({'userid':data.logins.userid,'password':data.logins.password}).then((res)=>{
         if (res==1){
+          store.dispatch('users/upIdActions',data.logins.userid)
           ElMessage({
             message: '登录成功',
             type: 'success',

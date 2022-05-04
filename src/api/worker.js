@@ -10,28 +10,28 @@ const getSomeWorker=function (data){
     return http('','get','worker/get',data)
 }
 const addWorkers = (data) => {
-    return http('','post','/worker/add',data)
+    return http('','post','worker/add',data)
 }
 const getWorkPay = () => {
-    return http('','get','/worker/getPay',)
+    return http('','get','worker/getPay',)
 }
 const getWorkTest = () => {
-    return http('','get','/worker/gettext',)
+    return http('','get','worker/gettext',)
 }
 const getWw = () => {
-    return http('','get','/worker/getWw',)
+    return http('','get','worker/getWw',)
 }
 const getWorkerLevel = () => {
-    return http('','get','/workerlevel/all',)
+    return http('','get','workerlevel/all',)
 }
 const payRoll = (data) => {
-    return http('','post','/worker/pay',data)
+    return http('','post','worker/pay',data)
 }
 const upWorker = (data) => {
-    return http('','post','/worker/up',data)
+    return http('','post','worker/up',data)
 }
 const getWorkForId = (data) => {
-    return http('','post','/worker/oneforid',data)
+    return http('','post','worker/oneforid',data)
 }
 export{
     getWorker,getWorkPay,getWorkTest,getWw,getWorkerLevel,addWorkers,getSomeWorker,payRoll,upWorker,

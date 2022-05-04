@@ -26,6 +26,7 @@
 import router from "../../router";
 import {onBeforeMount, reactive, toRefs} from "vue";
 import {useStore} from "vuex";
+import {logoutApi} from "../../api/login";
 
 
 export default {
@@ -39,6 +40,7 @@ export default {
       router.push("/index");
     }
     const logout = () => {
+      logoutApi({"id":store.state.users.id})
       router.push("/login")
       localStorage.removeItem("loginToken");
     }

@@ -1,6 +1,7 @@
 const users={
     namespaced: true,
     state: {
+        id:0,
         username:'未登录',
         worker1Bonus:0.2,
         worker2Bonus:0.1,
@@ -17,7 +18,10 @@ const users={
         },
         upWorker2Bonus (state, worker2Bonus) {
             state.worker2Bonus = worker2Bonus
-        }
+        },
+        upId (state, id) {
+            state.id = id
+        },
     },
     actions: {
         // 定义actions，用于异步修改状态
@@ -29,6 +33,9 @@ const users={
         },
         upWorker2BonusActions (context, worker2Bonus) {
             context.commit('upWorker2Bonus', worker2Bonus)
+        },
+        upIdActions (context, id) {
+            context.commit('upId', id)
         }
     },
     getters: {
