@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 
 const routes = [
   {
@@ -37,7 +37,7 @@ const routes = [
     component: () => import('../views/Home.vue'),
     children:[
       {
-        path: '',
+        path: 'counter',
         name: 'counter',
         component: ()=>import('../views/counter/Index')
       },
@@ -207,7 +207,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(),
   routes
 })
 router.beforeEach(((to, from, next) => {

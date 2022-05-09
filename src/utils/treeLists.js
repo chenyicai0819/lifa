@@ -1,8 +1,11 @@
 import router from "../router";
 
+
+
+
 const treeLists = function (type) {
     if (type == 1) {
-        router.push("/home")
+        router.push("/home/counter")
         return TREELIST_1
     } else if (type == 2) {
         router.push("/vips/vipslist")
@@ -26,7 +29,7 @@ const TREELIST_1 = [{
     "path": "/",
     "parents": null,
     "type": 1,
-    "chi": [{"id": 111, "name": "收银", "path": "/home", "parents": 110, "type": null, "chi": null}]
+    "chi": [{"id": 111, "name": "收银", "path": "/home/counter", "parents": 110, "type": null, "chi": null}]
 }, {
     "id": 120,
     "name": "开卡",

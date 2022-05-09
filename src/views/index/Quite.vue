@@ -121,22 +121,22 @@ export default {
     const indexto = (index) => {
       if (index == 1) {
         router.push("/home");
-        store.dispatch('trees/upMenuIndexAtions','1')
+        store.dispatch('trees/upMenuIndexAtions',1)
       } else if (index == 2) {
         router.push("/index");
-        store.dispatch('trees/upMenuIndexAtions','2')
+        store.dispatch('trees/upMenuIndexAtions',2)
       } else if (index == 3) {
         router.push("/vips/vipslist");
-        store.dispatch('trees/upMenuIndexAtions','2')
+        store.dispatch('trees/upMenuIndexAtions',2)
       } else if (index == 4) {
         router.push("/home/pending");
-        store.dispatch('trees/upMenuIndexAtions','1')
+        store.dispatch('trees/upMenuIndexAtions',1)
       } else if (index == 5) {
         router.push("/home/card");
-        store.dispatch('trees/upMenuIndexAtions','2')
+        store.dispatch('trees/upMenuIndexAtions',2)
       } else if (index == 6) {
         router.push("/vips/guest");
-        store.dispatch('trees/upMenuIndexAtions','2')
+        store.dispatch('trees/upMenuIndexAtions',2)
       }
 
     }

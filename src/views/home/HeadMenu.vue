@@ -59,11 +59,11 @@ export default {
       // getTree({ 'type': key }).then((res) => {
       //   store.dispatch('trees/updatamutations',res)
       // });
-
+      store.dispatch('trees/upMenuIndexAtions',key)
       store.dispatch('trees/updatamutations',treeLists(key))
 
     }
-    getTrees(1)
+    getTrees(store.state.trees.menuIndex)
     watch(()=>store.state.trees.menuIndex,()=>{//通过一个函数返回要监听的属性
       data.activeIndex=store.state.trees.menuIndex
       // 监听到变化后更新菜单
