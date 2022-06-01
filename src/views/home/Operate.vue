@@ -37,6 +37,7 @@ export default {
       username:'',
     })
     const toIndex = () => {
+      store.dispatch('trees/upMenuIndexAtions',0)
       router.push("/index");
     }
     const logout = () => {
@@ -68,11 +69,11 @@ export default {
 }
 .op-button:hover{
   background-color: Transparent;
-  color: #409EFF!important;;
+  color: #409EFF!important;
 }
 .op-button:active{
   background-color: Transparent;
-  color: #2c3e50!important;;
+  color: #2c3e50!important;
 }
 .op-button-div :active{
   /*background-color: #f5576c;*/

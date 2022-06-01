@@ -1,10 +1,15 @@
 <template>
   <div class="login">
+    <div class="login-logo" style="position: absolute;left: 10px;top: 10px;width: 30%; height: 30%">
+      <el-image
+                :src="url"
+                :fit="fits">
+      </el-image>
+    </div>
     <div class="login-card">
       <n-card>
         <n-tabs default-value="signin" size="large">
           <n-tab-pane name="signin" tab="登录" @keyup.enter="login">
-
               <n-form-item-row label="账号">
                 <el-input v-model="logins.userid" placeholder="账号" />
               </n-form-item-row>
@@ -57,6 +62,8 @@ export default {
   setup(){
     const store =useStore();
     const data=reactive({
+      fits: 'cover',
+      url: 'https://z3.ax1x.com/2021/11/13/Iyn0S0.png',
       logins:{
         userid:'',
         password:'',
@@ -151,7 +158,7 @@ export default {
       })
     }
     return{
-      ...toRefs(data),login,aaa,getAll,logup,checkPass
+      ...toRefs(data),login,aaa,getAll,logup,checkPass,
     }
   }
 }
@@ -160,7 +167,7 @@ export default {
 <style scoped>
 .login{
   width: 100%;
-  height: 700px;
+  height: 100vh;
   background-color: #cca8f5;
 }
 .login-card{

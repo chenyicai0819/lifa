@@ -204,6 +204,12 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
+  {
+    path: '/wechat',
+    name: 'wechat',
+    meta: { permission: false },
+    component: () => import(/* webpackChunkName: "about" */ '../views/weChat/Wechat')
+  },
 ]
 
 const router = createRouter({

@@ -3,7 +3,7 @@ const trees= {
     namespaced: true, // 开启命名空间
     state: {
         menuList: [],
-        menuIndex: '1',
+        menuIndex: '0',
     },
     mutations: {
         // 定义mutations，用于同步修改状态

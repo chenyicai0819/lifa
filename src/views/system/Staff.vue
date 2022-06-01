@@ -76,7 +76,7 @@
   <div class="dialogs">
     <el-dialog
         v-model="dialogVisible"
-        title="添加员工"
+        :title="title"
         width="50%"
         :before-close="handleClose"
         :show-close=false
@@ -122,9 +122,8 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="addWorker"
-        >确认</el-button
-        >
+        <el-button type="primary" @click="addWorker" v-if="title=='添加员工'">确认添加</el-button>
+        <el-button type="primary" @click="upDataWorker" v-if="title=='修改员工信息'">确认修改</el-button>
       </span>
       </template>
     </el-dialog>
@@ -133,7 +132,7 @@
 
 <script>
 import {onBeforeMount, reactive, toRefs} from "vue";
-import {addWorkers} from "../../api/worker";
+import {addWorkers, upWorker} from "../../api/worker";
 import formatDate from "../../utils/date";
 const {useStore} = require("vuex");
 const {ElMessage} = require("element-plus");
@@ -150,6 +149,7 @@ export default {
       currentPage: 1,
       dialogVisible: false,
       pageSize: 10,
+      title:'添加员工',
       form: {
         search: '',
         staffStart: '',
@@ -161,6 +161,8 @@ export default {
         dialogInTime: '',
         dialogIDcard: '',
         dialogBirthday: '',
+        dialogOldBirthday: '',
+        dialogOldInTime:'',
       }
     })
 
@@ -168,6 +170,7 @@ export default {
      * 添加新员工
      */
     const addStaff = () => {
+      data.title="添加员工"
       data.dialogVisible = true
     }
     /**
@@ -180,15 +183,19 @@ export default {
       let form_ = data.form
       getWorkForId({"id":row.workId}).then((res)=>{
         form_.dialogInTime = res.workDate;
+        form_.dialogOldInTime=res.workDate;
         form_.dialogBirthday = res.workBirthday;
+        form_.dialogOldBirthday = res.workBirthday;
       })
-
+      data.title="修改员工信息"
       form_.dialogId = row.workId;
       form_.dialogName = row.workName;
       form_.dialogSex = row.workSex;
       form_.staffLevel = row.levelId;
       form_.dialogPhone = row.workPhone;
       form_.dialogIDcard = row.workIDcard;
+
+
       data.dialogVisible = true
     }
     const handleDelete = (index, row) => {
@@ -234,10 +241,7 @@ export default {
           })
           data.dialogVisible = false
           //成功后重新获取员工列表
-          getWorker().then((res)=>{
-            data.workers=res
-            store.dispatch('selectItem/upworkmanActions',res)
-          })
+          GetWorkerApi()
         }else{
           ElMessage.error('添加新员工失败.')
         }
@@ -245,7 +249,44 @@ export default {
         ElMessage.error('添加新员工失败.')
       })
     }
-    onBeforeMount(() => {
+    /**
+     * 更新员工信息
+     */
+    const upDataWorker = () => {
+      let upDatas={}
+      if (data.form.dialogOldBirthday==data.form.dialogBirthday && data.form.dialogInTime==data.form.dialogOldInTime){
+        upDatas={"workId":data.form.dialogId,"levelId":data.form.staffLevel,"workName":data.form.dialogName,
+          "workSex":data.form.dialogSex,"workPhone":data.form.dialogPhone, "workIDcard":data.form.dialogIDcard}
+      }else if (data.form.dialogOldBirthday==data.form.dialogBirthday){
+        upDatas={"workId":data.form.dialogId,"levelId":data.form.staffLevel,"workName":data.form.dialogName,
+          "workSex":data.form.dialogSex,"workPhone":data.form.dialogPhone,"workDate":data.form.dialogInTime,
+          "workIDcard":data.form.dialogIDcard}
+      }else if (data.form.dialogInTime==data.form.dialogOldInTime){
+        upDatas={"workId":data.form.dialogId,"levelId":data.form.staffLevel,"workName":data.form.dialogName,
+          "workSex":data.form.dialogSex,"workPhone":data.form.dialogPhone, "workBirthday":data.form.dialogBirthday,
+          "workIDcard":data.form.dialogIDcard}
+      }else {
+        upDatas={"workId":data.form.dialogId,"levelId":data.form.staffLevel,"workName":data.form.dialogName,
+            "workSex":data.form.dialogSex,"workPhone":data.form.dialogPhone,"workDate":data.form.dialogInTime,
+            "workBirthday":data.form.dialogBirthday,"workIDcard":data.form.dialogIDcard}
+      }
+      upWorker(upDatas).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: '修改员工信息成功',
+            type: 'success',
+          })
+          data.dialogVisible = false
+          //成功后重新获取员工列表
+          GetWorkerApi()
+        }else{
+          ElMessage.error('修改员工信息失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('出错了.')
+      })
+    }
+    const GetWorkerApi = () => {
       data.staffLevels = store.state.selectItem.STAFFLEVELS
       data.workers = store.state.selectItem.WORKMANS
       data.allStaff=data.workers.length
@@ -265,9 +306,13 @@ export default {
           data.workers[i].levelId = obj.levelName
         }
       })
+    }
+    onBeforeMount(() => {
+      GetWorkerApi()
     })
     return {
       ...toRefs(data), addStaff, handleDelete, handleEdit, handleSizeChange, handleCurrentChange, handleClose,addWorker,getSomeWorkers,
+      upDataWorker,GetWorkerApi,
     }
   }
 }

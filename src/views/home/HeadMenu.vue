@@ -52,8 +52,10 @@ export default {
       console.log(key)
       console.log(keyPath);
       getTrees(key)
+      // 点击菜单的时候存储
       store.dispatch('trees/upMenuIndexAtions',key)
     }
+    // 获取菜单
     const getTrees = (key) => {
       // 从数据库获取左侧导航栏的列表
       // getTree({ 'type': key }).then((res) => {
@@ -63,6 +65,7 @@ export default {
       store.dispatch('trees/updatamutations',treeLists(key))
 
     }
+    // 登陆成功首次进入界面的时候就查找菜单
     getTrees(store.state.trees.menuIndex)
     watch(()=>store.state.trees.menuIndex,()=>{//通过一个函数返回要监听的属性
       data.activeIndex=store.state.trees.menuIndex

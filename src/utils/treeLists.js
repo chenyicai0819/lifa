@@ -19,7 +19,8 @@ const treeLists = function (type) {
     } else if (type == 5) {
         router.push("/system/staff")
         return TREELIST_5
-
+    }else if (type == 0) {
+        router.push("/index")
     }
 }
 
@@ -115,14 +116,15 @@ const TREELIST_3 = [{
     "path": "/",
     "parents": null,
     "type": 3,
-    "chi": [{"id": 331, "name": "员工提成核对", "path": "/finance/bonuscheck", "parents": 330, "type": null, "chi": null}, {
-        "id": 332,
-        "name": "员工业绩核对",
-        "path": "/",
-        "parents": 330,
-        "type": null,
-        "chi": null
-    }]
+    "chi": [{"id": 331, "name": "员工提成核对", "path": "/finance/bonuscheck", "parents": 330, "type": null, "chi": null}, ]
+    // {
+    //     "id": 332,
+    //     "name": "员工业绩核对",
+    //     "path": "/",
+    //     "parents": 330,
+    //     "type": null,
+    //     "chi": null
+    // }
 }, {
     "id": 340,
     "name": "员工工资表",
@@ -219,28 +221,30 @@ const TREELIST_5 = [{
     //     "type": null,
     //     "chi": null
     // }
-}, {
-    "id": 530,
-    "name": "短信设置",
-    "path": "/",
-    "parents": null,
-    "type": 5,
-    "chi": [{"id": 531, "name": "会员卡动态提醒", "path": "/", "parents": 530, "type": null, "chi": null}, {
-        "id": 532,
-        "name": "会员消费跟进",
-        "path": "/",
-        "parents": 530,
-        "type": null,
-        "chi": null
-    }, {"id": 533, "name": "会员服务", "path": "/", "parents": 530, "type": null, "chi": null}, {
-        "id": 534,
-        "name": "店面管理",
-        "path": "/",
-        "parents": 530,
-        "type": null,
-        "chi": null
-    }, {"id": 535, "name": "基础设置", "path": "/", "parents": 530, "type": null, "chi": null}]
-}, {
+},
+//     {
+//     "id": 530,
+//     "name": "短信设置",
+//     "path": "/",
+//     "parents": null,
+//     "type": 5,
+//     "chi": [{"id": 531, "name": "会员卡动态提醒", "path": "/", "parents": 530, "type": null, "chi": null}, {
+//         "id": 532,
+//         "name": "会员消费跟进",
+//         "path": "/",
+//         "parents": 530,
+//         "type": null,
+//         "chi": null
+//     }, {"id": 533, "name": "会员服务", "path": "/", "parents": 530, "type": null, "chi": null}, {
+//         "id": 534,
+//         "name": "店面管理",
+//         "path": "/",
+//         "parents": 530,
+//         "type": null,
+//         "chi": null
+//     }, {"id": 535, "name": "基础设置", "path": "/", "parents": 530, "type": null, "chi": null}]
+// },
+    {
     "id": 540,
     "name": "系统安全",
     "path": "/",

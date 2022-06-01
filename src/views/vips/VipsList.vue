@@ -63,6 +63,15 @@
                 <el-input v-model="form.search" size="mini" placeholder="搜索姓名" />
               </template>
               <template #default="scope">
+                <el-popover placement="left" :width="400" trigger="click">
+                  <template #reference>
+                    <el-button size="mini" type="success" @click="newQR(scope.$index, scope.row)">weChat</el-button>
+                  </template>
+                  <h2 v-if="scope.row.openid==null">{{wechat.name}}绑定微信</h2>
+                  <h2 v-if="scope.row.openid!=null">{{wechat.name}}已经绑定微信了！</h2>
+                  <el-image :src="url" v-if="scope.row.openid==null"/>
+                </el-popover>
+
                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
                 >Edit</el-button
                 >
@@ -127,7 +136,7 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button type="primary" @click="vipsIn"
         >确认</el-button
         >
       </span>
@@ -216,8 +225,7 @@ import {useStore} from "vuex";
 import formatDate from "../../utils/date";
 import {getVips} from "../../api/vips";
 import {ElMessage} from "element-plus";
-
-const {pageGetVips, getVipByEvery, getOneForId} = require("../../api/vips");
+const {pageGetVips, getVipByEvery, getOneForId, upVip} = require("../../api/vips");
 const {downloadVipTemplate} = require("../../api/files");
 
 
@@ -243,13 +251,20 @@ export default {
         search:'',
       },
       edit:{
+        id:'',
         name:'',
         sex:'',
         phone:'',
         birthday:'',
+        oldBirthday:'',
+      },
+      wechat:{
+        name:'',
       },
       fileList:[],
       insertBatchNum: 0,
+      url:'http://ht.cyc292.top/vips/newQR?qrCodeUrl=www.cyc292.top',
+      QRurl:'',
     })
 
     /**
@@ -279,7 +294,31 @@ export default {
         }
       })
     }
+    /**
+     * 修改的时候点击确定
+     */
     const vipsIn = () => {
+      let updatas={};
+      if (data.edit.birthday==data.edit.oldBirthday){
+        updatas={"vipId":data.edit.id,"vipName":data.edit.name,"vipSex":data.edit.sex,"vipPhone":data.edit.phone}
+      }else {
+        updatas={"vipId":data.edit.id,"vipName":data.edit.name,"vipBirthday":data.edit.birthday,"vipSex":data.edit.sex,"vipPhone":data.edit.phone}
+      }
+
+      upVip(updatas).then((res)=>{
+        if (res==1){
+          ElMessage({
+            message: data.edit.id+'信息修改成功',
+            type: 'success',
+          })
+          pageGetVip()
+          data.dialogVisible = false
+        }else {
+          ElMessage.error('修改失败.')
+        }
+      }).catch(()=>{
+        ElMessage.error('出错了.')
+      })
 
     }
     const handleEdit = (index, row) => {
@@ -287,10 +326,11 @@ export default {
       getOneForId({"id":row.vipId}).then((res)=>{
         data.edit.sex=res.vipSex
         data.edit.birthday=res.vipBirthday
+        data.edit.oldBirthday=res.vipBirthday
       })
       // 点击修改会员信息后，给修改时的参数赋值，不直接影响原来的参数
       data.edit.name=row.vipName
-
+      data.edit.id=row.vipId
       data.edit.phone=row.vipPhone
 
       data.dialogVisible=true
@@ -399,11 +439,19 @@ export default {
       ElMessage.error("上传失败！原因：" + err)
       console.log(file+fileList)
     }
+    /**
+     * 点击wechat的时候生成一个新的二维码，然后可以扫码绑定微信
+     */
+    const newQR = (index, row) => {
+      data.wechat.name=row.vipName
+      data.QRurl='http://ht.cyc292.top/wechat/oauth?id='+row.vipId
+      data.url='http://ht.cyc292.top/vips/newQR?qrCodeUrl='+data.QRurl
+    }
 
 
     return{
       ...toRefs(data),vipsOut,vipsIn,handleDelete,handleEdit,handleSizeChange,handleCurrentChange,pageGetVip,
-      selectByList,uploadSuccess,onExceed,onProgress,onRemove,downloadTemplate,uploadError
+      selectByList,uploadSuccess,onExceed,onProgress,onRemove,downloadTemplate,uploadError,newQR,
     }
   }
 }

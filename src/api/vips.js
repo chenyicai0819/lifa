@@ -39,7 +39,10 @@ const getVipByEvery = (data) => {
 const getOneForId = (data) => {
     return http('','post','vips/oneforid',data)
 }
+const newQRApi = () => {
+    return http('','post','vips/newQR')
+}
 export{
     getVips,getVipsType,getVipsIndex,allVipsType,openCardVips,pageGetVips,outAllVips,delVipsType,getNowMoney,
-    upVip,getVipByEvery,getOneForId,getDiscountById
+    upVip,getVipByEvery,getOneForId,getDiscountById,newQRApi
 }
